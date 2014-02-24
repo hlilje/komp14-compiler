@@ -3,6 +3,7 @@
     <property name="jar.file" value="mjc.jar" />
     <property name="main.class" value="MiniJavaParser" />
     <property name="javacc.file" value="MiniJavaLexer.jj" />
+    <property name="jjtree.file" value="MiniJavaLexer.jjt" />
 
     <property name="src.dir" location="src" />
     <property name="bin.dir" location="bin" />
@@ -41,9 +42,19 @@
     </target>
 
     <!-- Invoke JavaCC -->
-    <target name="javacc" depends="clean, makedir">
+    <target name="javacc" depends="jjtree">
         <javacc
             target="${src.dir}/${javacc.file}"
+            outputdirectory="${src.dir}"
+            javacchome="${lib.dir}"
+            static="false"
+        />
+    </target>
+
+    <!-- Invoke JJTree -->
+    <target name="jjtree" depends="clean, makedir">
+        <javacc
+            target="${src.dir}/${jjtree.file}"
             outputdirectory="${src.dir}"
             javacchome="${lib.dir}"
             static="false"
