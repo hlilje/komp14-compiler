@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<project name="MiniJavaCompiler" default="main" basedir=".">
+    <property name="jar.file" value="mjc.jar" />
+    <property name="main.class" value="MiniJavaParser" />
+    <property name="javacc.file" value="MiniJavaLexer.jj" />
+
+    <property name="src.dir" location="src" />
+    <property name="bin.dir" location="bin" />
+    <property name="lib.dir" location="lib" />
+    <!--<property name="dist.dir" location="dist" />-->
+
+    <!-- Delete created dirs -->
+    <target name="clean">
+        <delete dir="${bin.dir}" />
+        <delete file="${jar.file}" />
+        <!--<delete dir="${dist.dir}" />-->
+    </target>
+
+    <!-- Create dirs -->
+    <target name="makedir">
+        <mkdir dir="${bin.dir}" />
+        <!--<mkdir dir="${dist.dir}" />-->
+    </target>
+
+    <!-- Compile the java code -->
+    <target name="compile" depends="javacc">
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" includeantruntime="false">
+            <classpath>
+                <path id="javacc" location="${lib.dir}/javacc.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Create the deployable jar file -->
+    <target name="jar" depends="compile">
+        <jar destfile="${jar.file}" basedir="${bin.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}" />
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- Invoke JavaCC -->
+    <target name="javacc" depends="clean, makedir">
+        <javacc
+            target="${src.dir}/${javacc.file}"
+            outputdirectory="${src.dir}"
+            javacchome="${lib.dir}"
+            static="false"
+        />
+    </target>
+
+    <!-- Entry point -->
+    <target name="main" depends="compile, jar">
+        <description>Main target</description>
+    </target>
+</project> 

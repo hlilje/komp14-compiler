@@ -1,0 +1,240 @@
+options {
+    JAVA_UNICODE_ESCAPE = true;
+}
+
+PARSER_BEGIN(MiniJavaParser)
+    //public class MiniJavaParser {}
+
+public class MiniJavaParser {
+    public static void main(String args[]) {
+        MiniJavaParser parser;
+
+        if(args.length == 0) {
+            parser = new MiniJavaParser(System.in);
+        } else if(args.length == 1) {
+            try {
+                parser = new MiniJavaParser(new java.io.FileInputStream(args[0]));
+            } catch (java.io.FileNotFoundException e) {
+                return;
+            }
+        } else {
+            System.out.println("Give no argument to read from stdin, otherwise specify a sinle input file.");
+            return;
+        }
+
+        try {
+            parser.Program();
+        } catch (ParseException e) {
+            System.out.println(e.toString());
+        }
+    }
+}
+PARSER_END(MiniJavaParser)
+
+/* TOKENS */
+// Skip whitespace
+SKIP :
+{ " " | "\t" | "\n" | "\r" | "\f" }
+
+// Comments
+SPECIAL_TOKEN:
+{
+    < SINGLE_LINE_COMMENT: "//" (~["\n","\n"])* ("\n"|"\r"|"\r\n") >
+    | < MULTI_LINE_COMMENT: "/*" (~["*"])* "*/" >
+}
+
+// Reserved words
+TOKEN :
+{
+    < CLASS: "class" >
+    | < PUBLIC: "public" >
+    | < STATIC: "static" >
+    | < VOID: "void" >
+    | < STRING: "String" >
+    | < RETURN: "return" >
+    | < INT: "int" >
+    | < BOOLEAN: "boolean" >
+    | < IF: "if" >
+    | < ELSE: "else" >
+    | < WHILE: "while" >
+    | < PRINT: "System.out.println" >
+    | < LENGTH: "length" >
+    | < TRUE: "true" >
+    | < FALSE: "false" >
+    | < THIS: "this" >
+    | < NEW: "new" >
+}
+
+// Operators
+TOKEN :
+{
+    < AND: "&&" >
+    | < LT: "<" >
+    | < PLUS: "+" >
+    | < MINUS: "-" >
+    | < STAR: "*" >
+    | < BANG: "!" >
+    | < ASSIGN: "=" >
+}
+
+// Separators
+TOKEN :
+{
+    < LBRACE: "{" >
+    | < RBRACE: "}" >
+    | < LPAREN: "(" >
+    | < RPAREN: ")" >
+    | < LBRACKET: "[" >
+    | < RBRACKET: "]" >
+    | < SEMICOLON: ";" >
+    | < COMMA: "," >
+    | < DOT: "." >
+}
+
+// TODO is this correct when not a reserved word?
+TOKEN :
+{
+    < MAIN: "main" >
+}
+
+// Lexicals
+TOKEN :
+{
+    < IDENTIFIER: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","0"-"9","_"])* >
+    | < INTEGER_LITERAL: "0"
+        | ["1"-"9"] (["0"-"9"])* >
+    //| < LONG_LITERAL: "" >
+}
+
+/* GRAMMAR */
+void Program() :
+{}
+{
+    MainClass() ( ClassDecl() )*
+    <EOF>
+}
+
+void MainClass() :
+{}
+{
+    "class" <IDENTIFIER> "{" "public" "static" "void" <MAIN> "(" "String" "[" "]"
+    <IDENTIFIER> ")" "{" ( LOOKAHEAD(2) VarDecl() )* ( Stmt() )* "}" "}"
+}
+
+void ClassDecl() :
+{}
+{
+    "class" <IDENTIFIER> "{" ( VarDecl() )* ( MethodDecl() )* "}"
+}
+
+void VarDecl() :
+{}
+{
+    Type() <IDENTIFIER> ";"
+}
+
+void MethodDecl() :
+{}
+{
+    "public" Type() <IDENTIFIER> "(" FormalList() ")" "{" ( LOOKAHEAD(2) VarDecl() )* ( Stmt() )*
+    "return" Exp() ";" "}"
+}
+
+void FormalList() :
+{}
+{
+    Type() <IDENTIFIER> ( FormalRest() )*
+    | {}
+}
+
+void FormalRest() :
+{}
+{
+    "," Type() <IDENTIFIER>
+}
+
+void Type() :
+{}
+{
+    LOOKAHEAD(2) "int" "[" "]"
+    | "boolean"
+    | "int"
+    | <IDENTIFIER>
+}
+
+void Stmt() :
+{}
+{
+    "{" ( Stmt() )* "}"
+    | "if" "(" Exp() ")" Stmt() "else" Stmt()
+    | "while" "(" Exp() ")" Stmt()
+    | "System.out.println" "(" Exp() ")" ";"
+    | LOOKAHEAD(2) <IDENTIFIER> "=" Exp() ";"
+    | <IDENTIFIER> "[" Exp() "]" "=" Exp() ";"
+}
+
+//void Exp() :
+//{}
+//{
+//    Exp() Op() Exp()
+//    | Exp() "[" Exp() "]"
+//    | Exp() "." "length"
+//    | Exp() "." <IDENTIFIER> "(" ExpList() ")"
+//    | <INTEGER_LITERAL>
+//    | "true"
+//    | "false"
+//    | <IDENTIFIER>
+//    | "this"
+//    | "new" "int" "[" Exp() "]"
+//    | "new" <IDENTIFIER> "(" ")"
+//    | "!" Exp()
+//    | "(" Exp() ")"
+//}
+
+void Exp() :
+{}
+{
+    <INTEGER_LITERAL> ExpPrim()
+    | "true" ExpPrim()
+    | "false" ExpPrim()
+    | <IDENTIFIER> ExpPrim()
+    | "this" ExpPrim()
+    | LOOKAHEAD(2) "new" "int" "[" Exp() "]" ExpPrim()
+    | "new" <IDENTIFIER> "(" ")" ExpPrim()
+    | "!" Exp() ExpPrim()
+    | "(" Exp() ")" ExpPrim()
+}
+
+// Eliminate left recursion
+void ExpPrim() :
+{}
+{
+    Op() Exp() ExpPrim() // TODO is ExpPrim() needed?
+    | "[" Exp() "]" ExpPrim()
+    | LOOKAHEAD(2) "." "length" ExpPrim()
+    | "." <IDENTIFIER> "(" ExpList() ")" ExpPrim()
+    | {}
+}
+
+void Op() :
+{}
+{
+    "&&"
+    | "<"
+    | "+"
+    | "-"
+    | "*"
+}
+
+void ExpList() :
+{}
+{
+    Exp() ( ExpRest() )*
+    | {}
+}
+
+void ExpRest() :
+{}
+{
+    "," Exp()
+}
