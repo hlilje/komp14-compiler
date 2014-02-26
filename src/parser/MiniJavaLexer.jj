@@ -4,8 +4,12 @@
 }
 
 PARSER_BEGIN(MiniJavaParser)
+package parser;
+import syntaxtree.*;
+import visitor.*;
+
 public class MiniJavaParser/*@bgen(jjtree)*/implements MiniJavaParserTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
-  protected static JJTMiniJavaParserState jjtree = new JJTMiniJavaParserState();
+  protected JJTMiniJavaParserState jjtree = new JJTMiniJavaParserState();
 
 /*@egen*/
     public static void main(String args[]) {
@@ -111,7 +115,6 @@ TOKEN :
 }
 
 /* GRAMMAR */
-//void Program() :
 SimpleNode Program() :
 {/*@bgen(jjtree) Program */
   SimpleNode jjtn000 = new SimpleNode(JJTPROGRAM);

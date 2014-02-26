@@ -3,6 +3,10 @@ options {
 }
 
 PARSER_BEGIN(MiniJavaParser)
+package parser;
+import syntaxtree.*;
+import visitor.*;
+
 public class MiniJavaParser {
     public static void main(String args[]) {
         MiniJavaParser parser;
@@ -107,7 +111,6 @@ TOKEN :
 }
 
 /* GRAMMAR */
-//void Program() :
 SimpleNode Program() :
 {}
 {
