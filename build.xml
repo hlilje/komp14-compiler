@@ -3,25 +3,21 @@
     <property name="jar.file" value="mjc.jar" />
     <property name="main.class" value="parser/MiniJavaParser" />
     <property name="javacc.file" value="MiniJavaLexer.jj" />
-    <property name="jjtree.file" value="MiniJavaLexer.jjt" />
 
     <property name="src.dir" location="src" />
     <property name="build.dir" location="build" />
     <property name="lib.dir" location="lib" />
     <property name="parser.dir" location="src/parser" />
-    <!--<property name="dist.dir" location="dist" />-->
 
     <!-- Delete created dirs -->
     <target name="clean">
         <delete dir="${build.dir}" />
         <delete file="${jar.file}" />
-        <!--<delete dir="${dist.dir}" />-->
     </target>
 
     <!-- Create dirs -->
     <target name="makedir">
         <mkdir dir="${build.dir}" />
-        <!--<mkdir dir="${dist.dir}" />-->
     </target>
 
     <!-- Compile the java code -->
@@ -43,19 +39,9 @@
     </target>
 
     <!-- Invoke JavaCC -->
-    <target name="javacc" depends="jjtree">
+    <target name="javacc" depends="clean, makedir">
         <javacc
             target="${parser.dir}/${javacc.file}"
-            outputdirectory="${parser.dir}"
-            javacchome="${lib.dir}"
-            static="false"
-        />
-    </target>
-
-    <!-- Invoke JJTree -->
-    <target name="jjtree" depends="clean, makedir">
-        <jjtree
-            target="${parser.dir}/${jjtree.file}"
             outputdirectory="${parser.dir}"
             javacchome="${lib.dir}"
             static="false"
