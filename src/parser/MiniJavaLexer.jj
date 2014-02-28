@@ -96,10 +96,10 @@ TOKEN :
 }
 
 // TODO This should not be a reserved word
-TOKEN :
-{
-    < MAIN: "main" >
-}
+//TOKEN :
+//{
+//    < MAIN: "main" >
+//}
 
 // Lexicals
 TOKEN :
@@ -119,24 +119,25 @@ Program Program() :
 }
 
 // TODO How should s be initialised?
+// TODO Handle VarDecl?
 MainClass MainClass() :
 { Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s = null; }
 {
-    "class" i1 = Identifier() "{" "public" "static" "void" <MAIN> "(" "String" "[" "]"
+    "class" i1 = Identifier() "{" "public" "static" "void" "main" "(" "String" "[" "]"
     i2 = Identifier() ")" "{" ( LOOKAHEAD(2) VarDecl() )* ( s = Stmt() { sl.addElement(s); } )* "}" "}"
     { return new MainClass(i1, i2, s); }
 }
 
-// TODO What class declaration?
+// TODO When is ClassDeclExtends needed?
 ClassDecl ClassDecl() :
 {
     Identifier i; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
     MethodDeclList mdl = new MethodDeclList();
 }
 {
-    "class" <IDENTIFIER> "{" ( vd = VarDecl() { vdl.addElement(vd); } )*
+    "class" i = Identifier() "{" ( vd = VarDecl() { vdl.addElement(vd); } )*
     ( md = MethodDecl() { mdl.addElement(md); } )* "}"
-    { return null; } // TODO Test
+    { return new ClassDeclSimple(i, vdl, mdl); }
 }
 
 VarDecl VarDecl() :
@@ -200,18 +201,18 @@ Statement Stmt() :
 
 // TODO What expression?
 Exp Exp() :
-{ Exp e; }
+{ Exp e = null; Token i; } // TODO Remove init to null
 {
-    <INTEGER_LITERAL> ExpPrim()
-    | "true" ExpPrim()
-    | "false" ExpPrim()
-    | <IDENTIFIER> ExpPrim()
-    | "this" ExpPrim()
-    | LOOKAHEAD(2) "new" "int" "[" Exp() "]" ExpPrim()
-    | "new" <IDENTIFIER> "(" ")" ExpPrim()
-    | "!" Exp() ExpPrim()
-    | "(" Exp() ")" ExpPrim()
-    { return new And(null, null); } // TODO Test
+    e = IntegerLiteral() ExpPrim()
+    | "true" ExpPrim() { e = new True(); }
+    | "false" ExpPrim() { e = new False(); }
+    | i = <IDENTIFIER> ExpPrim() { e = new IdentifierExp(i.toString()); } // TODO Shall this be converted here?
+    | "this" ExpPrim() { e = new This(); }
+    | LOOKAHEAD(2) "new" "int" "[" Exp() "]" ExpPrim() { e = new NewArray(); } // TODO
+    | "new" <IDENTIFIER> "(" ")" ExpPrim() { e = new NewObject(); } // TODO
+    | "!" Exp() ExpPrim() { e = new Not(); } // TODO
+    | "(" Exp() ")" ExpPrim() // TODO
+    { return e; } // TODO Test
 }
 
 // Eliminate left recursion
@@ -223,7 +224,8 @@ Exp ExpPrim() :
     | "[" Exp() "]" ExpPrim()
     | LOOKAHEAD(2) "." "length" ExpPrim()
     | "." <IDENTIFIER> "(" ExpList() ")" ExpPrim()
-    | { return null; } // TODO Test, this was empty {} before
+    | {}
+    { return null; } // TODO Test
 }
 
 // TODO What operation?
@@ -253,10 +255,18 @@ Exp ExpRest() :
     { return e; }
 }
 
-// Since Identifier is abstract
+// To be able to extract the identifier value
 Identifier Identifier() :
 { Token i; }
 {
     i = <IDENTIFIER>
     { return new Identifier(i.toString()); }
+}
+
+// To be able to extract the int value
+IntegerLiteral IntegerLiteral() :
+{ Token il; }
+{
+    il = <INTEGER_LITERAL>
+    { return new IntegerLiteral(Integer.parseInt(il.toString())); }
 }

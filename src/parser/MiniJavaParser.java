@@ -53,6 +53,7 @@ cdl.addElement(cd);
   }
 
 // TODO How should s be initialised?
+// TODO Handle VarDecl?
   final public MainClass MainClass() throws ParseException {Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s = null;
     jj_consume_token(CLASS);
     i1 = Identifier();
@@ -60,7 +61,7 @@ cdl.addElement(cd);
     jj_consume_token(PUBLIC);
     jj_consume_token(STATIC);
     jj_consume_token(VOID);
-    jj_consume_token(MAIN);
+    jj_consume_token(43);
     jj_consume_token(LPAREN);
     jj_consume_token(STRING);
     jj_consume_token(LBRACKET);
@@ -101,11 +102,11 @@ sl.addElement(s);
     throw new Error("Missing return statement in function");
   }
 
-// TODO What class declaration?
+// TODO When is ClassDeclExtends needed?
   final public ClassDecl ClassDecl() throws ParseException {Identifier i; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
     MethodDeclList mdl = new MethodDeclList();
     jj_consume_token(CLASS);
-    jj_consume_token(IDENTIFIER);
+    i = Identifier();
     jj_consume_token(LBRACE);
     label_4:
     while (true) {
@@ -138,7 +139,7 @@ vdl.addElement(vd);
 mdl.addElement(md);
     }
     jj_consume_token(RBRACE);
-{if ("" != null) return null;}
+{if ("" != null) return new ClassDeclSimple(i, vdl, mdl);}
     throw new Error("Missing return statement in function");
   }
 
@@ -351,31 +352,35 @@ t  = null;
   }
 
 // TODO What expression?
-  final public Exp Exp() throws ParseException {Exp e;
+  final public Exp Exp() throws ParseException {Exp e = null; Token i;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INTEGER_LITERAL:{
-      jj_consume_token(INTEGER_LITERAL);
+      e = IntegerLiteral();
       ExpPrim();
       break;
       }
     case TRUE:{
       jj_consume_token(TRUE);
       ExpPrim();
+e = new True();
       break;
       }
     case FALSE:{
       jj_consume_token(FALSE);
       ExpPrim();
+e = new False();
       break;
       }
     case IDENTIFIER:{
-      jj_consume_token(IDENTIFIER);
+      i = jj_consume_token(IDENTIFIER);
       ExpPrim();
+e = new IdentifierExp(i.toString());
       break;
       }
     case THIS:{
       jj_consume_token(THIS);
       ExpPrim();
+e = new This();
       break;
       }
     default:
@@ -387,6 +392,7 @@ t  = null;
         Exp();
         jj_consume_token(RBRACKET);
         ExpPrim();
+e = new NewArray();
       } else {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case NEW:{
@@ -395,12 +401,14 @@ t  = null;
           jj_consume_token(LPAREN);
           jj_consume_token(RPAREN);
           ExpPrim();
+e = new NewObject();
           break;
           }
         case BANG:{
           jj_consume_token(BANG);
           Exp();
           ExpPrim();
+e = new Not();
           break;
           }
         case LPAREN:{
@@ -408,7 +416,7 @@ t  = null;
           Exp();
           jj_consume_token(RPAREN);
           ExpPrim();
-{if ("" != null) return new And(null, null);}
+{if ("" != null) return e;}
           break;
           }
         default:
@@ -461,6 +469,7 @@ t  = null;
           }
         default:
           jj_la1[14] = jj_gen;
+
 {if ("" != null) return null;}
         }
       }
@@ -543,10 +552,17 @@ el.addElement(e2);
     throw new Error("Missing return statement in function");
   }
 
-// Since Identifier is abstract
+// To be able to extract the identifier value
   final public Identifier Identifier() throws ParseException {Token i;
     i = jj_consume_token(IDENTIFIER);
 {if ("" != null) return new Identifier(i.toString());}
+    throw new Error("Missing return statement in function");
+  }
+
+// To be able to extract the int value
+  final public IntegerLiteral IntegerLiteral() throws ParseException {Token il;
+    il = jj_consume_token(INTEGER_LITERAL);
+{if ("" != null) return new IntegerLiteral(Integer.parseInt(il.toString()));}
     throw new Error("Missing return statement in function");
   }
 
@@ -708,7 +724,7 @@ el.addElement(e2);
       jj_la1_0 = new int[] {0x100,0xd0000,0xc000,0x200,0xd0000,0x0,0xc000,0xc000,0xd0000,0xd0000,0x0,0xe00000,0x41000000,0x3e000000,0x0,0x3e000000,0x0,0x41e00000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x401,0x400,0x0,0x401,0x80,0x400,0x400,0x401,0x1,0x400,0xc00,0x4,0x10,0x100,0x0,0x80,0xc04,};
+      jj_la1_1 = new int[] {0x0,0x201,0x200,0x0,0x201,0x80,0x200,0x200,0x201,0x1,0x200,0x600,0x4,0x10,0x100,0x0,0x80,0x604,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[6];
   private boolean jj_rescan = false;
