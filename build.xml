@@ -4,6 +4,7 @@
     <property name="main.class" value="parser/MiniJavaParser" />
     <property name="javacc.file" value="MiniJavaLexer.jj" />
     <property name="jjtree.file" value="MiniJavaLexer.jjt" />
+    <property name="defaultvisitor.file" value="MiniJavaParserDefaultVisitor.java" />
 
     <property name="src.dir" location="src" />
     <property name="build.dir" location="build" />
@@ -43,6 +44,7 @@
     </target>
 
     <!-- Invoke JavaCC -->
+    <!-- Using version 5.0 due to JJTree visitor method name bug in 6.0 -->
     <target name="javacc" depends="jjtree">
         <javacc
             target="${parser.dir}/${javacc.file}"
