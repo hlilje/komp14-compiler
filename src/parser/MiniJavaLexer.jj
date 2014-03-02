@@ -11,6 +11,7 @@ public class MiniJavaParser {
     public static void main(String args[]) {
         MiniJavaParser parser;
         ASTPrintVisitor visitor;
+        Program p;
 
         if(args.length == 0) {
             parser = new MiniJavaParser(System.in);
@@ -26,8 +27,10 @@ public class MiniJavaParser {
         }
 
         try {
+            p = parser.Program();
+
             visitor = new ASTPrintVisitor();
-            parser.Program();
+            visitor.visit(p);
         } catch (ParseException e) {
             System.out.println(e.toString());
         }
@@ -186,17 +189,19 @@ Type Type() :
     LOOKAHEAD(2) "int" "[" "]" { t = new IntegerType(); }
     | "boolean" { t = new BooleanType(); }
     | "int" { t = new IntegerType(); }
-    | <IDENTIFIER> { t  = null; } // TODO Handle different 'types'
+    | tok = <IDENTIFIER> { t  = new IdentifierType(tok.toString()); } // TODO toString here?
     )
     { return t; }
 }
 
+// TODO How to handle multiple stmts?
+// TODO Finish adding new statements
 Statement Stmt() :
-{}
+{ StatementList sl = new StatementList(); Statement s1; Statement s2; If i; Exp e; }
 {
     (
-    "{" ( Stmt() )* "}"
-    | "if" "(" Exp() ")" Stmt() "else" Stmt()
+    "{" ( s1 = Stmt() { sl.addElement(s1); } )* "}"
+    | "if" "(" e = Exp() ")" s1 = Stmt() "else" s2 = Stmt() { i = new If(e, s1, s2); }
     | "while" "(" Exp() ")" Stmt()
     | "System.out.println" "(" Exp() ")" ";"
     | LOOKAHEAD(2) <IDENTIFIER> "=" Exp() ";"
@@ -238,7 +243,7 @@ Exp ExpPrim() :
     { return null; } // TODO Test
 }
 
-// TODO What operation?
+// TODO Operation on what?
 Exp Op() :
 {}
 {

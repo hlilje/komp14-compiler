@@ -8,6 +8,7 @@ public class MiniJavaParser implements MiniJavaParserConstants {
     public static void main(String args[]) {
         MiniJavaParser parser;
         ASTPrintVisitor visitor;
+        Program p;
 
         if(args.length == 0) {
             parser = new MiniJavaParser(System.in);
@@ -23,8 +24,10 @@ public class MiniJavaParser implements MiniJavaParserConstants {
         }
 
         try {
+            p = parser.Program();
+
             visitor = new ASTPrintVisitor();
-            parser.Program();
+            visitor.visit(p);
         } catch (ParseException e) {
             System.out.println(e.toString());
         }
@@ -257,8 +260,8 @@ t = new IntegerType();
         break;
         }
       case IDENTIFIER:{
-        jj_consume_token(IDENTIFIER);
-t  = null;
+        tok = jj_consume_token(IDENTIFIER);
+t  = new IdentifierType(tok.toString());
         break;
         }
       default:
@@ -271,7 +274,9 @@ t  = null;
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement Stmt() throws ParseException {
+// TODO How to handle multiple stmts?
+// TODO Finish adding new statements
+  final public Statement Stmt() throws ParseException {StatementList sl = new StatementList(); Statement s1; Statement s2; If i; Exp e;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case LBRACE:{
       jj_consume_token(LBRACE);
@@ -290,7 +295,8 @@ t  = null;
           jj_la1[8] = jj_gen;
           break label_9;
         }
-        Stmt();
+        s1 = Stmt();
+sl.addElement(s1);
       }
       jj_consume_token(RBRACE);
       break;
@@ -298,11 +304,12 @@ t  = null;
     case IF:{
       jj_consume_token(IF);
       jj_consume_token(LPAREN);
-      Exp();
+      e = Exp();
       jj_consume_token(RPAREN);
-      Stmt();
+      s1 = Stmt();
       jj_consume_token(ELSE);
-      Stmt();
+      s2 = Stmt();
+i = new If(e, s1, s2);
       break;
       }
     case WHILE:{
@@ -477,7 +484,7 @@ e = new Not(ie);
     throw new Error("Missing return statement in function");
   }
 
-// TODO What operation?
+// TODO Operation on what?
   final public Exp Op() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AND:{
@@ -614,23 +621,17 @@ el.addElement(e2);
     finally { jj_save(5, xla); }
   }
 
-  private boolean jj_3_1()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5()
- {
-    if (jj_scan_token(NEW)) return true;
-    if (jj_scan_token(INT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_11()
  {
     if (jj_3R_12()) return true;
     if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6()
+ {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_scan_token(LENGTH)) return true;
     return false;
   }
 
@@ -646,16 +647,15 @@ el.addElement(e2);
     return false;
   }
 
-  private boolean jj_3_6()
- {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_scan_token(LENGTH)) return true;
-    return false;
-  }
-
   private boolean jj_3R_14()
  {
     if (jj_scan_token(BOOLEAN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
@@ -683,9 +683,10 @@ el.addElement(e2);
     return false;
   }
 
-  private boolean jj_3R_13()
+  private boolean jj_3_4()
  {
     if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(ASSIGN)) return true;
     return false;
   }
 
@@ -695,10 +696,16 @@ el.addElement(e2);
     return false;
   }
 
-  private boolean jj_3_4()
+  private boolean jj_3_1()
  {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(ASSIGN)) return true;
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
+ {
+    if (jj_scan_token(NEW)) return true;
+    if (jj_scan_token(INT)) return true;
     return false;
   }
 
