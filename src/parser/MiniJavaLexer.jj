@@ -95,11 +95,11 @@ TOKEN :
     | < DOT: "." >
 }
 
-// TODO This should not be a reserved word
-//TOKEN :
-//{
-//    < MAIN: "main" >
-//}
+// TODO main should not be a reserved word!
+TOKEN :
+{
+    < MAIN: "main" >
+}
 
 // Lexicals
 TOKEN :
@@ -163,9 +163,11 @@ MethodDecl MethodDecl() :
 FormalList FormalList() :
 { Formal f; FormalList fl = new FormalList(); Type t; Identifier i; }
 {
+    (
     t = Type() i = Identifier() { fl.addElement(new Formal(t, i)); }
     ( f = FormalRest() { fl.addElement(f); } )*
     | {}
+    )
     { return fl; }
 }
 
@@ -180,39 +182,45 @@ Formal FormalRest() :
 Type Type() :
 { Type t; Token tok; }
 {
+    (
     LOOKAHEAD(2) "int" "[" "]" { t = new IntegerType(); }
     | "boolean" { t = new BooleanType(); }
     | "int" { t = new IntegerType(); }
     | <IDENTIFIER> { t  = null; } // TODO Handle different 'types'
+    )
     { return t; }
 }
 
 Statement Stmt() :
 {}
 {
+    (
     "{" ( Stmt() )* "}"
     | "if" "(" Exp() ")" Stmt() "else" Stmt()
     | "while" "(" Exp() ")" Stmt()
     | "System.out.println" "(" Exp() ")" ";"
     | LOOKAHEAD(2) <IDENTIFIER> "=" Exp() ";"
     | <IDENTIFIER> "[" Exp() "]" "=" Exp() ";"
+    )
     { return new If(null, null, null); } // TODO Test
 }
 
 // TODO What expression?
 Exp Exp() :
-{ Exp e = null; Token i; } // TODO Remove init to null
+{ Exp e = null; Exp ie; Token i; Identifier id; } // TODO Remove init to null
 {
+    (
     e = IntegerLiteral() ExpPrim()
     | "true" ExpPrim() { e = new True(); }
     | "false" ExpPrim() { e = new False(); }
     | i = <IDENTIFIER> ExpPrim() { e = new IdentifierExp(i.toString()); } // TODO Shall this be converted here?
     | "this" ExpPrim() { e = new This(); }
-    | LOOKAHEAD(2) "new" "int" "[" Exp() "]" ExpPrim() { e = new NewArray(); } // TODO
-    | "new" <IDENTIFIER> "(" ")" ExpPrim() { e = new NewObject(); } // TODO
-    | "!" Exp() ExpPrim() { e = new Not(); } // TODO
-    | "(" Exp() ")" ExpPrim() // TODO
-    { return e; } // TODO Test
+    | LOOKAHEAD(2) "new" "int" "[" ie = Exp() "]" ExpPrim() { e = new NewArray(ie); } // TODO ExpPrim?
+    | "new" id = Identifier() "(" ")" ExpPrim() { e = new NewObject(id); }
+    | "!" ie = Exp() ExpPrim() { e = new Not(ie); } // TODO How should ExpPrim be handled by ie?
+    | "(" e = Exp() ")" ExpPrim()
+    )
+    { return e; }
 }
 
 // Eliminate left recursion
@@ -220,11 +228,13 @@ Exp Exp() :
 Exp ExpPrim() :
 { Exp e; }
 {
+    (
     Op() Exp() ExpPrim() // TODO is ExpPrim() needed?
     | "[" Exp() "]" ExpPrim()
     | LOOKAHEAD(2) "." "length" ExpPrim()
     | "." <IDENTIFIER> "(" ExpList() ")" ExpPrim()
     | {}
+    )
     { return null; } // TODO Test
 }
 
@@ -232,19 +242,23 @@ Exp ExpPrim() :
 Exp Op() :
 {}
 {
+    (
     "&&"
     | "<"
     | "+"
     | "-"
     | "*"
+    )
     { return null; } // TODO Test
 }
 
 ExpList ExpList() :
 { Exp e1; Exp e2; ExpList el = new ExpList(); }
 {
+    (
     e1 = Exp() { el.addElement(e1); }( e2 = ExpRest() { el.addElement(e2); } )*
     | {}
+    )
     { return el; }
 }
 

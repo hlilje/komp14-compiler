@@ -81,9 +81,11 @@ public interface MiniJavaParserConstants {
   /** RegularExpression Id. */
   int DOT = 40;
   /** RegularExpression Id. */
-  int IDENTIFIER = 41;
+  int MAIN = 41;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 42;
+  int IDENTIFIER = 42;
+  /** RegularExpression Id. */
+  int INTEGER_LITERAL = 43;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -131,9 +133,9 @@ public interface MiniJavaParserConstants {
     "\";\"",
     "\",\"",
     "\".\"",
+    "\"main\"",
     "<IDENTIFIER>",
     "<INTEGER_LITERAL>",
-    "\"main\"",
   };
 
 }

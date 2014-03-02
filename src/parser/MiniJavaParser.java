@@ -61,7 +61,7 @@ cdl.addElement(cd);
     jj_consume_token(PUBLIC);
     jj_consume_token(STATIC);
     jj_consume_token(VOID);
-    jj_consume_token(43);
+    jj_consume_token(MAIN);
     jj_consume_token(LPAREN);
     jj_consume_token(STRING);
     jj_consume_token(LBRACKET);
@@ -224,8 +224,8 @@ fl.addElement(f);
     default:
       jj_la1[6] = jj_gen;
 
-{if ("" != null) return fl;}
     }
+{if ("" != null) return fl;}
     throw new Error("Missing return statement in function");
   }
 
@@ -259,7 +259,6 @@ t = new IntegerType();
       case IDENTIFIER:{
         jj_consume_token(IDENTIFIER);
 t  = null;
-{if ("" != null) return t;}
         break;
         }
       default:
@@ -268,6 +267,7 @@ t  = null;
         throw new ParseException();
       }
     }
+{if ("" != null) return t;}
     throw new Error("Missing return statement in function");
   }
 
@@ -338,7 +338,6 @@ t  = null;
           jj_consume_token(ASSIGN);
           Exp();
           jj_consume_token(SEMICOLON);
-{if ("" != null) return new If(null, null, null);}
           break;
           }
         default:
@@ -348,11 +347,12 @@ t  = null;
         }
       }
     }
+{if ("" != null) return new If(null, null, null);}
     throw new Error("Missing return statement in function");
   }
 
 // TODO What expression?
-  final public Exp Exp() throws ParseException {Exp e = null; Token i;
+  final public Exp Exp() throws ParseException {Exp e = null; Exp ie; Token i; Identifier id;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INTEGER_LITERAL:{
       e = IntegerLiteral();
@@ -389,34 +389,33 @@ e = new This();
         jj_consume_token(NEW);
         jj_consume_token(INT);
         jj_consume_token(LBRACKET);
-        Exp();
+        ie = Exp();
         jj_consume_token(RBRACKET);
         ExpPrim();
-e = new NewArray();
+e = new NewArray(ie);
       } else {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case NEW:{
           jj_consume_token(NEW);
-          jj_consume_token(IDENTIFIER);
+          id = Identifier();
           jj_consume_token(LPAREN);
           jj_consume_token(RPAREN);
           ExpPrim();
-e = new NewObject();
+e = new NewObject(id);
           break;
           }
         case BANG:{
           jj_consume_token(BANG);
-          Exp();
+          ie = Exp();
           ExpPrim();
-e = new Not();
+e = new Not(ie);
           break;
           }
         case LPAREN:{
           jj_consume_token(LPAREN);
-          Exp();
+          e = Exp();
           jj_consume_token(RPAREN);
           ExpPrim();
-{if ("" != null) return e;}
           break;
           }
         default:
@@ -426,6 +425,7 @@ e = new Not();
         }
       }
     }
+{if ("" != null) return e;}
     throw new Error("Missing return statement in function");
   }
 
@@ -470,10 +470,10 @@ e = new Not();
         default:
           jj_la1[14] = jj_gen;
 
-{if ("" != null) return null;}
         }
       }
     }
+{if ("" != null) return null;}
     throw new Error("Missing return statement in function");
   }
 
@@ -498,7 +498,6 @@ e = new Not();
       }
     case STAR:{
       jj_consume_token(STAR);
-{if ("" != null) return null;}
       break;
       }
     default:
@@ -506,6 +505,7 @@ e = new Not();
       jj_consume_token(-1);
       throw new ParseException();
     }
+{if ("" != null) return null;}
     throw new Error("Missing return statement in function");
   }
 
@@ -540,8 +540,8 @@ el.addElement(e2);
     default:
       jj_la1[17] = jj_gen;
 
-{if ("" != null) return el;}
     }
+{if ("" != null) return el;}
     throw new Error("Missing return statement in function");
   }
 
@@ -620,16 +620,10 @@ el.addElement(e2);
     return false;
   }
 
-  private boolean jj_3_4()
+  private boolean jj_3_5()
  {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(ASSIGN)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_13()
- {
-    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(NEW)) return true;
+    if (jj_scan_token(INT)) return true;
     return false;
   }
 
@@ -637,13 +631,6 @@ el.addElement(e2);
  {
     if (jj_3R_12()) return true;
     if (jj_3R_13()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5()
- {
-    if (jj_scan_token(NEW)) return true;
-    if (jj_scan_token(INT)) return true;
     return false;
   }
 
@@ -656,6 +643,13 @@ el.addElement(e2);
   private boolean jj_3R_15()
  {
     if (jj_scan_token(INT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_6()
+ {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_scan_token(LENGTH)) return true;
     return false;
   }
 
@@ -689,16 +683,22 @@ el.addElement(e2);
     return false;
   }
 
+  private boolean jj_3R_13()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
   private boolean jj_3_2()
  {
     if (jj_3R_11()) return true;
     return false;
   }
 
-  private boolean jj_3_6()
+  private boolean jj_3_4()
  {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_scan_token(LENGTH)) return true;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(ASSIGN)) return true;
     return false;
   }
 
@@ -724,7 +724,7 @@ el.addElement(e2);
       jj_la1_0 = new int[] {0x100,0xd0000,0xc000,0x200,0xd0000,0x0,0xc000,0xc000,0xd0000,0xd0000,0x0,0xe00000,0x41000000,0x3e000000,0x0,0x3e000000,0x0,0x41e00000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x201,0x200,0x0,0x201,0x80,0x200,0x200,0x201,0x1,0x200,0x600,0x4,0x10,0x100,0x0,0x80,0x604,};
+      jj_la1_1 = new int[] {0x0,0x401,0x400,0x0,0x401,0x80,0x400,0x400,0x401,0x1,0x400,0xc00,0x4,0x10,0x100,0x0,0x80,0xc04,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[6];
   private boolean jj_rescan = false;
