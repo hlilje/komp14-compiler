@@ -57,14 +57,14 @@ cdl.addElement(cd);
 
 // TODO How should s be initialised?
 // TODO Handle VarDecl?
-  final public MainClass MainClass() throws ParseException {Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s = null;
+  final public MainClass MainClass() throws ParseException {Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s;
     jj_consume_token(CLASS);
     i1 = Identifier();
     jj_consume_token(LBRACE);
     jj_consume_token(PUBLIC);
     jj_consume_token(STATIC);
     jj_consume_token(VOID);
-    jj_consume_token(MAIN);
+    jj_consume_token(IDENTIFIER);
     jj_consume_token(LPAREN);
     jj_consume_token(STRING);
     jj_consume_token(LBRACKET);
@@ -274,9 +274,8 @@ t  = new IdentifierType(tok.toString());
     throw new Error("Missing return statement in function");
   }
 
-// TODO How to handle multiple stmts?
-// TODO Finish adding new statements
-  final public Statement Stmt() throws ParseException {StatementList sl = new StatementList(); Statement s1; Statement s2; If i; Exp e;
+  final public Statement Stmt() throws ParseException {StatementList sl = new StatementList(); Statement s; Statement s1; Statement s2;
+    Exp e1; Exp e2; Identifier i;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case LBRACE:{
       jj_consume_token(LBRACE);
@@ -299,52 +298,57 @@ t  = new IdentifierType(tok.toString());
 sl.addElement(s1);
       }
       jj_consume_token(RBRACE);
+s = new Block(sl);
       break;
       }
     case IF:{
       jj_consume_token(IF);
       jj_consume_token(LPAREN);
-      e = Exp();
+      e1 = Exp();
       jj_consume_token(RPAREN);
       s1 = Stmt();
       jj_consume_token(ELSE);
       s2 = Stmt();
-i = new If(e, s1, s2);
+s = new If(e1, s1, s2);
       break;
       }
     case WHILE:{
       jj_consume_token(WHILE);
       jj_consume_token(LPAREN);
-      Exp();
+      e1 = Exp();
       jj_consume_token(RPAREN);
-      Stmt();
+      s1 = Stmt();
+s = new While(e1, s1);
       break;
       }
     case PRINT:{
       jj_consume_token(PRINT);
       jj_consume_token(LPAREN);
-      Exp();
+      e1 = Exp();
       jj_consume_token(RPAREN);
       jj_consume_token(SEMICOLON);
+s = new Print(e1);
       break;
       }
     default:
       jj_la1[9] = jj_gen;
       if (jj_2_4(2)) {
-        jj_consume_token(IDENTIFIER);
+        i = Identifier();
         jj_consume_token(ASSIGN);
-        Exp();
+        e1 = Exp();
         jj_consume_token(SEMICOLON);
+s = new Assign(i, e1);
       } else {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case IDENTIFIER:{
-          jj_consume_token(IDENTIFIER);
+          i = Identifier();
           jj_consume_token(LBRACKET);
-          Exp();
+          e1 = Exp();
           jj_consume_token(RBRACKET);
           jj_consume_token(ASSIGN);
-          Exp();
+          e2 = Exp();
           jj_consume_token(SEMICOLON);
+s = new ArrayAssign(i, e1, e2);
           break;
           }
         default:
@@ -354,40 +358,39 @@ i = new If(e, s1, s2);
         }
       }
     }
-{if ("" != null) return new If(null, null, null);}
+{if ("" != null) return s;}
     throw new Error("Missing return statement in function");
   }
 
-// TODO What expression?
-  final public Exp Exp() throws ParseException {Exp e = null; Exp ie; Token i; Identifier id;
+  final public Exp Exp() throws ParseException {Exp e; Exp ie; Exp ep; Token i; Identifier id;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INTEGER_LITERAL:{
       e = IntegerLiteral();
-      ExpPrim();
+      ep = ExpPrim(e);
       break;
       }
     case TRUE:{
       jj_consume_token(TRUE);
-      ExpPrim();
 e = new True();
+      ep = ExpPrim(e);
       break;
       }
     case FALSE:{
       jj_consume_token(FALSE);
-      ExpPrim();
 e = new False();
+      ep = ExpPrim(e);
       break;
       }
     case IDENTIFIER:{
       i = jj_consume_token(IDENTIFIER);
-      ExpPrim();
 e = new IdentifierExp(i.toString());
+      ep = ExpPrim(e);
       break;
       }
     case THIS:{
       jj_consume_token(THIS);
-      ExpPrim();
 e = new This();
+      ep = ExpPrim(e);
       break;
       }
     default:
@@ -398,8 +401,8 @@ e = new This();
         jj_consume_token(LBRACKET);
         ie = Exp();
         jj_consume_token(RBRACKET);
-        ExpPrim();
 e = new NewArray(ie);
+        ep = ExpPrim(e);
       } else {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case NEW:{
@@ -407,22 +410,22 @@ e = new NewArray(ie);
           id = Identifier();
           jj_consume_token(LPAREN);
           jj_consume_token(RPAREN);
-          ExpPrim();
 e = new NewObject(id);
+          ep = ExpPrim(e);
           break;
           }
         case BANG:{
           jj_consume_token(BANG);
           ie = Exp();
-          ExpPrim();
 e = new Not(ie);
+          ep = ExpPrim(e);
           break;
           }
         case LPAREN:{
           jj_consume_token(LPAREN);
           e = Exp();
           jj_consume_token(RPAREN);
-          ExpPrim();
+          ep = ExpPrim(e);
           break;
           }
         default:
@@ -432,29 +435,27 @@ e = new Not(ie);
         }
       }
     }
-{if ("" != null) return e;}
+{if ("" != null) return ep;}
     throw new Error("Missing return statement in function");
   }
 
 // Eliminate left recursion
-// TODO What?
-  final public Exp ExpPrim() throws ParseException {Exp e;
+// ExpPrim has been removed
+  final public Exp ExpPrim(Exp eb) throws ParseException {Exp e; Exp ea; Identifier i; ExpList el;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AND:
     case LT:
     case PLUS:
     case MINUS:
     case STAR:{
-      Op();
-      Exp();
-      ExpPrim();
+      e = Op(eb);
       break;
       }
     case LBRACKET:{
       jj_consume_token(LBRACKET);
-      Exp();
+      ea = Exp();
       jj_consume_token(RBRACKET);
-      ExpPrim();
+e = new ArrayLookup(eb, ea);
       break;
       }
     default:
@@ -462,49 +463,59 @@ e = new Not(ie);
       if (jj_2_6(2)) {
         jj_consume_token(DOT);
         jj_consume_token(LENGTH);
-        ExpPrim();
+e = new ArrayLength(eb);
       } else {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case DOT:{
           jj_consume_token(DOT);
-          jj_consume_token(IDENTIFIER);
+          i = Identifier();
           jj_consume_token(LPAREN);
-          ExpList();
+          el = ExpList();
           jj_consume_token(RPAREN);
-          ExpPrim();
+e = new Call(eb, i, el);
           break;
           }
         default:
           jj_la1[14] = jj_gen;
-
+e = eb;
         }
       }
     }
-{if ("" != null) return null;}
+{if ("" != null) return e;}
     throw new Error("Missing return statement in function");
   }
 
-// TODO Operation on what?
-  final public Exp Op() throws ParseException {
+// Exp moved here to get the right evaluation order
+  final public Exp Op(Exp eb) throws ParseException {Exp e; Exp ea;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AND:{
       jj_consume_token(AND);
+      ea = Exp();
+e = new And(eb, ea);
       break;
       }
     case LT:{
       jj_consume_token(LT);
+      ea = Exp();
+e = new LessThan(eb, ea);
       break;
       }
     case PLUS:{
       jj_consume_token(PLUS);
+      ea = Exp();
+e = new Plus(eb, ea);
       break;
       }
     case MINUS:{
       jj_consume_token(MINUS);
+      ea = Exp();
+e = new Minus(eb, ea);
       break;
       }
     case STAR:{
       jj_consume_token(STAR);
+      ea = Exp();
+e = new Times(eb, ea);
       break;
       }
     default:
@@ -512,7 +523,7 @@ e = new Not(ie);
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return null;}
+{if ("" != null) return e;}
     throw new Error("Missing return statement in function");
   }
 
@@ -621,10 +632,23 @@ el.addElement(e2);
     finally { jj_save(5, xla); }
   }
 
+  private boolean jj_3_1()
+ {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
+ {
+    if (jj_scan_token(NEW)) return true;
+    if (jj_scan_token(INT)) return true;
+    return false;
+  }
+
   private boolean jj_3R_11()
  {
-    if (jj_3R_12()) return true;
     if (jj_3R_13()) return true;
+    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -653,12 +677,6 @@ el.addElement(e2);
     return false;
   }
 
-  private boolean jj_3R_13()
- {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
   private boolean jj_3_3()
  {
     if (jj_scan_token(INT)) return true;
@@ -667,6 +685,12 @@ el.addElement(e2);
   }
 
   private boolean jj_3R_12()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13()
  {
     Token xsp;
     xsp = jj_scanpos;
@@ -685,7 +709,7 @@ el.addElement(e2);
 
   private boolean jj_3_4()
  {
-    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_3R_12()) return true;
     if (jj_scan_token(ASSIGN)) return true;
     return false;
   }
@@ -693,19 +717,6 @@ el.addElement(e2);
   private boolean jj_3_2()
  {
     if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5()
- {
-    if (jj_scan_token(NEW)) return true;
-    if (jj_scan_token(INT)) return true;
     return false;
   }
 
@@ -731,7 +742,7 @@ el.addElement(e2);
       jj_la1_0 = new int[] {0x100,0xd0000,0xc000,0x200,0xd0000,0x0,0xc000,0xc000,0xd0000,0xd0000,0x0,0xe00000,0x41000000,0x3e000000,0x0,0x3e000000,0x0,0x41e00000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x401,0x400,0x0,0x401,0x80,0x400,0x400,0x401,0x1,0x400,0xc00,0x4,0x10,0x100,0x0,0x80,0xc04,};
+      jj_la1_1 = new int[] {0x0,0x201,0x200,0x0,0x201,0x80,0x200,0x200,0x201,0x1,0x200,0x600,0x4,0x10,0x100,0x0,0x80,0x604,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[6];
   private boolean jj_rescan = false;
@@ -918,7 +929,7 @@ el.addElement(e2);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[44];
+    boolean[] la1tokens = new boolean[43];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -935,7 +946,7 @@ el.addElement(e2);
         }
       }
     }
-    for (int i = 0; i < 44; i++) {
+    for (int i = 0; i < 43; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

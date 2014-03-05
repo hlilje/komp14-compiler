@@ -98,12 +98,6 @@ TOKEN :
     | < DOT: "." >
 }
 
-// TODO main should not be a reserved word!
-TOKEN :
-{
-    < MAIN: "main" >
-}
-
 // Lexicals
 TOKEN :
 {
@@ -121,12 +115,12 @@ Program Program() :
     { return new Program(mc, cdl); }
 }
 
-// TODO How should s be initialised?
 // TODO Handle VarDecl?
 MainClass MainClass() :
-{ Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s = null; }
+{ Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s = null; } // TODO Remove init to null
 {
-    "class" i1 = Identifier() "{" "public" "static" "void" "main" "(" "String" "[" "]"
+    // TODO Check that identifier is main later
+    "class" i1 = Identifier() "{" "public" "static" "void" <IDENTIFIER> "(" "String" "[" "]"
     i2 = Identifier() ")" "{" ( LOOKAHEAD(2) VarDecl() )* ( s = Stmt() { sl.addElement(s); } )* "}" "}"
     { return new MainClass(i1, i2, s); }
 }
@@ -194,67 +188,67 @@ Type Type() :
     { return t; }
 }
 
-// TODO How to handle multiple stmts?
-// TODO Finish adding new statements
 Statement Stmt() :
-{ StatementList sl = new StatementList(); Statement s1; Statement s2; If i; Exp e; }
+{
+    StatementList sl = new StatementList(); Statement s; Statement s1; Statement s2;
+    Exp e1; Exp e2; Identifier i;
+}
 {
     (
-    "{" ( s1 = Stmt() { sl.addElement(s1); } )* "}"
-    | "if" "(" e = Exp() ")" s1 = Stmt() "else" s2 = Stmt() { i = new If(e, s1, s2); }
-    | "while" "(" Exp() ")" Stmt()
-    | "System.out.println" "(" Exp() ")" ";"
-    | LOOKAHEAD(2) <IDENTIFIER> "=" Exp() ";"
-    | <IDENTIFIER> "[" Exp() "]" "=" Exp() ";"
+    "{" ( s1 = Stmt() { sl.addElement(s1); } )* "}" { s = new Block(sl); }
+    | "if" "(" e1 = Exp() ")" s1 = Stmt() "else" s2 = Stmt() { s = new If(e1, s1, s2); }
+    | "while" "(" e1 = Exp() ")" s1 = Stmt() { s = new While(e1, s1); }
+    | "System.out.println" "(" e1 = Exp() ")" ";" { s = new Print(e1); }
+    | LOOKAHEAD(2) i = Identifier() "=" e1 = Exp() ";" { s = new Assign(i, e1); }
+    | i = Identifier() "[" e1 = Exp() "]" "=" e2 = Exp() ";" { s = new ArrayAssign(i, e1, e2); }
     )
-    { return new If(null, null, null); } // TODO Test
+    { return s; }
 }
 
-// TODO What expression?
 Exp Exp() :
-{ Exp e = null; Exp ie; Token i; Identifier id; } // TODO Remove init to null
+{ Exp e; Exp ie; Exp ep; Token i; Identifier id; }
 {
     (
-    e = IntegerLiteral() ExpPrim()
-    | "true" ExpPrim() { e = new True(); }
-    | "false" ExpPrim() { e = new False(); }
-    | i = <IDENTIFIER> ExpPrim() { e = new IdentifierExp(i.toString()); } // TODO Shall this be converted here?
-    | "this" ExpPrim() { e = new This(); }
-    | LOOKAHEAD(2) "new" "int" "[" ie = Exp() "]" ExpPrim() { e = new NewArray(ie); } // TODO ExpPrim?
-    | "new" id = Identifier() "(" ")" ExpPrim() { e = new NewObject(id); }
-    | "!" ie = Exp() ExpPrim() { e = new Not(ie); } // TODO How should ExpPrim be handled by ie?
-    | "(" e = Exp() ")" ExpPrim()
+    e = IntegerLiteral() ep = ExpPrim(e)
+    | "true" { e = new True(); } ep = ExpPrim(e)
+    | "false" { e = new False(); } ep = ExpPrim(e)
+    | i = <IDENTIFIER> { e = new IdentifierExp(i.toString()); } ep = ExpPrim(e) // TODO Shall this be converted here?
+    | "this" { e = new This(); } ep = ExpPrim(e)
+    | LOOKAHEAD(2) "new" "int" "[" ie = Exp() "]" { e = new NewArray(ie); } ep = ExpPrim(e)
+    | "new" id = Identifier() "(" ")" { e = new NewObject(id); } ep = ExpPrim(e)
+    | "!" ie = Exp() { e = new Not(ie); } ep = ExpPrim(e)
+    | "(" e = Exp() ")" ep = ExpPrim(e)
+    )
+    { return ep; }
+}
+
+// Eliminate left recursion
+// ExpPrim has been removed
+Exp ExpPrim(Exp eb) :
+{ Exp e; Exp ea; Identifier i; ExpList el;}
+{
+    (
+    e = Op(eb)
+    | "[" ea = Exp() "]" { e = new ArrayLookup(eb, ea); }
+    | LOOKAHEAD(2) "." "length" { e = new ArrayLength(eb); }
+    | "." i = Identifier() "(" el = ExpList() ")" { e = new Call(eb, i, el); }
+    | { e = eb; } // Else return the other expression
     )
     { return e; }
 }
 
-// Eliminate left recursion
-// TODO What?
-Exp ExpPrim() :
-{ Exp e; }
+// Exp moved here to get the right evaluation order
+Exp Op(Exp eb) :
+{ Exp e; Exp ea; }
 {
     (
-    Op() Exp() ExpPrim() // TODO is ExpPrim() needed?
-    | "[" Exp() "]" ExpPrim()
-    | LOOKAHEAD(2) "." "length" ExpPrim()
-    | "." <IDENTIFIER> "(" ExpList() ")" ExpPrim()
-    | {}
+    "&&" ea = Exp() { e = new And(eb, ea); }
+    | "<" ea = Exp() { e = new LessThan(eb, ea); }
+    | "+" ea = Exp() { e = new Plus(eb, ea); }
+    | "-" ea = Exp() { e = new Minus(eb, ea); }
+    | "*" ea = Exp() { e = new Times(eb, ea); }
     )
-    { return null; } // TODO Test
-}
-
-// TODO Operation on what?
-Exp Op() :
-{}
-{
-    (
-    "&&"
-    | "<"
-    | "+"
-    | "-"
-    | "*"
-    )
-    { return null; } // TODO Test
+    { return e; }
 }
 
 ExpList ExpList() :
