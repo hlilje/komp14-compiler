@@ -55,9 +55,8 @@ cdl.addElement(cd);
     throw new Error("Missing return statement in function");
   }
 
-// TODO How should s be initialised?
 // TODO Handle VarDecl?
-  final public MainClass MainClass() throws ParseException {Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s;
+  final public MainClass MainClass() throws ParseException {Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s = null;
     jj_consume_token(CLASS);
     i1 = Identifier();
     jj_consume_token(LBRACE);
@@ -105,7 +104,7 @@ sl.addElement(s);
     throw new Error("Missing return statement in function");
   }
 
-// TODO When is ClassDeclExtends needed?
+// ClassDeclExtends is an extension to the grammar
   final public ClassDecl ClassDecl() throws ParseException {Identifier i; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
     MethodDeclList mdl = new MethodDeclList();
     jj_consume_token(CLASS);
@@ -441,14 +440,14 @@ e = new Not(ie);
 
 // Eliminate left recursion
 // ExpPrim has been removed
-  final public Exp ExpPrim(Exp eb) throws ParseException {Exp e; Exp ea; Identifier i; ExpList el;
+  final public Exp ExpPrim(Exp eb) throws ParseException {Exp e; Exp ep; Exp ea; Identifier i; ExpList el;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AND:
     case LT:
     case PLUS:
     case MINUS:
     case STAR:{
-      e = Op(eb);
+      ep = Op(eb);
       break;
       }
     case LBRACKET:{
@@ -456,6 +455,7 @@ e = new Not(ie);
       ea = Exp();
       jj_consume_token(RBRACKET);
 e = new ArrayLookup(eb, ea);
+      ep = ExpPrim(e);
       break;
       }
     default:
@@ -464,6 +464,7 @@ e = new ArrayLookup(eb, ea);
         jj_consume_token(DOT);
         jj_consume_token(LENGTH);
 e = new ArrayLength(eb);
+        ep = ExpPrim(e);
       } else {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case DOT:{
@@ -473,15 +474,16 @@ e = new ArrayLength(eb);
           el = ExpList();
           jj_consume_token(RPAREN);
 e = new Call(eb, i, el);
+          ep = ExpPrim(e);
           break;
           }
         default:
           jj_la1[14] = jj_gen;
-e = eb;
+ep = eb;
         }
       }
     }
-{if ("" != null) return e;}
+{if ("" != null) return ep;}
     throw new Error("Missing return statement in function");
   }
 

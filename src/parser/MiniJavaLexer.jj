@@ -125,7 +125,7 @@ MainClass MainClass() :
     { return new MainClass(i1, i2, s); }
 }
 
-// TODO When is ClassDeclExtends needed?
+// ClassDeclExtends is an extension to the grammar
 ClassDecl ClassDecl() :
 {
     Identifier i; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
@@ -225,16 +225,16 @@ Exp Exp() :
 // Eliminate left recursion
 // ExpPrim has been removed
 Exp ExpPrim(Exp eb) :
-{ Exp e; Exp ea; Identifier i; ExpList el;}
+{ Exp e; Exp ep; Exp ea; Identifier i; ExpList el;}
 {
     (
-    e = Op(eb)
-    | "[" ea = Exp() "]" { e = new ArrayLookup(eb, ea); }
-    | LOOKAHEAD(2) "." "length" { e = new ArrayLength(eb); }
-    | "." i = Identifier() "(" el = ExpList() ")" { e = new Call(eb, i, el); }
-    | { e = eb; } // Else return the other expression
+    ep = Op(eb)
+    | "[" ea = Exp() "]" { e = new ArrayLookup(eb, ea); } ep = ExpPrim(e)
+    | LOOKAHEAD(2) "." "length" { e = new ArrayLength(eb); } ep = ExpPrim(e)
+    | "." i = Identifier() "(" el = ExpList() ")" { e = new Call(eb, i, el); } ep = ExpPrim(e)
+    | { ep = eb; } // Else return the other expression
     )
-    { return e; }
+    { return ep; }
 }
 
 // Exp moved here to get the right evaluation order
