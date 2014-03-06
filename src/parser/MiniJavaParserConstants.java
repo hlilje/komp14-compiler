@@ -63,27 +63,39 @@ public interface MiniJavaParserConstants {
   /** RegularExpression Id. */
   int ASSIGN = 31;
   /** RegularExpression Id. */
-  int LBRACE = 32;
+  int LEQ = 32;
   /** RegularExpression Id. */
-  int RBRACE = 33;
+  int GT = 33;
   /** RegularExpression Id. */
-  int LPAREN = 34;
+  int GEQ = 34;
   /** RegularExpression Id. */
-  int RPAREN = 35;
+  int EQ = 35;
   /** RegularExpression Id. */
-  int LBRACKET = 36;
+  int NEQ = 36;
   /** RegularExpression Id. */
-  int RBRACKET = 37;
+  int OR = 37;
   /** RegularExpression Id. */
-  int SEMICOLON = 38;
+  int LBRACE = 38;
   /** RegularExpression Id. */
-  int COMMA = 39;
+  int RBRACE = 39;
   /** RegularExpression Id. */
-  int DOT = 40;
+  int LPAREN = 40;
   /** RegularExpression Id. */
-  int IDENTIFIER = 41;
+  int RPAREN = 41;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 42;
+  int LBRACKET = 42;
+  /** RegularExpression Id. */
+  int RBRACKET = 43;
+  /** RegularExpression Id. */
+  int SEMICOLON = 44;
+  /** RegularExpression Id. */
+  int COMMA = 45;
+  /** RegularExpression Id. */
+  int DOT = 46;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 47;
+  /** RegularExpression Id. */
+  int INTEGER_LITERAL = 48;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -122,6 +134,12 @@ public interface MiniJavaParserConstants {
     "\"*\"",
     "\"!\"",
     "\"=\"",
+    "\"<=\"",
+    "\">\"",
+    "\">=\"",
+    "\"==\"",
+    "\"!=\"",
+    "\"||\"",
     "\"{\"",
     "\"}\"",
     "\"(\"",

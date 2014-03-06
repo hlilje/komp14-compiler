@@ -446,7 +446,13 @@ e = new Not(ie);
     case LT:
     case PLUS:
     case MINUS:
-    case STAR:{
+    case STAR:
+    case LEQ:
+    case GT:
+    case GEQ:
+    case EQ:
+    case NEQ:
+    case OR:{
       ep = Op(eb);
       break;
       }
@@ -518,6 +524,42 @@ e = new Minus(eb, ea);
       jj_consume_token(STAR);
       ea = Exp();
 e = new Times(eb, ea);
+      break;
+      }
+    case LEQ:{
+      jj_consume_token(LEQ);
+      ea = Exp();
+e = new LessThanEquals(eb, ea);
+      break;
+      }
+    case GT:{
+      jj_consume_token(GT);
+      ea = Exp();
+e = new GreaterThan(eb, ea);
+      break;
+      }
+    case GEQ:{
+      jj_consume_token(GEQ);
+      ea = Exp();
+e = new GreaterThanEquals(eb, ea);
+      break;
+      }
+    case EQ:{
+      jj_consume_token(EQ);
+      ea = Exp();
+e = new Equals(eb, ea);
+      break;
+      }
+    case NEQ:{
+      jj_consume_token(NEQ);
+      ea = Exp();
+e = new EqualsNot(eb, ea);
+      break;
+      }
+    case OR:{
+      jj_consume_token(OR);
+      ea = Exp();
+e = new Or(eb, ea);
       break;
       }
     default:
@@ -634,19 +676,6 @@ el.addElement(e2);
     finally { jj_save(5, xla); }
   }
 
-  private boolean jj_3_1()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5()
- {
-    if (jj_scan_token(NEW)) return true;
-    if (jj_scan_token(INT)) return true;
-    return false;
-  }
-
   private boolean jj_3R_11()
  {
     if (jj_3R_13()) return true;
@@ -658,6 +687,12 @@ el.addElement(e2);
  {
     if (jj_scan_token(DOT)) return true;
     if (jj_scan_token(LENGTH)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
@@ -683,12 +718,6 @@ el.addElement(e2);
  {
     if (jj_scan_token(INT)) return true;
     if (jj_scan_token(LBRACKET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12()
- {
-    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
@@ -722,6 +751,19 @@ el.addElement(e2);
     return false;
   }
 
+  private boolean jj_3_1()
+ {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
+ {
+    if (jj_scan_token(NEW)) return true;
+    if (jj_scan_token(INT)) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
   public MiniJavaParserTokenManager token_source;
   JavaCharStream jj_input_stream;
@@ -744,7 +786,7 @@ el.addElement(e2);
       jj_la1_0 = new int[] {0x100,0xd0000,0xc000,0x200,0xd0000,0x0,0xc000,0xc000,0xd0000,0xd0000,0x0,0xe00000,0x41000000,0x3e000000,0x0,0x3e000000,0x0,0x41e00000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x201,0x200,0x0,0x201,0x80,0x200,0x200,0x201,0x1,0x200,0x600,0x4,0x10,0x100,0x0,0x80,0x604,};
+      jj_la1_1 = new int[] {0x0,0x8040,0x8000,0x0,0x8040,0x2000,0x8000,0x8000,0x8040,0x40,0x8000,0x18000,0x100,0x43f,0x4000,0x3f,0x2000,0x18100,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[6];
   private boolean jj_rescan = false;
@@ -931,7 +973,7 @@ el.addElement(e2);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[43];
+    boolean[] la1tokens = new boolean[49];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -948,7 +990,7 @@ el.addElement(e2);
         }
       }
     }
-    for (int i = 0; i < 43; i++) {
+    for (int i = 0; i < 49; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

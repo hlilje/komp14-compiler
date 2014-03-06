@@ -82,6 +82,12 @@ TOKEN :
     | < STAR: "*" >
     | < BANG: "!" >
     | < ASSIGN: "=" >
+    | < LEQ: "<=" > // Extensions follows
+    | < GT: ">" >
+    | < GEQ: ">=" >
+    | < EQ: "==" >
+    | < NEQ: "!=" >
+    | < OR: "||" > // Separate extension
 }
 
 // Separators
@@ -247,6 +253,12 @@ Exp Op(Exp eb) :
     | "+" ea = Exp() { e = new Plus(eb, ea); }
     | "-" ea = Exp() { e = new Minus(eb, ea); }
     | "*" ea = Exp() { e = new Times(eb, ea); }
+    | "<=" ea = Exp() { e = new LessThanEquals(eb, ea); }
+    | ">" ea = Exp() { e = new GreaterThan(eb, ea); }
+    | ">=" ea = Exp() { e = new GreaterThanEquals(eb, ea); }
+    | "==" ea = Exp() { e = new Equals(eb, ea); }
+    | "!=" ea = Exp() { e = new EqualsNot(eb, ea); }
+    | "||" ea = Exp() { e = new Or(eb, ea); } // Binds looser than &&
     )
     { return e; }
 }

@@ -37,4 +37,10 @@ public interface TypeVisitor {
   public Type visit(NewObject n);
   public Type visit(Not n);
   public Type visit(Identifier n);
+  public Type visit(LessThanEquals n); // Extensions follows
+  public Type visit(GreaterThan n);
+  public Type visit(GreaterThanEquals n);
+  public Type visit(Equals n);
+  public Type visit(EqualsNot n);
+  public Type visit(Or n); // Separate extension
 }
