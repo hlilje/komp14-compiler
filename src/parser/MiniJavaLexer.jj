@@ -117,7 +117,7 @@ Program Program() :
 
 // TODO Handle VarDecl?
 MainClass MainClass() :
-{ Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s = null; } // TODO Remove init to null
+{ Identifier i1, i2; StatementList sl = new StatementList(); Statement s = null; } // TODO Remove init to null
 {
     // TODO Check that identifier is main later
     "class" i1 = Identifier() "{" "public" "static" "void" <IDENTIFIER> "(" "String" "[" "]"
@@ -190,8 +190,8 @@ Type Type() :
 
 Statement Stmt() :
 {
-    StatementList sl = new StatementList(); Statement s; Statement s1; Statement s2;
-    Exp e1; Exp e2; Identifier i;
+    StatementList sl = new StatementList(); Statement s, s1, s2;
+    Exp e1, e2; Identifier i;
 }
 {
     (
@@ -206,7 +206,7 @@ Statement Stmt() :
 }
 
 Exp Exp() :
-{ Exp e; Exp ie; Exp ep; Token i; Identifier id; }
+{ Exp e, ie, ep; Token i; Identifier id; }
 {
     (
     e = IntegerLiteral() ep = ExpPrim(e)
@@ -225,7 +225,7 @@ Exp Exp() :
 // Eliminate left recursion
 // ExpPrim has been removed
 Exp ExpPrim(Exp eb) :
-{ Exp e; Exp ep; Exp ea; Identifier i; ExpList el;}
+{ Exp e, ep, ea; Identifier i; ExpList el;}
 {
     (
     ep = Op(eb)
@@ -239,7 +239,7 @@ Exp ExpPrim(Exp eb) :
 
 // Exp moved here to get the right evaluation order
 Exp Op(Exp eb) :
-{ Exp e; Exp ea; }
+{ Exp e, ea; }
 {
     (
     "&&" ea = Exp() { e = new And(eb, ea); }
@@ -252,7 +252,7 @@ Exp Op(Exp eb) :
 }
 
 ExpList ExpList() :
-{ Exp e1; Exp e2; ExpList el = new ExpList(); }
+{ Exp e1, e2; ExpList el = new ExpList(); }
 {
     (
     e1 = Exp() { el.addElement(e1); }( e2 = ExpRest() { el.addElement(e2); } )*

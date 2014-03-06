@@ -56,7 +56,7 @@ cdl.addElement(cd);
   }
 
 // TODO Handle VarDecl?
-  final public MainClass MainClass() throws ParseException {Identifier i1; Identifier i2; StatementList sl = new StatementList(); Statement s = null;
+  final public MainClass MainClass() throws ParseException {Identifier i1, i2; StatementList sl = new StatementList(); Statement s = null;
     jj_consume_token(CLASS);
     i1 = Identifier();
     jj_consume_token(LBRACE);
@@ -273,8 +273,8 @@ t  = new IdentifierType(tok.toString());
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement Stmt() throws ParseException {StatementList sl = new StatementList(); Statement s; Statement s1; Statement s2;
-    Exp e1; Exp e2; Identifier i;
+  final public Statement Stmt() throws ParseException {StatementList sl = new StatementList(); Statement s, s1, s2;
+    Exp e1, e2; Identifier i;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case LBRACE:{
       jj_consume_token(LBRACE);
@@ -361,7 +361,7 @@ s = new ArrayAssign(i, e1, e2);
     throw new Error("Missing return statement in function");
   }
 
-  final public Exp Exp() throws ParseException {Exp e; Exp ie; Exp ep; Token i; Identifier id;
+  final public Exp Exp() throws ParseException {Exp e, ie, ep; Token i; Identifier id;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INTEGER_LITERAL:{
       e = IntegerLiteral();
@@ -440,7 +440,7 @@ e = new Not(ie);
 
 // Eliminate left recursion
 // ExpPrim has been removed
-  final public Exp ExpPrim(Exp eb) throws ParseException {Exp e; Exp ep; Exp ea; Identifier i; ExpList el;
+  final public Exp ExpPrim(Exp eb) throws ParseException {Exp e, ep, ea; Identifier i; ExpList el;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AND:
     case LT:
@@ -488,7 +488,7 @@ ep = eb;
   }
 
 // Exp moved here to get the right evaluation order
-  final public Exp Op(Exp eb) throws ParseException {Exp e; Exp ea;
+  final public Exp Op(Exp eb) throws ParseException {Exp e, ea;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AND:{
       jj_consume_token(AND);
@@ -529,7 +529,7 @@ e = new Times(eb, ea);
     throw new Error("Missing return statement in function");
   }
 
-  final public ExpList ExpList() throws ParseException {Exp e1; Exp e2; ExpList el = new ExpList();
+  final public ExpList ExpList() throws ParseException {Exp e1, e2; ExpList el = new ExpList();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case TRUE:
     case FALSE:
