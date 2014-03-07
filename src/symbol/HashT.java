@@ -11,14 +11,16 @@ public class HashT {
         return h;
     }
 
-    public void insert(String s, Binding b) {
+    // Changed from Binding b, possible error in Appel book
+    public void insert(String s, Object b) {
         int index=hash(s)%SIZE;
         table[index]=new Bucket(s,b,table[index]);
     }
 
     public Object lookup(String s) {
         int index=hash(s)%SIZE;
-        for (Binding b = table[index]; b!=null; b=b.next)
+        // Changed from Binding b, possible error in Appel book
+        for (Bucket b = table[index]; b!=null; b=b.next)
             if (s.equals(b.key)) return b.binding;
         return null;
     }
