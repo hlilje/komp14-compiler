@@ -1,12 +1,18 @@
 import parser.*;
 import syntaxtree.*;
 import visitor.*;
+import error.*;
 
 public class Main {
     public static void main(String [] args) {
         MiniJavaParser parser;
-        ASTPrintVisitor visitor;
-        Program p;
+        ASTPrintVisitor printVisitor;
+        DepthFirstVisitor depthVisitor;
+        //TypeDepthFirstVisitor typeVisitor;
+        Program program;
+
+        ErrorMsg error;
+        error = new ErrorMsg(System.out);
 
         if(args.length == 0) {
             parser = new MiniJavaParser(System.in);
@@ -22,10 +28,15 @@ public class Main {
         }
 
         try {
-            p = parser.Program();
+            program = parser.Program();
 
-            visitor = new ASTPrintVisitor();
-            visitor.visit(p);
+            printVisitor = new ASTPrintVisitor();
+            printVisitor.visit(program);
+
+            depthVisitor = new DepthFirstVisitor(error);
+            depthVisitor.visit(program);
+            //typeVisitor = new TypeDepthFirstVisitor(error);
+            //typeVisitor.visit(program);
         } catch (ParseException e) {
             System.out.println(e.toString());
         }

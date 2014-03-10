@@ -219,7 +219,7 @@ fl.addElement(f);
       jj_consume_token(INT);
       jj_consume_token(LBRACKET);
       jj_consume_token(RBRACKET);
-t = new IntegerType();
+t = new IntArrayType();
     } else {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case BOOLEAN:{

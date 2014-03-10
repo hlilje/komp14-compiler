@@ -160,7 +160,7 @@ Type Type() :
 { Type t; Token tok; }
 {
     (
-    LOOKAHEAD(2) "int" "[" "]" { t = new IntegerType(); }
+    LOOKAHEAD(2) "int" "[" "]" { t = new IntArrayType(); }
     | "boolean" { t = new BooleanType(); }
     | "int" { t = new IntegerType(); }
     | tok = <IDENTIFIER> { t  = new IdentifierType(tok.toString()); } // TODO toString here?
