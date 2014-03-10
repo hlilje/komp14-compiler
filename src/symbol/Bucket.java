@@ -1,4 +1,4 @@
-package Symbol;
+package symbol;
 
 public class Bucket {
     public String key;

@@ -2,13 +2,16 @@ package visitor;
 
 import syntaxtree.*;
 import error.*;
+import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
     private ErrorMsg error;
+    private Table table;
 
     // Add constructor to inject error message handler
-    public DepthFirstVisitor(ErrorMsg error) {
+    public DepthFirstVisitor(ErrorMsg error, Table table) {
         this.error = error;
+        this.table = table;
     }
 
     // MainClass m;
@@ -59,6 +62,8 @@ public class DepthFirstVisitor implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
+        table.put(Symbol.symbol(n.i.toString()), n);
+
         n.t.accept(this);
         n.i.accept(this);
 

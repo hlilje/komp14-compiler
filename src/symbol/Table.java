@@ -1,4 +1,4 @@
-package Symbol;
+package symbol;
 
 public class Table {
     private static final String MARKER = "_MARKER_";

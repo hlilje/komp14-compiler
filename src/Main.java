@@ -2,6 +2,7 @@ import parser.*;
 import syntaxtree.*;
 import visitor.*;
 import error.*;
+import symbol.*;
 
 public class Main {
     public static void main(String [] args) {
@@ -11,8 +12,8 @@ public class Main {
         //TypeDepthFirstVisitor typeVisitor;
         Program program;
 
-        ErrorMsg error;
-        error = new ErrorMsg(System.out);
+        ErrorMsg error = new ErrorMsg(System.out);
+        Table table = new Table();
 
         if(args.length == 0) {
             parser = new MiniJavaParser(System.in);
@@ -33,7 +34,7 @@ public class Main {
             printVisitor = new ASTPrintVisitor();
             printVisitor.visit(program);
 
-            depthVisitor = new DepthFirstVisitor(error);
+            depthVisitor = new DepthFirstVisitor(error, table);
             depthVisitor.visit(program);
             //typeVisitor = new TypeDepthFirstVisitor(error);
             //typeVisitor.visit(program);

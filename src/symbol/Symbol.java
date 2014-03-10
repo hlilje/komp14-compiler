@@ -1,4 +1,4 @@
-package Symbol;
+package symbol;
 
 public class Symbol {
     private String name;
@@ -7,7 +7,7 @@ public class Symbol {
 
     private static java.util.Dictionary dict = new java.util.Hashtable();
 
-    public String toString() { return name;}
+    public String toString() { return name; }
 
     public static Symbol symbol(String n) {
         String u = n.intern();
