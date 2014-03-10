@@ -32,7 +32,8 @@ public class Table {
         // TODO How should this actually work?
     }
 
-    //public java.util.Enumeration keys() {
-    //    return;
-    //}
+    // TODO Is this what is supposed to be returned?
+    public java.util.Enumeration keys() {
+        return Symbol.getKeys();
+    }
 }

@@ -15,4 +15,9 @@ public class Symbol {
         if (s==null) { s = new Symbol(u); dict.put(u,s); }
         return s;
     }
+
+    // Added method to fetch key set
+    public static java.util.Enumeration getKeys() {
+        return dict.keys();
+    }
 }

@@ -5,33 +5,7 @@ import syntaxtree.*;
 import visitor.*;
 
 public class MiniJavaParser implements MiniJavaParserConstants {
-    public static void main(String args[]) {
-        MiniJavaParser parser;
-        ASTPrintVisitor visitor;
-        Program p;
-
-        if(args.length == 0) {
-            parser = new MiniJavaParser(System.in);
-        } else if(args.length == 1) {
-            try {
-                parser = new MiniJavaParser(new java.io.FileInputStream(args[0]));
-            } catch (java.io.FileNotFoundException e) {
-                return;
-            }
-        } else {
-            System.out.println("Give no argument to read from stdin, otherwise specify a sinle input file.");
-            return;
-        }
-
-        try {
-            p = parser.Program();
-
-            visitor = new ASTPrintVisitor();
-            visitor.visit(p);
-        } catch (ParseException e) {
-            System.out.println(e.toString());
-        }
-    }
+    public MiniJavaParser() {}
 
 /* GRAMMAR */
   final public Program Program() throws ParseException {MainClass mc; ClassDeclList cdl = new ClassDeclList(); ClassDecl cd;
@@ -676,10 +650,16 @@ el.addElement(e2);
     finally { jj_save(5, xla); }
   }
 
-  private boolean jj_3R_11()
+  private boolean jj_3_1()
  {
-    if (jj_3R_13()) return true;
-    if (jj_3R_12()) return true;
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
+ {
+    if (jj_scan_token(NEW)) return true;
+    if (jj_scan_token(INT)) return true;
     return false;
   }
 
@@ -693,6 +673,13 @@ el.addElement(e2);
   private boolean jj_3R_12()
  {
     if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_11()
+ {
+    if (jj_3R_13()) return true;
+    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -748,19 +735,6 @@ el.addElement(e2);
   private boolean jj_3_2()
  {
     if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5()
- {
-    if (jj_scan_token(NEW)) return true;
-    if (jj_scan_token(INT)) return true;
     return false;
   }
 

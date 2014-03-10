@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="MiniJavaCompiler" default="main" basedir=".">
     <property name="jar.file" value="mjc.jar" />
-    <property name="main.class" value="parser/MiniJavaParser" />
+    <property name="main.class" value="Main" />
     <property name="javacc.file" value="MiniJavaLexer.jj" />
 
     <property name="src.dir" location="src" />
