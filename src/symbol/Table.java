@@ -26,7 +26,7 @@ public class Table {
     }
 
     public Object get(Symbol key) {
-        System.out.println("GET: " + key.toString()); // DEBUG
+        //System.out.println("GET: " + key.toString()); // DEBUG
         return hashTable.lookup(key.toString());
     }
 
