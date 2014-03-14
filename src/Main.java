@@ -39,9 +39,14 @@ public class Main {
             //typeVisitor = new TypeDepthFirstVisitor(error);
             //typeVisitor.visit(program);
             
+            // DEBUG
             java.util.Enumeration keys = table.keys();
+            String key; Object type;
             while(keys.hasMoreElements()) {
-                System.out.println(keys.nextElement());
+                key = (String)keys.nextElement();
+                type = table.get(Symbol.symbol(key));
+                System.out.println("KEY FROM TABLE: " + key);
+                System.out.println("    TYPE FROM TABLE: " + (type != null ? table.get(Symbol.symbol(key)).getClass().getName() : "NULL"));
             }
         } catch (ParseException e) {
             System.out.println(e.toString());
