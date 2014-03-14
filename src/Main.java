@@ -38,6 +38,11 @@ public class Main {
             depthVisitor.visit(program);
             //typeVisitor = new TypeDepthFirstVisitor(error);
             //typeVisitor.visit(program);
+            
+            java.util.Enumeration keys = table.keys();
+            while(keys.hasMoreElements()) {
+                System.out.println(keys.nextElement());
+            }
         } catch (ParseException e) {
             System.out.println(e.toString());
         }

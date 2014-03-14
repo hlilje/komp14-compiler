@@ -17,6 +17,7 @@ public class Table {
     }
 
     public void put(Symbol key, Object value) {
+        System.out.println("PUT: " + key.toString());
         hashTable.insert(key.toString(), value);
         //prevtop = top;
         //top = key;
@@ -25,11 +26,13 @@ public class Table {
     }
 
     public Object get(Symbol key) {
+        System.out.println("GET: " + key.toString());
         return hashTable.lookup(key.toString());
     }
 
     // Push special marker onto stack
     public void beginScope() {
+        System.out.println("=== BEGIN SCOPE === ");
         //prevtop = top;
         //top = Symbol.symbol(MARKER);
 
@@ -37,6 +40,7 @@ public class Table {
     }
 
     public void endScope() {
+        System.out.println("=== END SCOPE ===");
         Symbol s;
         while(!stack.empty()) {
             s = stack.pop();
@@ -48,6 +52,7 @@ public class Table {
 
     // TODO Is this what is supposed to be returned?
     public java.util.Enumeration keys() {
+        System.out.println("GET KEYS");
         return Symbol.getKeys();
     }
 }

@@ -7,13 +7,17 @@ public class HashT {
     private int hash(String s) {
         int h=0;
         for(int i=0; i<s.length(); i++)
+        {
             h=h*65599+s.charAt(i);
-        return h;
+        }
+        System.out.println("HASH: " + h);
+        return h < 0 ? -h : h; // Avoid negative values form int overflow
     }
 
     // Changed from Binding b, possible error in Appel book
     public void insert(String s, Object b) {
         int index=hash(s)%SIZE;
+        System.out.println("    INDEX FROM HASH: " + index);
         table[index]=new Bucket(s,b,table[index]);
     }
 

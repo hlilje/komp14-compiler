@@ -17,6 +17,7 @@ public class DepthFirstVisitor implements Visitor {
     // MainClass m;
     // ClassDeclList cl;
     public void visit(Program n) {
+        // TODO should Program have a scope?
         n.m.accept(this);
         for ( int i = 0; i < n.cl.size(); i++ ) {
             n.cl.elementAt(i).accept(this);
@@ -26,37 +27,54 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i1,i2;
     // Statement s;
     public void visit(MainClass n) {
+        // TODO Should MainClass have a special scope?
+        table.put(Symbol.symbol(n.i1.toString()), n);
+        table.beginScope();
+
         n.i1.accept(this);
         n.i2.accept(this);
         n.s.accept(this);
+
+        table.endScope();
     }
 
     // Identifier i;
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
+        table.put(Symbol.symbol(n.i.toString()), n);
+        table.beginScope();
         n.i.accept(this);
+
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
+
+        table.endScope();
     }
 
     // Identifier i;
     // Identifier j;
     // VarDeclList vl;
     // MethodDeclList ml;
+    // TODO Not implemented
     public void visit(ClassDeclExtends n) {
+        table.put(Symbol.symbol(n.i.toString()), n);
+        table.beginScope();
         n.i.accept(this);
         n.j.accept(this);
+
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
+
+        table.endScope();
     }
 
     // Type t;
@@ -85,6 +103,9 @@ public class DepthFirstVisitor implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
+        table.put(Symbol.symbol(n.i.toString()), n);
+        table.beginScope();
+
         n.t.accept(this);
         n.i.accept(this);
         for ( int i = 0; i < n.fl.size(); i++ ) {
@@ -96,7 +117,9 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
+
         n.e.accept(this);
+        table.endScope(); // TODO Should this occur before accept?
     }
 
     // Type t;
@@ -121,6 +144,7 @@ public class DepthFirstVisitor implements Visitor {
 
     // StatementList sl;
     public void visit(Block n) {
+        // TODO Should Block have a scope?
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
