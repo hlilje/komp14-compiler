@@ -55,4 +55,18 @@ public class Table {
         //System.out.println("GET KEYS"); // DEBUG
         return Symbol.getKeys();
     }
+
+    // Added method
+    public boolean inScope(Symbol key) {
+        for(Symbol s : stack) {
+            System.out.println("ITERATE STACK FOR: " + s.toString()); // DEBUG
+            if(s == key)
+                return true;
+            else if(s.toString().equals(key.toString())) // DEBUG
+                return true;
+            else if(s == symbolMarker) // Scope above already checked
+                break;
+        }
+        return false;
+    }
 }

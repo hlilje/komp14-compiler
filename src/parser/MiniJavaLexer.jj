@@ -4,6 +4,7 @@ options {
 
 PARSER_BEGIN(MiniJavaParser)
 package parser;
+
 import syntaxtree.*;
 import visitor.*;
 

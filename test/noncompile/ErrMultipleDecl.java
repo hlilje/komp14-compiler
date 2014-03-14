@@ -8,8 +8,10 @@ class Main
 class Test {
     int a;
     int a;
+    int a;
     Other b;
-    b = new Other();
+    Other a;
+    //b = new Other();
 
     public int start() {
         a = 17;
@@ -23,9 +25,9 @@ class Test {
     }
 }
 
-class Other {
-    int a;
-    boolean a;
-
-    return a;
-}
+//class Other {
+//    int a;
+//    boolean a;
+//
+//    return a;
+//}

@@ -43,17 +43,22 @@ public class DepthFirstVisitor implements Visitor {
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
         table.put(Symbol.symbol(n.i.toString()), n);
-        table.beginScope();
+        //table.beginScope();
         n.i.accept(this);
 
+        table.beginScope();
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
+        table.endScope();
+
+        table.beginScope();
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
-
         table.endScope();
+
+        //table.endScope();
     }
 
     // Identifier i;
@@ -63,24 +68,35 @@ public class DepthFirstVisitor implements Visitor {
     // TODO Not implemented
     public void visit(ClassDeclExtends n) {
         table.put(Symbol.symbol(n.i.toString()), n);
-        table.beginScope();
+        //table.beginScope();
         n.i.accept(this);
         n.j.accept(this);
 
+        table.beginScope();
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
+        table.endScope();
+
+        table.beginScope();
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
-
         table.endScope();
+
+        //table.endScope();
     }
 
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
-        table.put(Symbol.symbol(n.i.toString()), n);
+        String name = n.i.toString(); Symbol s = Symbol.symbol(name);
+        if(!table.inScope(s)) {
+            table.put(s, n);
+        } else {
+            error.complain(s + " is already defined");
+            //return;
+        }
 
         n.t.accept(this);
         n.i.accept(this);
@@ -104,27 +120,36 @@ public class DepthFirstVisitor implements Visitor {
     // Exp e;
     public void visit(MethodDecl n) {
         table.put(Symbol.symbol(n.i.toString()), n);
-        table.beginScope();
+        //table.beginScope();
 
         n.t.accept(this);
         n.i.accept(this);
+
+        table.beginScope();
         for ( int i = 0; i < n.fl.size(); i++ ) {
             n.fl.elementAt(i).accept(this);
         }
+        table.endScope();
+
+        table.beginScope();
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
+        table.endScope();
+
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
 
         n.e.accept(this);
-        table.endScope(); // TODO Should this occur before accept?
+        //table.endScope(); // TODO Should this occur before accept?
     }
 
     // Type t;
     // Identifier i;
     public void visit(Formal n) {
+        table.put(Symbol.symbol(n.i.toString()), n);
+
         n.t.accept(this);
         n.i.accept(this);
     }
@@ -143,11 +168,15 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     // StatementList sl;
+    // TODO Names in inner blocks should not be allowed to override the scope above
     public void visit(Block n) {
-        // TODO Should Block have a scope?
+        table.beginScope();
+
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
+
+        table.endScope();
     }
 
     // Exp e;
