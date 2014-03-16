@@ -58,7 +58,7 @@ public class Table {
 
     // Added method
     public boolean inScope(Symbol key) {
-        java.util.ListIterator li = stack.listIterator(stack.size() - 1);
+        java.util.ListIterator li = stack.listIterator(stack.size());
         Symbol s;
         while(li.hasPrevious()) { // Due to Iterator iterating the stack 'backwards'
             s = (Symbol)li.previous();
