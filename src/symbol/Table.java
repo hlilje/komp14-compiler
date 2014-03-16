@@ -58,11 +58,11 @@ public class Table {
 
     // Added method
     public boolean inScope(Symbol key) {
-        for(Symbol s : stack) {
-            System.out.println("ITERATE STACK FOR: " + s.toString()); // DEBUG
+        java.util.ListIterator li = stack.listIterator(stack.size() - 1);
+        Symbol s;
+        while(li.hasPrevious()) { // Due to Iterator iterating the stack 'backwards'
+            s = (Symbol)li.previous();
             if(s == key)
-                return true;
-            else if(s.toString().equals(key.toString())) // DEBUG
                 return true;
             else if(s == symbolMarker) // Scope above already checked
                 break;
