@@ -6,7 +6,7 @@ import error.*;
 public class TypeDepthFirstVisitor implements TypeVisitor {
     private ErrorMsg error;
 
-    // Add constructor to inject error message handler
+    // Add constructor to inject error message
     public TypeDepthFirstVisitor(ErrorMsg error) {
         this.error = error;
     }

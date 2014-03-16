@@ -9,7 +9,7 @@ public class Main {
         MiniJavaParser parser;
         ASTPrintVisitor printVisitor;
         DepthFirstVisitor depthVisitor;
-        //TypeDepthFirstVisitor typeVisitor;
+        TypeDepthFirstVisitor typeVisitor;
         Program program;
 
         ErrorMsg error = new ErrorMsg(System.out);
@@ -36,8 +36,9 @@ public class Main {
 
             depthVisitor = new DepthFirstVisitor(error, table);
             depthVisitor.visit(program);
-            //typeVisitor = new TypeDepthFirstVisitor(error);
-            //typeVisitor.visit(program);
+
+            typeVisitor = new TypeDepthFirstVisitor(error);
+            typeVisitor.visit(program);
 
             // DEBUG
             //java.util.Enumeration keys = table.keys();

@@ -69,4 +69,25 @@ public class Table {
         }
         return false;
     }
+
+    // Added method
+    // Special check to disallow name override in inner blocks
+    // TODO Is a check of only the scope above sufficient?
+    public boolean inOuterScope(Symbol key) {
+        java.util.ListIterator li = stack.listIterator(stack.size());
+        Symbol s;
+        boolean outerScope = false;
+        while(li.hasPrevious()) {
+            s = (Symbol)li.previous();
+            if(s == key) 
+                return true;
+            else if(s == symbolMarker) {
+                if(outerScope)
+                    break;
+                else
+                    outerScope = true;
+            }
+        }
+        return false;
+    }
 }

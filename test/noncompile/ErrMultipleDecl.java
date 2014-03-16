@@ -25,6 +25,10 @@ class Test {
     }
 }
 
+class Test {
+    int x;
+}
+
 //class Other {
 //    int a;
 //    boolean a;

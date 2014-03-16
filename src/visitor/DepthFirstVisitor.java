@@ -8,7 +8,7 @@ public class DepthFirstVisitor implements Visitor {
     private ErrorMsg error;
     private Table table;
 
-    // Add constructor to inject error message handler
+    // Add constructor to inject error message and table
     public DepthFirstVisitor(ErrorMsg error, Table table) {
         this.error = error;
         this.table = table;
@@ -42,7 +42,14 @@ public class DepthFirstVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
-        table.put(Symbol.symbol(n.i.toString()), n);
+        String name = n.i.toString(); Symbol s = Symbol.symbol(name);
+        if(!table.inScope(s)) {
+            table.put(s, n);
+        } else {
+            error.complain(s + " is already defined");
+            return;
+        }
+
         //table.beginScope();
         n.i.accept(this);
 
@@ -67,7 +74,14 @@ public class DepthFirstVisitor implements Visitor {
     // MethodDeclList ml;
     // TODO Not implemented
     public void visit(ClassDeclExtends n) {
-        table.put(Symbol.symbol(n.i.toString()), n);
+        String name = n.i.toString(); Symbol s = Symbol.symbol(name);
+        if(!table.inScope(s)) {
+            table.put(s, n);
+        } else {
+            error.complain(s + " is already defined");
+            return;
+        }
+
         //table.beginScope();
         n.i.accept(this);
         n.j.accept(this);
@@ -95,7 +109,7 @@ public class DepthFirstVisitor implements Visitor {
             table.put(s, n);
         } else {
             error.complain(s + " is already defined");
-            //return;
+            return;
         }
 
         n.t.accept(this);
@@ -169,14 +183,15 @@ public class DepthFirstVisitor implements Visitor {
 
     // StatementList sl;
     // TODO Names in inner blocks should not be allowed to override the scope above
+    // TODO Is it sufficient to just ignore declaring a new scope for this issue?
     public void visit(Block n) {
-        table.beginScope();
+        //table.beginScope();
 
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
 
-        table.endScope();
+        //table.endScope();
     }
 
     // Exp e;
