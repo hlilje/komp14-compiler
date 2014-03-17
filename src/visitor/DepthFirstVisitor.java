@@ -7,11 +7,15 @@ import symbol.*;
 public class DepthFirstVisitor implements Visitor {
     private ErrorMsg error;
     private Table table;
+    private Symbol currClass;
+    private Symbol currMethod;
 
     // Add constructor to inject error message and table
     public DepthFirstVisitor(ErrorMsg error, Table table) {
         this.error = error;
         this.table = table;
+        currClass = null;
+        currMethod = null;
     }
 
     // MainClass m;
@@ -31,7 +35,9 @@ public class DepthFirstVisitor implements Visitor {
     // Statement s;
     public void visit(MainClass n) {
         // TODO Should MainClass have a special scope?
-        table.put(Symbol.symbol(n.i1.toString()), n);
+        Symbol s = Symbol.symbol(n.i1.toString());
+        currClass = s;
+        table.put(s, n);
         table.beginScope();
 
         n.i1.accept(this);
@@ -47,10 +53,10 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(ClassDeclSimple n) {
         String name = n.i.toString(); Symbol s = Symbol.symbol(name);
         if(!table.inScope(s)) {
+            currClass = s;
             table.put(s, n);
         } else {
             error.complain(s + " is already defined");
-            return;
         }
 
         n.i.accept(this);
@@ -73,10 +79,10 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(ClassDeclExtends n) {
         String name = n.i.toString(); Symbol s = Symbol.symbol(name);
         if(!table.inScope(s)) {
+            currClass = s;
             table.put(s, n);
         } else {
             error.complain(s + " is already defined");
-            return;
         }
 
         n.i.accept(this);
@@ -99,8 +105,10 @@ public class DepthFirstVisitor implements Visitor {
         if(!table.inScope(s)) {
             table.put(s, n);
         } else {
-            error.complain(s + " is already defined");
-            return;
+            if(currMethod == null)
+                error.complain(s + " is already defined in " + currClass);
+            else
+                error.complain(s + " is already defined in " + currMethod);
         }
 
         n.t.accept(this);
@@ -116,10 +124,10 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(MethodDecl n) {
         String name = n.i.toString(); Symbol s = Symbol.symbol(name);
         if(!table.inScope(s)) {
+            currMethod = s;
             table.put(s, n);
         } else {
-            error.complain(s + " is already defined");
-            return;
+            error.complain(s + " is already defined in " + currClass);
         }
 
         n.t.accept(this);

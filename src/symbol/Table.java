@@ -90,4 +90,17 @@ public class Table {
         }
         return false;
     }
+
+    // Added method
+    // Added to see if an identifier has been declared at all
+    public boolean inFullScope(Symbol key) {
+        java.util.ListIterator li = stack.listIterator(stack.size());
+        Symbol s;
+        while(li.hasPrevious()) {
+            s = (Symbol)li.previous();
+            if(s == key) 
+                return true;
+        }
+        return false;
+    }
 }
