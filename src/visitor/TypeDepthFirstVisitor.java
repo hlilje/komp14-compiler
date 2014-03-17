@@ -35,6 +35,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i1,i2;
     // Statement s;
     public Type visit(MainClass n) {
+        Symbol s = Symbol.symbol(n.i1.toString());
+        currClass = s;
         table.beginScope();
 
         n.i1.accept(this);
@@ -49,6 +51,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public Type visit(ClassDeclSimple n) {
+        Symbol s = Symbol.symbol(n.i.toString());
+        currClass = s;
         table.beginScope();
 
         n.i.accept(this);
@@ -68,6 +72,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public Type visit(ClassDeclExtends n) {
+        Symbol s = Symbol.symbol(n.i.toString());
+        currClass = s;
         table.beginScope();
 
         n.i.accept(this);
@@ -98,6 +104,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // StatementList sl;
     // Exp e;
     public Type visit(MethodDecl n) {
+        Symbol s = Symbol.symbol(n.i.toString());
+        currMethod = s;
         table.beginScope();
 
         n.t.accept(this);

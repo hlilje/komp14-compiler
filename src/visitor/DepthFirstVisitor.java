@@ -7,7 +7,6 @@ import symbol.*;
 public class DepthFirstVisitor implements Visitor {
     private ErrorMsg error;
     private Table table;
-    // TODO Should these be symbol tables instead?
     private Symbol currClass;
     private Symbol currMethod;
 
@@ -52,7 +51,7 @@ public class DepthFirstVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
-        String name = n.i.toString(); Symbol s = Symbol.symbol(name);
+        Symbol s = Symbol.symbol(n.i.toString());
         if(!table.inScope(s)) {
             currClass = s;
             table.put(s, n);
@@ -78,7 +77,7 @@ public class DepthFirstVisitor implements Visitor {
     // MethodDeclList ml;
     // TODO Not implemented
     public void visit(ClassDeclExtends n) {
-        String name = n.i.toString(); Symbol s = Symbol.symbol(name);
+        Symbol s = Symbol.symbol(n.i.toString());
         if(!table.inScope(s)) {
             currClass = s;
             table.put(s, n);
@@ -102,7 +101,7 @@ public class DepthFirstVisitor implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
-        String name = n.i.toString(); Symbol s = Symbol.symbol(name);
+        Symbol s = Symbol.symbol(n.i.toString());
         if(!table.inScope(s)) {
             table.put(s, n);
         } else {
@@ -123,7 +122,7 @@ public class DepthFirstVisitor implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
-        String name = n.i.toString(); Symbol s = Symbol.symbol(name);
+        Symbol s = Symbol.symbol(n.i.toString());
         if(!table.inScope(s)) {
             currMethod = s;
             table.put(s, n);
