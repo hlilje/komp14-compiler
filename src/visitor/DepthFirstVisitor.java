@@ -7,6 +7,7 @@ import symbol.*;
 public class DepthFirstVisitor implements Visitor {
     private ErrorMsg error;
     private Table table;
+    // TODO Should these be symbol tables instead?
     private Symbol currClass;
     private Symbol currMethod;
 

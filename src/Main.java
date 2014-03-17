@@ -31,13 +31,14 @@ public class Main {
         try {
             program = parser.Program();
 
-            //printVisitor = new ASTPrintVisitor();
-            //printVisitor.visit(program);
+            printVisitor = new ASTPrintVisitor();
+            printVisitor.visit(program);
 
             depthVisitor = new DepthFirstVisitor(error, table);
             depthVisitor.visit(program);
 
-            typeVisitor = new TypeDepthFirstVisitor(error);
+            // TODO Should the same table be passed?
+            typeVisitor = new TypeDepthFirstVisitor(error, table);
             typeVisitor.visit(program);
 
             // DEBUG
