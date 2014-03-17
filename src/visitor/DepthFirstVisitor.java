@@ -17,11 +17,14 @@ public class DepthFirstVisitor implements Visitor {
     // MainClass m;
     // ClassDeclList cl;
     public void visit(Program n) {
-        // TODO should Program have a scope?
+        table.beginScope();
+
         n.m.accept(this);
         for ( int i = 0; i < n.cl.size(); i++ ) {
             n.cl.elementAt(i).accept(this);
         }
+
+        table.endScope();
     }
 
     // Identifier i1,i2;
@@ -50,22 +53,16 @@ public class DepthFirstVisitor implements Visitor {
             return;
         }
 
-        //table.beginScope();
         n.i.accept(this);
 
         table.beginScope();
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
-        table.endScope();
-
-        table.beginScope();
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
         table.endScope();
-
-        //table.endScope();
     }
 
     // Identifier i;
@@ -82,7 +79,6 @@ public class DepthFirstVisitor implements Visitor {
             return;
         }
 
-        //table.beginScope();
         n.i.accept(this);
         n.j.accept(this);
 
@@ -90,15 +86,10 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
-        table.endScope();
-
-        table.beginScope();
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
         table.endScope();
-
-        //table.endScope();
     }
 
     // Type t;
@@ -114,16 +105,6 @@ public class DepthFirstVisitor implements Visitor {
 
         n.t.accept(this);
         n.i.accept(this);
-
-        //Type t = n.t.accept(this);
-
-        //String id = n.i.toString();
-        //if (currMethod == null) {
-        //    if (!currClass.addVar(id,t))
-        //        error.complain(id + "is already defined in " + currClass.getId());
-        //} else if (!currMethod.addVar(id,t))
-        //    error.complain(id + "is already defined in "
-        //            + currClass.getId() + "." + currMethod.getId());
     }
 
     // Type t;
@@ -133,8 +114,13 @@ public class DepthFirstVisitor implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
-        table.put(Symbol.symbol(n.i.toString()), n);
-        //table.beginScope();
+        String name = n.i.toString(); Symbol s = Symbol.symbol(name);
+        if(!table.inScope(s)) {
+            table.put(s, n);
+        } else {
+            error.complain(s + " is already defined");
+            return;
+        }
 
         n.t.accept(this);
         n.i.accept(this);
@@ -143,20 +129,15 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.fl.size(); i++ ) {
             n.fl.elementAt(i).accept(this);
         }
-        table.endScope();
-
-        table.beginScope();
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
-        table.endScope();
-
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
+        table.endScope();
 
         n.e.accept(this);
-        //table.endScope(); // TODO Should this occur before accept?
     }
 
     // Type t;
@@ -185,13 +166,11 @@ public class DepthFirstVisitor implements Visitor {
     // TODO Names in inner blocks should not be allowed to override the scope above
     // TODO Is it sufficient to just ignore declaring a new scope for this issue?
     public void visit(Block n) {
-        //table.beginScope();
-
+        table.beginScope();
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-
-        //table.endScope();
+        table.endScope();
     }
 
     // Exp e;
