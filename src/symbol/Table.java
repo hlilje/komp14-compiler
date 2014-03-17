@@ -46,7 +46,7 @@ public class Table {
             s = stack.pop();
             if(s == symbolMarker)
                 break;
-            hashTable.pop(s.toString());
+            //hashTable.pop(s.toString()); // TODO Don't type check need this?
         }
     }
 

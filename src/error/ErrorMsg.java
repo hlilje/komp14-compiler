@@ -1,17 +1,16 @@
 package error;
 
-public class ErrorMsg
-{
+public class ErrorMsg {
     private boolean anyErrors;
     private java.io.PrintStream out;
 
     public ErrorMsg(java.io.PrintStream o) {
-	anyErrors = false;
-	out = o;
+        anyErrors = false;
+        out = o;
     }
 
     public void complain(String msg) {
-	anyErrors = true;
-	out.println(msg);
+        anyErrors = true;
+        out.println(msg);
     }
 }

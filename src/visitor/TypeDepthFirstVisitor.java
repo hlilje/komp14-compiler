@@ -4,6 +4,7 @@ import syntaxtree.*;
 import error.*;
 import symbol.*;
 
+// TODO Should this class have scopes?
 public class TypeDepthFirstVisitor implements TypeVisitor {
     private ErrorMsg error;
     private Table table;
@@ -222,7 +223,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(LessThan n) {
-        System.out.println("LESSTHAN E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
+        System.out.println("LESS_THAN E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
 
         if(!(n.e1.accept(this) instanceof IntegerType))
             error.complain("Left side of LessThan must be of type integer");
@@ -269,7 +270,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(ArrayLookup n) {
         n.e1.accept(this);
         n.e2.accept(this);
-        return new IntegerType(); // TODO Is this correct?
+        return new IntegerType();
     }
 
     // Exp e;
@@ -308,11 +309,41 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         // TODO Must return the actual type from symbol table
         System.out.println("ID_EXP: " + n.s); // DEBUG
 
-        return new IdentifierType(n.s);
+        // Probably null due to removal when scope ends?
+        Symbol s = Symbol.symbol(n.s);
+        Object o = table.get(s);
+        Type t;
+        if(o instanceof VarDecl) {
+            System.out.println("    instanceof VarDecl"); // DEBUG
+            t = ((VarDecl)o).t;
+        } else if(o instanceof MethodDecl) {
+            System.out.println("    instanceof MethodDecl"); // DEBUG
+            t = ((MethodDecl)o).t;
+        } else if(o instanceof Formal) {
+            System.out.println("    instanceof Formal"); // DEBUG
+            t = ((Formal)o).t;
+        } else {
+            if(o == null)
+                System.out.println("    was NULL"); // DEBUG
+            else
+                System.out.println("    instance of class: " + o.getClass()); // DEBUG
+            return null; // TODO
+        }
+
+        return t;
     }
 
     public Type visit(This n) {
-        return new IdentifierType("this"); // TODO Is this correct?
+        // TODO Is this correct?
+        //ClassDecl cl = (ClassDecl)table.get(currClass);
+        //if(cl instanceof ClassDeclSimple) {
+        //    ClassDeclSimple cds = (ClassDeclSimple)cl;
+        //    return cds.i.accept(this); // Extract the type from the identifier
+        //} else {
+        //    ClassDeclExtends cde = (ClassDeclExtends)cl;
+        //    return cde.i.accept(this);
+        //}
+        return null;
     }
 
     // Exp e;
@@ -337,6 +368,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // String s;
     public Type visit(Identifier n) {
         System.out.println("ID: " + n.s); // DEBUG
+        Symbol s = Symbol.symbol(n.s); // TODO
+
         return new IdentifierType(n.s);
     }
 

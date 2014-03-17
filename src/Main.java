@@ -5,7 +5,7 @@ import error.*;
 import symbol.*;
 
 public class Main {
-    public static void main(String [] args) {
+    public static void main(String[] args) {
         MiniJavaParser parser;
         ASTPrintVisitor printVisitor;
         DepthFirstVisitor depthVisitor;

@@ -6,8 +6,8 @@ public class Bucket {
     public Bucket next;
 
     public Bucket(String k, Object b, Bucket n) {
-        key=k;
-        binding=b;
-        next=n;
+        key = k;
+        binding = b;
+        next = n;
     }
 }
