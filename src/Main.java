@@ -13,7 +13,7 @@ public class Main {
         Program program;
 
         ErrorMsg error = new ErrorMsg(System.out);
-        Table table = new Table();
+        Table table = new Table(null); // Set previous table to null
 
         if(args.length == 0) {
             parser = new MiniJavaParser(System.in);
@@ -31,15 +31,15 @@ public class Main {
         try {
             program = parser.Program();
 
-            System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>");
+            System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             printVisitor = new ASTPrintVisitor();
             printVisitor.visit(program);
 
-            System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>");
+            System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             depthVisitor = new DepthFirstVisitor(error, table);
             depthVisitor.visit(program);
 
-            System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>");
+            System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             // TODO Should the same table be passed?
             typeVisitor = new TypeDepthFirstVisitor(error, table);
             typeVisitor.visit(program);

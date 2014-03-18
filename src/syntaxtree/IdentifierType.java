@@ -7,6 +7,7 @@ public class IdentifierType extends Type {
     
     public boolean equals(Type tp)
     {
+        System.out.println("ID_TYPE: " + s + " called equals on : " + tp.getClass()); // DEBUG
 	if (! (tp instanceof IdentifierType) ) return false;
 	return ((IdentifierType)tp).s.equals(s);
     }

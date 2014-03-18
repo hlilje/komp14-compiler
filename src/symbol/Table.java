@@ -1,28 +1,39 @@
 package symbol;
 
+import syntaxtree.*;
+
 public class Table {
-    private static final String MARKER = "_MARKER_";
-    private Symbol symbolMarker;
+    //private static final String MARKER = "_MARKER_";
+    //private Symbol symbolMarker;
+    //private java.util.Stack<Symbol> stack;
     private HashT hashTable;
-    //private Symbol top, prevtop;
-    private java.util.Stack<Symbol> stack;
+    private Table table;
 
-    public Table() {
+    public Table(Table table) {
         hashTable = new HashT();
-        //top = null;
-        //prevtop = null;
+        this.table = table;
 
-        stack = new java.util.Stack<Symbol>();
-        symbolMarker = Symbol.symbol(MARKER);
+        //stack = new java.util.Stack<Symbol>();
+        //symbolMarker = Symbol.symbol(MARKER);
     }
 
     public void put(Symbol key, Object value) {
         System.out.println("PUT: " + key.toString()); // DEBUG
         hashTable.insert(key.toString(), value);
-        //prevtop = top;
-        //top = key;
 
-        stack.push(key);
+        //stack.push(key);
+    }
+
+    // Added method to avoid method name collisions
+    // Creates a unique method name based on id, type and params
+    public void putMethod(MethodDecl md, Table t) {
+        String uniqueName = md.i + ":" + md.t;
+        FormalList fl = md.fl;
+        for(int i=0; i<fl.size(); i++) {
+            uniqueName += ":" + fl.elementAt(i).t;
+        }
+
+        hashTable.insert(uniqueName, t);
     }
 
     public Object get(Symbol key) {
@@ -36,18 +47,18 @@ public class Table {
         //prevtop = top;
         //top = Symbol.symbol(MARKER);
 
-        stack.push(symbolMarker);
+        //stack.push(symbolMarker);
     }
 
     public void endScope() {
         System.out.println("======= END SCOPE ======="); // DEBUG
-        Symbol s;
-        while(!stack.empty()) {
-            s = stack.pop();
-            if(s == symbolMarker)
-                break;
-            //hashTable.pop(s.toString()); // TODO Don't type check need this?
-        }
+        //Symbol s;
+        //while(!stack.empty()) {
+        //    s = stack.pop();
+        //    if(s == symbolMarker)
+        //        break;
+        //    hashTable.pop(s.toString()); // TODO Don't type check need this?
+        //}
     }
 
     // TODO Is this what is supposed to be returned?
@@ -57,50 +68,57 @@ public class Table {
     }
 
     // Added method
+    // If you are using variables outside of method you must declare it with 'this'
     public boolean inScope(Symbol key) {
-        java.util.ListIterator li = stack.listIterator(stack.size());
-        Symbol s;
-        while(li.hasPrevious()) { // Due to Iterator iterating the stack 'backwards'
-            s = (Symbol)li.previous();
-            if(s == key)
-                return true;
-            else if(s == symbolMarker) // Scope above already checked
-                break;
-        }
-        return false;
-    }
+        //java.util.ListIterator li = stack.listIterator(stack.size());
+        //Symbol s;
+        //while(li.hasPrevious()) { // Due to Iterator iterating the stack 'backwards'
+        //    s = (Symbol)li.previous();
+        //    if(s == key)
+        //        return true;
+        //    else if(s == symbolMarker) // Scope above already checked
+        //        break;
+        //}
 
-    // Added method
-    // Special check to disallow name override in inner blocks
-    // TODO Is a check of only the scope above sufficient?
-    public boolean inOuterScope(Symbol key) {
-        java.util.ListIterator li = stack.listIterator(stack.size());
-        Symbol s;
-        boolean outerScope = false;
-        while(li.hasPrevious()) {
-            s = (Symbol)li.previous();
-            if(s == key) 
+        Table currTable = this;
+        while(currTable != null) {
+            if(currTable.get(key) != null) {
                 return true;
-            else if(s == symbolMarker) {
-                if(outerScope)
-                    break;
-                else
-                    outerScope = true;
             }
+            currTable = currTable.table;
         }
         return false;
     }
 
+    // Special case to handle the scope of 'blocks'
+    public boolean inScopeAbove(Symbol key) {
+        //java.util.ListIterator li = stack.listIterator(stack.size());
+        //Symbol s;
+        //boolean scopeAbove = false;
+        //while(li.hasPrevious()) {
+        //    s = (Symbol)li.previous();
+        //    if(s == key)
+        //        return true;
+        //    else if(s == symbolMarker) {
+        //        if(!scopeAbove)
+        //            scopeAbove = true;
+        //        else
+        //            break;
+        //    }
+        //}
+        return false;
+    }
+
     // Added method
-    // Added to see if an identifier has been declared at all
+    // TODO Might not be needed?
     public boolean inFullScope(Symbol key) {
-        java.util.ListIterator li = stack.listIterator(stack.size());
-        Symbol s;
-        while(li.hasPrevious()) {
-            s = (Symbol)li.previous();
-            if(s == key) 
-                return true;
-        }
+        //java.util.ListIterator li = stack.listIterator(stack.size());
+        //Symbol s;
+        //while(li.hasPrevious()) {
+        //    s = (Symbol)li.previous();
+        //    if(s == key) 
+        //        return true;
+        //}
         return false;
     }
 }

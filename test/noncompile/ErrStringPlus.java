@@ -6,6 +6,7 @@ class Main
         boolean b;
         int c;
         int x;
+        int x;
 
         a = 1;
         x = 2;
@@ -27,5 +28,13 @@ class Main
 //        b = true;
 //        c = a + b;
 //        return a;
+//    }
+//
+//    public int v() {
+//        return 1;
+//    }
+//
+//    public int v() {
+//        return 1;
 //    }
 //}

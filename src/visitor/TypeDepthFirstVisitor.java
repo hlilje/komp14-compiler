@@ -197,10 +197,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e;
     public Type visit(Assign n) {
-        // TODO Hopefully this works for IdentifierType equals method
-        //if(!(n.i.accept(this).getClass().equals(n.e.accept(this).getClass())))
-        if(!(n.i.accept(this).equals(n.e.accept(this))))
-            error.complain("Incompatible types in assignment");
+        Symbol s = Symbol.symbol(n.i.toString());
+        Object o = table.get(s);
+
+        n.i.accept(this);
+        n.e.accept(this);
 
         return null;
     }

@@ -27,6 +27,12 @@ class Test {
 
 class Test {
     int x;
+    public int v() {
+        return 1;
+    }
+    public int v() {
+        return 1;
+    }
 }
 
 //class Other {
