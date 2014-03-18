@@ -205,7 +205,7 @@ public class DepthFirstVisitor implements Visitor {
     // Exp e;
     public void visit(Assign n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        if(s == null)
+        if(!table.inScope(s))
             error.complain(s + " is not defined");
         n.i.accept(this);
         n.e.accept(this);

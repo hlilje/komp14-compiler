@@ -8,8 +8,8 @@ import symbol.*;
 public class TypeDepthFirstVisitor implements TypeVisitor {
     private ErrorMsg error;
     private Table table;
-    private Symbol currClass;
-    private Symbol currMethod;
+    private Object currClass;
+    private Object currMethod;
 
     // Add constructor to inject error message
     public TypeDepthFirstVisitor(ErrorMsg error, Table table) {
@@ -33,8 +33,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i1,i2;
     // Statement s;
     public Type visit(MainClass n) {
-        Symbol s = Symbol.symbol(n.i1.toString());
-        currClass = s;
+        currClass = n;
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -52,8 +51,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public Type visit(ClassDeclSimple n) {
-        Symbol s = Symbol.symbol(n.i.toString());
-        currClass = s;
+        currClass = n;
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -63,7 +61,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.ml.elementAt(i).accept(this);
         }
 
-        return null;
+        return new IdentifierType(n.i.toString());
     }
 
     // Identifier i;
@@ -71,8 +69,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public Type visit(ClassDeclExtends n) {
-        Symbol s = Symbol.symbol(n.i.toString());
-        currClass = s;
+        currClass = n;
 
         n.i.accept(this);
         n.j.accept(this);
@@ -83,7 +80,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.ml.elementAt(i).accept(this);
         }
 
-        return null;
+        return new IdentifierType(n.i.toString());
     }
 
     // Type t;
@@ -91,7 +88,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(VarDecl n) {
         n.t.accept(this);
         n.i.accept(this);
-        return null;
+        return n.t;
     }
 
     // Type t;
@@ -101,8 +98,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // StatementList sl;
     // Exp e;
     public Type visit(MethodDecl n) {
-        Symbol s = Symbol.symbol(n.i.toString());
-        currMethod = s;
+        currMethod = n;
 
         n.t.accept(this);
         n.i.accept(this);
@@ -117,7 +113,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         }
         n.e.accept(this);
 
-        return null;
+        return n.t;
     }
 
     // Type t;
@@ -125,7 +121,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(Formal n) {
         n.t.accept(this);
         n.i.accept(this);
-        return null;
+        return n.t;
     }
 
     public Type visit(IntArrayType n) {
@@ -186,9 +182,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(Assign n) {
         Symbol s = Symbol.symbol(n.i.toString());
         Object o = table.get(s);
-
-        n.i.accept(this);
-        n.e.accept(this);
+        //if(!(n.i.accept(this).equals(n.e.accept(this))))
+        if(!(n.i.accept(this).equals(n.e.accept(this))))
+            error.complain("Expression is not of type " + ((VarDecl)o).t);
 
         return null;
     }
@@ -276,12 +272,21 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // ExpList el;
     public Type visit(Call n) {
+        Symbol s = Symbol.symbol(n.i.toString());
+        Type t;
+        ClassDecl cl = (ClassDecl)table.get(s);
+        if(cl instanceof ClassDeclSimple) {
+            t = new IdentifierType(((ClassDeclSimple)cl).i.toString());
+        } else {
+            t = new IdentifierType(((ClassDeclExtends)cl).i.toString());
+        }
+
         n.e.accept(this);
         n.i.accept(this);
         for ( int i = 0; i < n.el.size(); i++ ) {
             n.el.elementAt(i).accept(this);
         }
-        return null; // TODO Should this return the type of the called method?
+        return t; // TODO Should this return the type of the called method?
     }
 
     // int i;
@@ -302,7 +307,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         // TODO Must return the actual type from symbol table
         System.out.println("ID_EXP: " + n.s); // DEBUG
 
-        // Probably null due to removal when scope ends?
         Symbol s = Symbol.symbol(n.s);
         Object o = table.get(s);
         Type t;
@@ -312,31 +316,31 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         } else if(o instanceof MethodDecl) {
             System.out.println("    instanceof MethodDecl"); // DEBUG
             t = ((MethodDecl)o).t;
-        } else if(o instanceof Formal) {
+        //} else if(o instanceof Formal) {
+        } else {
             System.out.println("    instanceof Formal"); // DEBUG
             t = ((Formal)o).t;
-        } else {
+        } /*else {
             if(o == null)
                 System.out.println("    was NULL"); // DEBUG
             else
                 System.out.println("    instance of class: " + o.getClass()); // DEBUG
             return null; // TODO
-        }
+        }*/
 
         return t;
     }
 
     public Type visit(This n) {
         // TODO Is this correct?
-        //ClassDecl cl = (ClassDecl)table.get(currClass);
-        //if(cl instanceof ClassDeclSimple) {
-        //    ClassDeclSimple cds = (ClassDeclSimple)cl;
-        //    return cds.i.accept(this); // Extract the type from the identifier
-        //} else {
-        //    ClassDeclExtends cde = (ClassDeclExtends)cl;
-        //    return cde.i.accept(this);
-        //}
-        return null;
+        ClassDecl cl = (ClassDecl)currClass;
+        if(cl instanceof ClassDeclSimple) {
+            ClassDeclSimple cds = (ClassDeclSimple)cl;
+            return cds.i.accept(this); // Extract the type from the identifier
+        } else {
+            ClassDeclExtends cde = (ClassDeclExtends)cl;
+            return cde.i.accept(this);
+        }
     }
 
     // Exp e;
@@ -361,7 +365,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // String s;
     public Type visit(Identifier n) {
         System.out.println("ID: " + n.s); // DEBUG
-        Symbol s = Symbol.symbol(n.s); // TODO
 
         return new IdentifierType(n.s);
     }
