@@ -40,20 +40,8 @@ public class Main {
             depthVisitor.visit(program);
 
             System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>"); // DEBUG
-            // TODO Should the same table be passed?
             typeVisitor = new TypeDepthFirstVisitor(error, table);
             typeVisitor.visit(program);
-
-            // DEBUG
-            //java.util.Enumeration keys = table.keys();
-            //String key; Object type;
-            //System.out.println("<<<<<<<< PRINT KEYS >>>>>>>>");
-            //while(keys.hasMoreElements()) {
-            //    key = (String)keys.nextElement();
-            //    type = table.get(Symbol.symbol(key));
-            //    System.out.println("KEY FROM TABLE: " + key);
-            //    System.out.println("    TYPE FROM TABLE: " + (type != null ? table.get(Symbol.symbol(key)).getClass().getName() : "NULL"));
-            //}
         } catch (ParseException e) {
             System.out.println(e.toString());
         }

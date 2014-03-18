@@ -22,14 +22,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // MainClass m;
     // ClassDeclList cl;
     public Type visit(Program n) {
-        table.beginScope();
-
         n.m.accept(this);
         for ( int i = 0; i < n.cl.size(); i++ ) {
             n.cl.elementAt(i).accept(this);
         }
 
-        table.endScope();
         return null;
     }
 
@@ -38,7 +35,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(MainClass n) {
         Symbol s = Symbol.symbol(n.i1.toString());
         currClass = s;
-        table.beginScope();
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -49,7 +45,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        table.endScope();
         return null;
     }
 
@@ -59,7 +54,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(ClassDeclSimple n) {
         Symbol s = Symbol.symbol(n.i.toString());
         currClass = s;
-        table.beginScope();
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -69,7 +63,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.ml.elementAt(i).accept(this);
         }
 
-        table.endScope();
         return null;
     }
 
@@ -80,7 +73,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(ClassDeclExtends n) {
         Symbol s = Symbol.symbol(n.i.toString());
         currClass = s;
-        table.beginScope();
 
         n.i.accept(this);
         n.j.accept(this);
@@ -91,7 +83,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.ml.elementAt(i).accept(this);
         }
 
-        table.endScope();
         return null;
     }
 
@@ -112,7 +103,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(MethodDecl n) {
         Symbol s = Symbol.symbol(n.i.toString());
         currMethod = s;
-        table.beginScope();
 
         n.t.accept(this);
         n.i.accept(this);
@@ -127,7 +117,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         }
         n.e.accept(this);
 
-        table.endScope();
         return null;
     }
 
@@ -159,11 +148,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // StatementList sl;
     public Type visit(Block n) {
-        table.beginScope();
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-        table.endScope();
         return null;
     }
 

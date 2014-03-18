@@ -21,25 +21,23 @@ public class DepthFirstVisitor implements Visitor {
     // MainClass m;
     // ClassDeclList cl;
     public void visit(Program n) {
-        table.beginScope();
+        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
 
         n.m.accept(this);
         for ( int i = 0; i < n.cl.size(); i++ ) {
             n.cl.elementAt(i).accept(this);
         }
 
-        table.endScope();
+        System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Identifier i1,i2;
     // Statement s;
     public void visit(MainClass n) {
-        // TODO Should MainClass have a special scope?
+        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i1.toString());
-        //table.put(s, n);
         currClass = s;
         table.put(s, new Table(table));
-        table.beginScope();
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -50,17 +48,16 @@ public class DepthFirstVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        table.endScope();
+        System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Identifier i;
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
+        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i.toString());
-        //if(!table.inScope(s)) {
         if(!table.inScope(s)) {
-            //table.put(s, n);
             currClass = s;
             table.put(s, new Table(table));
         } else {
@@ -69,26 +66,23 @@ public class DepthFirstVisitor implements Visitor {
 
         n.i.accept(this);
 
-        table.beginScope();
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
-        table.endScope();
+        System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Identifier i;
     // Identifier j;
     // VarDeclList vl;
     // MethodDeclList ml;
-    // TODO Not implemented
     public void visit(ClassDeclExtends n) {
+        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i.toString());
-        //if(!table.inScope(s)) {
         if(!table.inScope(s)) {
-            //table.put(s, n);
             currClass = s;
             table.put(s, new Table(table));
         } else {
@@ -98,21 +92,19 @@ public class DepthFirstVisitor implements Visitor {
         n.i.accept(this);
         n.j.accept(this);
 
-        table.beginScope();
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
-        table.endScope();
+        System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        //if(!table.inScope(s)) {
         if(!table.inScope(s)) {
             table.put(s, n); // TODO Should this be a new scope?
         } else {
@@ -133,10 +125,9 @@ public class DepthFirstVisitor implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
+        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i.toString());
-        //if(!table.inScope(s)) {
         if(!table.inScope(s)) {
-            //table.put(s, n);
             currMethod = s;
             table.putMethod(n, new Table(table));
         } else {
@@ -146,7 +137,6 @@ public class DepthFirstVisitor implements Visitor {
         n.t.accept(this);
         n.i.accept(this);
 
-        table.beginScope();
         for ( int i = 0; i < n.fl.size(); i++ ) {
             n.fl.elementAt(i).accept(this);
         }
@@ -156,9 +146,9 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-        table.endScope();
 
         n.e.accept(this);
+        System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Type t;
@@ -186,11 +176,9 @@ public class DepthFirstVisitor implements Visitor {
     // StatementList sl;
     // TODO Names in inner blocks should not be allowed to override the scope above
     public void visit(Block n) {
-        table.beginScope();
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-        table.endScope();
     }
 
     // Exp e;
