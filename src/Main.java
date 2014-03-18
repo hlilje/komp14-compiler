@@ -31,12 +31,15 @@ public class Main {
         try {
             program = parser.Program();
 
+            System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>");
             printVisitor = new ASTPrintVisitor();
             printVisitor.visit(program);
 
+            System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>");
             depthVisitor = new DepthFirstVisitor(error, table);
             depthVisitor.visit(program);
 
+            System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>");
             // TODO Should the same table be passed?
             typeVisitor = new TypeDepthFirstVisitor(error, table);
             typeVisitor.visit(program);

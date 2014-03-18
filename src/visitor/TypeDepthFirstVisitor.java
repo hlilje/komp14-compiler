@@ -42,7 +42,12 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
         n.i1.accept(this);
         n.i2.accept(this);
-        n.s.accept(this);
+        for ( int i = 0; i < n.vl.size(); i++ ) {
+            n.vl.elementAt(i).accept(this);
+        }
+        for ( int i = 0; i < n.sl.size(); i++ ) {
+            n.sl.elementAt(i).accept(this);
+        }
 
         table.endScope();
         return null;

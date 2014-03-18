@@ -4,10 +4,12 @@ import visitor.TypeVisitor;
 
 public class MainClass {
   public Identifier i1,i2;
-  public Statement s;
+  public StatementList sl;
+  public VarDeclList vl;
 
-  public MainClass(Identifier ai1, Identifier ai2, Statement as) {
-    i1=ai1; i2=ai2; s=as;
+  // Added VarDeclList and changed Stmt to StmlList
+  public MainClass(Identifier ai1, Identifier ai2, StatementList asl, VarDeclList avl) {
+    i1=ai1; i2=ai2; sl=asl; vl=avl;
   }
 
   public void accept(Visitor v) {

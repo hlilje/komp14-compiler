@@ -31,7 +31,8 @@ cdl.addElement(cd);
   }
 
 // TODO Handle VarDecl?
-  final public MainClass MainClass() throws ParseException {Identifier i1, i2; StatementList sl = new StatementList(); Statement s = null;
+  final public MainClass MainClass() throws ParseException {Identifier i1, i2; StatementList sl = new StatementList(); Statement s; // TODO Remove init to null
+    VarDeclList vdl = new VarDeclList(); VarDecl vd;
     jj_consume_token(CLASS);
     i1 = Identifier();
     jj_consume_token(LBRACE);
@@ -53,7 +54,8 @@ cdl.addElement(cd);
       } else {
         break label_2;
       }
-      VarDecl();
+      vd = VarDecl();
+vdl.addElement(vd);
     }
     label_3:
     while (true) {
@@ -75,7 +77,7 @@ sl.addElement(s);
     }
     jj_consume_token(RBRACE);
     jj_consume_token(RBRACE);
-{if ("" != null) return new MainClass(i1, i2, s);}
+{if ("" != null) return new MainClass(i1, i2, sl, vdl);}
     throw new Error("Missing return statement in function");
   }
 
@@ -651,10 +653,10 @@ el.addElement(e2);
     finally { jj_save(5, xla); }
   }
 
-  private boolean jj_3_5()
+  private boolean jj_3R_11()
  {
-    if (jj_scan_token(NEW)) return true;
-    if (jj_scan_token(INT)) return true;
+    if (jj_3R_13()) return true;
+    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -668,13 +670,6 @@ el.addElement(e2);
   private boolean jj_3R_12()
  {
     if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_11()
- {
-    if (jj_3R_13()) return true;
-    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -736,6 +731,13 @@ el.addElement(e2);
   private boolean jj_3_1()
  {
     if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
+ {
+    if (jj_scan_token(NEW)) return true;
+    if (jj_scan_token(INT)) return true;
     return false;
   }
 

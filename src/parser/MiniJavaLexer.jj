@@ -98,12 +98,16 @@ Program Program() :
 
 // TODO Handle VarDecl?
 MainClass MainClass() :
-{ Identifier i1, i2; StatementList sl = new StatementList(); Statement s = null; } // TODO Remove init to null
+{
+    Identifier i1, i2; StatementList sl = new StatementList(); Statement s; // TODO Remove init to null
+    VarDeclList vdl = new VarDeclList(); VarDecl vd;
+}
 {
     // TODO Check that identifier is main later
     "class" i1 = Identifier() "{" "public" "static" "void" <IDENTIFIER> "(" "String" "[" "]"
-    i2 = Identifier() ")" "{" ( LOOKAHEAD(2) VarDecl() )* ( s = Stmt() { sl.addElement(s); } )* "}" "}"
-    { return new MainClass(i1, i2, s); }
+    i2 = Identifier() ")" "{" ( LOOKAHEAD(2) vd = VarDecl() { vdl.addElement(vd); } )*
+    ( s = Stmt() { sl.addElement(s); } )* "}" "}"
+    { return new MainClass(i1, i2, sl, vdl); }
 }
 
 // ClassDeclExtends is an extension to the grammar

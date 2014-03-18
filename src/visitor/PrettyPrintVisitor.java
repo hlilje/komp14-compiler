@@ -23,8 +23,15 @@ public class PrettyPrintVisitor implements Visitor {
         System.out.print("  public static void main (String [] ");
         n.i2.accept(this);
         System.out.println(") {");
-        System.out.print("    ");
-        n.s.accept(this);
+        for ( int i = 0; i < n.vl.size(); i++ ) {
+            System.out.print("  ");
+            n.vl.elementAt(i).accept(this);
+            if ( i+1 < n.vl.size() ) { System.out.println(); }
+        }
+        for ( int i = 0; i < n.sl.size(); i++ ) {
+            System.out.println();
+            n.sl.elementAt(i).accept(this);
+        }
         System.out.println("  }");
         System.out.println("}");
     }
