@@ -9,14 +9,13 @@ public class HashT {
         for(int i=0; i<s.length(); i++) {
             h = h * 65599 + s.charAt(i);
         }
-        System.out.println("    HASH: " + h); // DEBUG
         return h < 0 ? -h : h; // Avoid negative values form int overflow
     }
 
     // Changed from Binding b, possible error in Appel book
     public void insert(String s, Object b) {
         int index = hash(s) % SIZE;
-        //System.out.println("    INDEX FROM HASH: " + index); // DEBUG
+        System.out.println("    INDEX FROM HASH: " + index); // DEBUG
         table[index] = new Bucket(s,b,table[index]);
     }
 

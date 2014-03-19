@@ -32,16 +32,16 @@ public class Main {
             program = parser.Program();
 
             System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>"); // DEBUG
-            printVisitor = new ASTPrintVisitor();
-            printVisitor.visit(program);
+            //printVisitor = new ASTPrintVisitor();
+            //printVisitor.visit(program);
 
             System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             depthVisitor = new DepthFirstVisitor(error, symTable);
             depthVisitor.visit(program);
 
             System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>"); // DEBUG
-            typeVisitor = new TypeDepthFirstVisitor(error, symTable);
-            typeVisitor.visit(program);
+            //typeVisitor = new TypeDepthFirstVisitor(error, symTable);
+            //typeVisitor.visit(program);
         } catch (ParseException e) {
             System.out.println(e.toString());
         }
