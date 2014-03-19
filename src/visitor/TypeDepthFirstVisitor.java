@@ -4,17 +4,16 @@ import syntaxtree.*;
 import error.*;
 import symbol.*;
 
-// TODO Should this class have scopes?
 public class TypeDepthFirstVisitor implements TypeVisitor {
     private ErrorMsg error;
-    private Table table;
-    private Object currClass;
-    private Object currMethod;
+    private SymbolTable symTable;
+    private ClassTable currClass;
+    private MethodTable currMethod;
 
-    // Add constructor to inject error message
-    public TypeDepthFirstVisitor(ErrorMsg error, Table table) {
+    // Added constructor to inject error message and symtable
+    public TypeDepthFirstVisitor(ErrorMsg error, SymbolTable symTable) {
         this.error = error;
-        this.table = table;
+        this.symTable = symTable;
         currClass = null;
         currMethod = null;
     }
@@ -33,7 +32,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i1,i2;
     // Statement s;
     public Type visit(MainClass n) {
-        currClass = n;
+        currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
+        currMethod = null; // TODO Is this correct?
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -51,7 +51,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public Type visit(ClassDeclSimple n) {
-        currClass = n;
+        currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
+        currMethod = null; // TODO Is this correct?
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -69,7 +70,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public Type visit(ClassDeclExtends n) {
-        currClass = n;
+        currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
+        currMethod = null; // TODO Is this correct?
 
         n.i.accept(this);
         n.j.accept(this);
@@ -98,7 +100,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // StatementList sl;
     // Exp e;
     public Type visit(MethodDecl n) {
-        currMethod = n;
+        currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
 
         n.t.accept(this);
         n.i.accept(this);
@@ -181,10 +183,14 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e;
     public Type visit(Assign n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        Object o = table.get(s);
-        //if(!(n.i.accept(this).equals(n.e.accept(this))))
+        Binding b;
+        if(currClass == null)
+            b = currMethod.getVar(s);
+        else
+            b = currClass.getVar(s);
+
         if(!(n.i.accept(this).equals(n.e.accept(this))))
-            error.complain("Expression is not of type " + ((VarDecl)o).t);
+            error.complain("Expression is not of type " + b.getType());
 
         return null;
     }
@@ -272,21 +278,12 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // ExpList el;
     public Type visit(Call n) {
-        Symbol s = Symbol.symbol(n.i.toString());
-        Type t;
-        ClassDecl cl = (ClassDecl)table.get(s);
-        if(cl instanceof ClassDeclSimple) {
-            t = new IdentifierType(((ClassDeclSimple)cl).i.toString());
-        } else {
-            t = new IdentifierType(((ClassDeclExtends)cl).i.toString());
-        }
-
         n.e.accept(this);
         n.i.accept(this);
         for ( int i = 0; i < n.el.size(); i++ ) {
             n.el.elementAt(i).accept(this);
         }
-        return t; // TODO Should this return the type of the called method?
+        return null; // TODO Should this return the type of the called method?
     }
 
     // int i;
@@ -306,41 +303,29 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(IdentifierExp n) {
         // TODO Must return the actual type from symbol table
         System.out.println("ID_EXP: " + n.s); // DEBUG
-
         Symbol s = Symbol.symbol(n.s);
-        Object o = table.get(s);
-        Type t;
-        if(o instanceof VarDecl) {
-            System.out.println("    instanceof VarDecl"); // DEBUG
-            t = ((VarDecl)o).t;
-        } else if(o instanceof MethodDecl) {
-            System.out.println("    instanceof MethodDecl"); // DEBUG
-            t = ((MethodDecl)o).t;
-        //} else if(o instanceof Formal) {
-        } else {
-            System.out.println("    instanceof Formal"); // DEBUG
-            t = ((Formal)o).t;
-        } /*else {
-            if(o == null)
-                System.out.println("    was NULL"); // DEBUG
-            else
-                System.out.println("    instance of class: " + o.getClass()); // DEBUG
-            return null; // TODO
-        }*/
 
-        return t;
+        Binding b;
+        if(currMethod == null)
+            b = currClass.getVar(s);
+        else
+            b = currMethod.getVar(s);
+
+        return b.getType();
     }
 
     public Type visit(This n) {
         // TODO Is this correct?
-        ClassDecl cl = (ClassDecl)currClass;
-        if(cl instanceof ClassDeclSimple) {
-            ClassDeclSimple cds = (ClassDeclSimple)cl;
-            return cds.i.accept(this); // Extract the type from the identifier
-        } else {
-            ClassDeclExtends cde = (ClassDeclExtends)cl;
-            return cde.i.accept(this);
-        }
+        //ClassDecl cl = (ClassDecl)currClass;
+        //if(cl instanceof ClassDeclSimple) {
+        //    ClassDeclSimple cds = (ClassDeclSimple)cl;
+        //    return cds.i.accept(this); // Extract the type from the identifier
+        //} else {
+        //    ClassDeclExtends cde = (ClassDeclExtends)cl;
+        //    return cde.i.accept(this);
+        //}
+
+        return null;
     }
 
     // Exp e;

@@ -6,14 +6,14 @@ import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
     private ErrorMsg error;
-    private Table table;
-    private Symbol currClass;
-    private Symbol currMethod;
+    private SymbolTable symTable;
+    private ClassTable currClass;
+    private MethodTable currMethod;
 
-    // Add constructor to inject error message and table
-    public DepthFirstVisitor(ErrorMsg error, Table table) {
+    // Added constructor to inject error message and symtable
+    public DepthFirstVisitor(ErrorMsg error, SymbolTable symTable) {
         this.error = error;
-        this.table = table;
+        this.symTable = symTable;
         currClass = null;
         currMethod = null;
     }
@@ -21,14 +21,10 @@ public class DepthFirstVisitor implements Visitor {
     // MainClass m;
     // ClassDeclList cl;
     public void visit(Program n) {
-        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
-
         n.m.accept(this);
         for ( int i = 0; i < n.cl.size(); i++ ) {
             n.cl.elementAt(i).accept(this);
         }
-
-        System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Identifier i1,i2;
@@ -36,8 +32,14 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(MainClass n) {
         System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i1.toString());
-        currClass = s;
-        table.put(s, new Table(table));
+        ClassTable ct = new ClassTable(s);
+
+        if(!symTable.addClass(s, ct))
+            error.complain("Class " + s + " is already defined (main class)");
+        else {
+            currClass = ct;
+            currMethod = null; // TODO
+        }
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -57,11 +59,13 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(ClassDeclSimple n) {
         System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i.toString());
-        if(!table.inScope(s)) {
-            currClass = s;
-            table.put(s, new Table(table));
-        } else {
-            error.complain(s + " is already defined");
+        ClassTable ct = new ClassTable(s);
+
+        if(!symTable.addClass(s, ct))
+            error.complain("Class " + s + " is already defined");
+        else {
+            currClass = ct;
+            currMethod = null; // TODO
         }
 
         n.i.accept(this);
@@ -82,11 +86,13 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(ClassDeclExtends n) {
         System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i.toString());
-        if(!table.inScope(s)) {
-            currClass = s;
-            table.put(s, new Table(table));
-        } else {
-            error.complain(s + " is already defined");
+
+        ClassTable ct = new ClassTable(s);
+        if(!symTable.addClass(s, ct))
+            error.complain("Class " + s + " is already defined");
+        else {
+            currClass = ct;
+            currMethod = null; // TODO
         }
 
         n.i.accept(this);
@@ -105,13 +111,14 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i;
     public void visit(VarDecl n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        if(!table.inScope(s)) {
-            table.put(s, n); // TODO Should this be a new scope?
+
+        // TODO May local variables override formals?
+        if(currMethod == null) {
+            if(!currClass.addVar(s, n.t))
+                error.complain("VarDecl " + s + " is already defined in " + currClass.getId());
         } else {
-            if(currMethod == null)
-                error.complain(s + " is already defined in " + currClass);
-            else
-                error.complain(s + " is already defined in " + currMethod);
+            if(!currMethod.addVar(s, n.t)); // TODO Must there be a check in class scope here?
+                error.complain("VarDecl" + s + " is already defined in " + currClass.getId());
         }
 
         n.t.accept(this);
@@ -127,14 +134,11 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(MethodDecl n) {
         System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i.toString());
-        if(!table.inScope(s)) {
-            currMethod = s;
-            table.putMethod(n, new Table(table));
-        } else {
-            error.complain(s + " is already defined in " + currClass);
-        }
+        MethodTable mt = new MethodTable(s, n.t);
 
-        n.t.accept(this);
+        if(!currClass.addMethod(s, mt))
+            error.complain("Method " + s + " is already defined in " + currClass.getId());
+
         n.i.accept(this);
 
         for ( int i = 0; i < n.fl.size(); i++ ) {
@@ -147,6 +151,7 @@ public class DepthFirstVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
+        n.t.accept(this);
         n.e.accept(this);
         System.out.println("======= END SCOPE ======="); // DEBUG
     }
@@ -154,7 +159,10 @@ public class DepthFirstVisitor implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(Formal n) {
-        table.put(Symbol.symbol(n.i.toString()), n); // TODO Should this be a new scope?
+        Symbol s = Symbol.symbol(n.i.toString());
+
+        if(!currMethod.addFormal(s, n.t))
+            error.complain("Formal " + s + " is already defined in " + currMethod.getId());
 
         n.t.accept(this);
         n.i.accept(this);
@@ -205,8 +213,15 @@ public class DepthFirstVisitor implements Visitor {
     // Exp e;
     public void visit(Assign n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        if(!table.inScope(s))
-            error.complain(s + " is not defined");
+        if(currMethod == null) {
+            if(!currClass.hasVar(s))
+                error.complain(s + " is not defined");
+        } else {
+            if(!currMethod.inScope(s)) {
+                if(!currClass.hasVar(s))
+                    error.complain(s + " is not defined");
+            }
+        }
         n.i.accept(this);
         n.e.accept(this);
     }

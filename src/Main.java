@@ -13,7 +13,7 @@ public class Main {
         Program program;
 
         ErrorMsg error = new ErrorMsg(System.out);
-        Table table = new Table(null); // Set previous table to null
+        SymbolTable symTable = new SymbolTable();
 
         if(args.length == 0) {
             parser = new MiniJavaParser(System.in);
@@ -36,11 +36,11 @@ public class Main {
             printVisitor.visit(program);
 
             System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>"); // DEBUG
-            depthVisitor = new DepthFirstVisitor(error, table);
+            depthVisitor = new DepthFirstVisitor(error, symTable);
             depthVisitor.visit(program);
 
             System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>"); // DEBUG
-            typeVisitor = new TypeDepthFirstVisitor(error, table);
+            typeVisitor = new TypeDepthFirstVisitor(error, symTable);
             typeVisitor.visit(program);
         } catch (ParseException e) {
             System.out.println(e.toString());
