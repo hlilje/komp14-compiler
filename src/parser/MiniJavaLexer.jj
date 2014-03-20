@@ -243,6 +243,20 @@ Exp Op(Exp eb) :
     { return e; }
 }
 
+Exp Exp() :
+{ Exp e; }
+{
+    e = And()
+    { return e; }
+}
+
+Exp And() :
+{ Exp e; }
+{
+    e = LessThan() ( "&&" LessThan() )*
+    { return e; }
+}
+
 Exp ArithmeticOp(Exp eb) :
 { Exp e, ea; }
 {
