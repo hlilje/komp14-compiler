@@ -244,9 +244,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG)
             System.out.println("AND E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
 
-        if(!(n.e1.accept(this) instanceof IntegerType))
+        if(!(n.e1.accept(this) instanceof BooleanType))
             error.complain("Left side of And must be of type boolean");
-        if(!(n.e2.accept(this) instanceof IntegerType))
+        if(!(n.e2.accept(this) instanceof BooleanType))
             error.complain("Right side of And must be of type boolean");
 
         return new BooleanType();

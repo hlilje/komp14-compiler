@@ -243,6 +243,41 @@ Exp Op(Exp eb) :
     { return e; }
 }
 
+Exp ArithmeticOp(Exp eb) :
+{ Exp e, ea; }
+{
+    (
+    "+" ea = Exp() { e = new Plus(eb, ea); }
+    | "-" ea = Exp() { e = new Minus(eb, ea); }
+    | "*" ea = Exp() { e = new Times(eb, ea); }
+    )
+    { return e; }
+}
+
+Exp LogicalOp(Exp eb) :
+{ Exp e, ea; }
+{
+    (
+    "&&" ea = Exp() { e = new And(eb, ea); }
+    | "||" ea = Exp() { e = new Or(eb, ea); } // Binds looser than &&
+    )
+    { return e; }
+}
+
+Exp CompareOp(Exp eb) :
+{ Exp e, ea; }
+{
+    (
+    "<" ea = Exp() { e = new LessThan(eb, ea); }
+    | "<=" ea = Exp() { e = new LessThanEquals(eb, ea); }
+    | ">" ea = Exp() { e = new GreaterThan(eb, ea); }
+    | ">=" ea = Exp() { e = new GreaterThanEquals(eb, ea); }
+    | "==" ea = Exp() { e = new Equals(eb, ea); }
+    | "!=" ea = Exp() { e = new EqualsNot(eb, ea); }
+    )
+    { return e; }
+}
+
 ExpList ExpList() :
 { Exp e1, e2; ExpList el = new ExpList(); }
 {
