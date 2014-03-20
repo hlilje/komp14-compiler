@@ -21,6 +21,10 @@ public class MethodTable extends AbstractTable {
         return s;
     }
 
+    public Type getType() {
+        return t;
+    }
+
     public boolean addVar(Symbol s, Type t) {
         if(locals.get(s) != null)
             return false;

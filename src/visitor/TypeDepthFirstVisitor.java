@@ -11,6 +11,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
+    private BlockTable currBlock;
 
     // Added constructor to inject error message and symtable
     public TypeDepthFirstVisitor(ErrorMsg error, SymbolTable symTable) {
@@ -18,6 +19,28 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         this.symTable = symTable;
         currClass = null;
         currMethod = null;
+        currBlock = null;
+    }
+
+    // Helper method to extract type of given var symbol, returns null
+    // if not found
+    public Type getVarType(Symbol s) {
+        Type t; Binding b;
+        if(currMethod == null)
+            b = currClass.getVar(s);
+        else if(currBlock == null) {
+            if(currMethod.getVar(s) == null)
+                b = (Binding)currClass.getVar(s);
+            else
+                b = (Binding)currMethod.getVar(s);
+        } else {
+            if(currBlock.getVar(s) == null) { // Also checks method
+                    b = (Binding)currClass.getVar(s);
+            } else
+                    b = (Binding)currBlock.getVar(s);
+        }
+
+        return b != null ? b.getType() : null;
     }
 
     // MainClass m;
@@ -35,7 +58,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Statement s;
     public Type visit(MainClass n) {
         currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
-        currMethod = null; // TODO Is this correct?
+        currMethod = null;
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -54,7 +77,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // MethodDeclList ml;
     public Type visit(ClassDeclSimple n) {
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
-        currMethod = null; // TODO Is this correct?
+        currMethod = null;
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -73,7 +96,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // MethodDeclList ml;
     public Type visit(ClassDeclExtends n) {
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
-        currMethod = null; // TODO Is this correct?
+        currMethod = null;
 
         n.i.accept(this);
         n.j.accept(this);
@@ -144,14 +167,22 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(IdentifierType n) {
         if(DEBUG)
             System.out.println("ID_TYPE: " + n.s); // DEBUG
+
         return n;
     }
 
     // StatementList sl;
     public Type visit(Block n) {
+        AbstractTable at;
+        if(currBlock == null)
+            at = new BlockTable(currMethod);
+        else
+            at = new BlockTable(currBlock);
+
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
+        currBlock = null;
         return null;
     }
 
@@ -186,14 +217,15 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e;
     public Type visit(Assign n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        Binding b;
-        if(currClass == null)
-            b = currMethod.getVar(s);
-        else
-            b = currClass.getVar(s);
+        Type t = getVarType(s);
+
+        if(DEBUG) {
+            System.out.println("i before equals: " + n.i.accept(this));
+            System.out.println("e before equals: " + n.e.accept(this));
+        }
 
         if(!(n.i.accept(this).equals(n.e.accept(this))))
-            error.complain("Expression is not of type " + b.getType());
+            error.complain("Expression is not of type " + t);
 
         return null;
     }
@@ -284,12 +316,26 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // ExpList el;
     public Type visit(Call n) {
+        Symbol s1 = Symbol.symbol(n.i.toString()); // Method name
+        Type t; Exp e = n.e; Symbol s2;
+        if(e instanceof NewObject) {
+            s2 = Symbol.symbol(((NewObject)e).i.toString());
+            t = symTable.getClass(s2).getMethod(s1).getType();
+        } else if(e instanceof IdentifierExp) {
+            IdentifierExp ie = (IdentifierExp)e;
+            s2 = Symbol.symbol(ie.s);
+            t = symTable.getClass(s2).getMethod(s1).getType();
+        } else { // instanceof This
+            t = ((MethodTable)currClass.getMethod(s1)).getType();
+        }
+
         n.e.accept(this);
         n.i.accept(this);
+
         for ( int i = 0; i < n.el.size(); i++ ) {
             n.el.elementAt(i).accept(this);
         }
-        return null; // TODO Should this return the type of the called method?
+        return t;
     }
 
     // int i;
@@ -311,27 +357,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG)
             System.out.println("ID_EXP: " + n.s); // DEBUG
         Symbol s = Symbol.symbol(n.s);
-
-        Binding b;
-        if(currMethod == null)
-            b = currClass.getVar(s);
-        else
-            b = currMethod.getVar(s);
-
-        return b.getType();
+        return getVarType(s);
     }
 
     public Type visit(This n) {
-        // TODO Is this correct?
-        //ClassDecl cl = (ClassDecl)currClass;
-        //if(cl instanceof ClassDeclSimple) {
-        //    ClassDeclSimple cds = (ClassDeclSimple)cl;
-        //    return cds.i.accept(this); // Extract the type from the identifier
-        //} else {
-        //    ClassDeclExtends cde = (ClassDeclExtends)cl;
-        //    return cde.i.accept(this);
-        //}
-
         return null;
     }
 
@@ -356,9 +385,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // String s;
     public Type visit(Identifier n) {
-        System.out.println("ID: " + n.s); // DEBUG
+        if(DEBUG)
+            System.out.println("ID: " + n.s); // DEBUG
+        Symbol s = Symbol.symbol(n.s);
 
-        return new IdentifierType(n.s);
+        return getVarType(s);
     }
 
     // Exp e1,e2;

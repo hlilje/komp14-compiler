@@ -14,7 +14,7 @@ public class BlockTable extends AbstractTable {
     }
 
     public boolean addVar(Symbol s, Type t) {
-        if(locals.get(s) != null)
+        if(getVar(s) != null)
             return false;
         else {
             locals.put(s, new Binding(s, t));
@@ -22,6 +22,7 @@ public class BlockTable extends AbstractTable {
         }
     }
 
+    // Will continue checking back until bt is current method
     public Binding getVar(Symbol s) {
         Binding b = (Binding)locals.get(s);
         if(b == null)

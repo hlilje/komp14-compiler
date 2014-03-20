@@ -30,7 +30,6 @@ cdl.addElement(cd);
     throw new Error("Missing return statement in function");
   }
 
-// TODO Handle VarDecl?
   final public MainClass MainClass() throws ParseException {Identifier i1, i2; StatementList sl = new StatementList(); Statement s; // TODO Remove init to null
     VarDeclList vdl = new VarDeclList(); VarDecl vd;
     jj_consume_token(CLASS);

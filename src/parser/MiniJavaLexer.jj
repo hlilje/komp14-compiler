@@ -96,7 +96,6 @@ Program Program() :
     { return new Program(mc, cdl); }
 }
 
-// TODO Handle VarDecl?
 MainClass MainClass() :
 {
     Identifier i1, i2; StatementList sl = new StatementList(); Statement s; // TODO Remove init to null
