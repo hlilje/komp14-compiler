@@ -5,6 +5,8 @@ import error.*;
 import symbol.*;
 
 public class TypeDepthFirstVisitor implements TypeVisitor {
+    public static final boolean DEBUG = true;
+
     private ErrorMsg error;
     private SymbolTable symTable;
     private ClassTable currClass;
@@ -140,7 +142,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // String s;
     public Type visit(IdentifierType n) {
-        System.out.println("ID_TYPE: " + n.s); // DEBUG
+        if(DEBUG)
+            System.out.println("ID_TYPE: " + n.s); // DEBUG
         return n;
     }
 
@@ -206,7 +209,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(And n) {
-        System.out.println("AND E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
+        if(DEBUG)
+            System.out.println("AND E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
 
         if(!(n.e1.accept(this) instanceof IntegerType))
             error.complain("Left side of And must be of type boolean");
@@ -218,7 +222,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(LessThan n) {
-        System.out.println("LESS_THAN E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
+        if(DEBUG)
+            System.out.println("LESS_THAN E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
 
         if(!(n.e1.accept(this) instanceof IntegerType))
             error.complain("Left side of LessThan must be of type integer");
@@ -231,7 +236,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     // TODO
     public Type visit(Plus n) {
-        System.out.println("PLUS E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
+        if(DEBUG)
+            System.out.println("PLUS E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
 
         if(!(n.e1.accept(this) instanceof IntegerType))
             error.complain("Left side of Plus must be of type integer");
@@ -302,7 +308,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // String s;
     public Type visit(IdentifierExp n) {
         // TODO Must return the actual type from symbol table
-        System.out.println("ID_EXP: " + n.s); // DEBUG
+        if(DEBUG)
+            System.out.println("ID_EXP: " + n.s); // DEBUG
         Symbol s = Symbol.symbol(n.s);
 
         Binding b;

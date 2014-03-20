@@ -5,6 +5,8 @@ import error.*;
 import symbol.*;
 
 public class Main {
+    public static final boolean DEBUG = true;
+
     public static void main(String[] args) {
         MiniJavaParser parser;
         ASTPrintVisitor printVisitor;
@@ -31,17 +33,20 @@ public class Main {
         try {
             program = parser.Program();
 
-            System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>"); // DEBUG
+            if(DEBUG)
+                System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             //printVisitor = new ASTPrintVisitor();
             //printVisitor.visit(program);
 
-            System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>"); // DEBUG
+            if(DEBUG)
+                System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             depthVisitor = new DepthFirstVisitor(error, symTable);
             depthVisitor.visit(program);
 
-            System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>"); // DEBUG
-            //typeVisitor = new TypeDepthFirstVisitor(error, symTable);
-            //typeVisitor.visit(program);
+            if(DEBUG)
+                System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>"); // DEBUG
+            typeVisitor = new TypeDepthFirstVisitor(error, symTable);
+            typeVisitor.visit(program);
         } catch (ParseException e) {
             System.out.println(e.toString());
         }

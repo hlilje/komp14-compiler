@@ -1,6 +1,8 @@
 package symbol;
 
 public class Table {
+    public static final boolean DEBUG = true;
+
     private HashT hashTable;
 
     public Table() {
@@ -8,12 +10,14 @@ public class Table {
     }
 
     public void put(Symbol key, Object value) {
-        System.out.println("    PUT: " + key.toString() + ", " + value.getClass()); // DEBUG
+        if(DEBUG)
+            System.out.println("    PUT: " + key.toString() + ", " + value.getClass()); // DEBUG
         hashTable.insert(key.toString(), value);
     }
 
     public Object get(Symbol key) {
-        System.out.println("    GET: " + key.toString()); // DEBUG
+        if(DEBUG)
+            System.out.println("    GET: " + key.toString()); // DEBUG
         return hashTable.lookup(key.toString());
     }
 

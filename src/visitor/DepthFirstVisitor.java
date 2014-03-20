@@ -5,10 +5,13 @@ import error.*;
 import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
+    public static final boolean DEBUG = true;
+
     private ErrorMsg error;
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
+    private BlockTable currBlock;
 
     // Added constructor to inject error message and symtable
     public DepthFirstVisitor(ErrorMsg error, SymbolTable symTable) {
@@ -16,12 +19,14 @@ public class DepthFirstVisitor implements Visitor {
         this.symTable = symTable;
         currClass = null;
         currMethod = null;
+        currBlock = null;
     }
 
     // MainClass m;
     // ClassDeclList cl;
     public void visit(Program n) {
-        System.out.println(">>> VISIT PROGRAM"); // DEBUG
+        if(DEBUG)
+            System.out.println(">>> VISIT PROGRAM"); // DEBUG
         n.m.accept(this);
         for ( int i = 0; i < n.cl.size(); i++ ) {
             n.cl.elementAt(i).accept(this);
@@ -31,9 +36,11 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i1,i2;
     // Statement s;
     public void visit(MainClass n) {
-        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
+        if(DEBUG)
+            System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i1.toString());
-        System.out.println(">>> VISIT MAIN_CLASS: " + s); // DEBUG
+        if(DEBUG)
+            System.out.println(">>> VISIT MAIN_CLASS: " + s); // DEBUG
         ClassTable ct = new ClassTable(s);
 
         if(!symTable.addClass(s, ct))
@@ -52,16 +59,19 @@ public class DepthFirstVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        System.out.println("======= END SCOPE ======="); // DEBUG
+        if(DEBUG)
+            System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Identifier i;
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
-        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
+        if(DEBUG)
+            System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i.toString());
-        System.out.println(">>> VISIT CLASS_DECL_SIMP: " + s); // DEBUG
+        if(DEBUG)
+            System.out.println(">>> VISIT CLASS_DECL_SIMP: " + s); // DEBUG
         ClassTable ct = new ClassTable(s);
 
         if(!symTable.addClass(s, ct))
@@ -79,7 +89,8 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
-        System.out.println("======= END SCOPE ======="); // DEBUG
+        if(DEBUG)
+            System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Identifier i;
@@ -87,9 +98,11 @@ public class DepthFirstVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
-        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
+        if(DEBUG)
+            System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i.toString());
-        System.out.println(">>> VISIT CLASS_DECLEXT: " + s); // DEBUG
+        if(DEBUG)
+            System.out.println(">>> VISIT CLASS_DECLEXT: " + s); // DEBUG
         ClassTable ct = new ClassTable(s);
 
         if(!symTable.addClass(s, ct))
@@ -108,23 +121,31 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
-        System.out.println("======= END SCOPE ======="); // DEBUG
+        if(DEBUG)
+            System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        System.out.println(">>> VISIT VAR_DECL: " + s); // DEBUG
+        if(DEBUG)
+            System.out.println(">>> VISIT VAR_DECL: " + s); // DEBUG
 
-
-        // TODO May local variables override formals?
         if(currMethod == null) {
             if(!currClass.addVar(s, n.t))
                 error.complain("VarDecl " + s + " is already defined in " + currClass.getId());
         } else {
-            if(!currMethod.addVar(s, n.t)) // TODO Must there be a check in class scope here?
-                error.complain("VarDecl " + s + " is already defined in " + currMethod.getId());
+            if(currBlock == null) {
+                if(!currMethod.addVar(s, n.t)) // TODO Must there be a check in class scope here?
+                    error.complain("VarDecl " + s + " is already defined in " + currMethod.getId());
+            } else {
+                if(currMethod.inScope(s))
+                    error.complain("VarDecl " + s + " is already defined in " + currMethod.getId());
+                else
+                    if(!currBlock.addVar(s, n.t))
+                        error.complain("VarDecl " + s + " is already defined in block in " + currMethod.getId());
+            }
         }
 
         n.t.accept(this);
@@ -138,9 +159,11 @@ public class DepthFirstVisitor implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
-        System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
+        if(DEBUG)
+            System.out.println("====== BEGIN SCOPE ====== "); // DEBUG
         Symbol s = Symbol.symbol(n.i.toString());
-        System.out.println(">>> VISIT METHOD_DECL: " + s); // DEBUG
+        if(DEBUG)
+            System.out.println(">>> VISIT METHOD_DECL: " + s); // DEBUG
         MethodTable mt = new MethodTable(s, n.t);
 
         if(!currClass.addMethod(s, mt))
@@ -162,14 +185,16 @@ public class DepthFirstVisitor implements Visitor {
 
         n.t.accept(this);
         n.e.accept(this);
-        System.out.println("======= END SCOPE ======="); // DEBUG
+        if(DEBUG)
+            System.out.println("======= END SCOPE ======="); // DEBUG
     }
 
     // Type t;
     // Identifier i;
     public void visit(Formal n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        System.out.println(">>> VISIT FORMAL: " + s); // DEBUG
+        if(DEBUG)
+            System.out.println(">>> VISIT FORMAL: " + s); // DEBUG
 
         if(!currMethod.addFormal(s, n.t))
             error.complain("Formal " + s + " is already defined in " + currMethod.getId());
@@ -192,12 +217,20 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     // StatementList sl;
-    // TODO Names in inner blocks should not be allowed to override the scope above
     public void visit(Block n) {
-        System.out.println(">>> VISIT BLOCK"); // DEBUG
+        if(DEBUG)
+            System.out.println(">>> VISIT BLOCK"); // DEBUG
+        BlockTable bt;
+        if(currBlock == null)
+            bt = new BlockTable(currMethod);
+        else
+            bt = new BlockTable(currBlock);
+        currBlock = bt;
+
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
+        currBlock = null;
     }
 
     // Exp e;
@@ -228,9 +261,18 @@ public class DepthFirstVisitor implements Visitor {
             if(!currClass.hasVar(s))
                 error.complain(s + " is not defined");
         } else {
-            if(!currMethod.inScope(s)) {
-                if(!currClass.hasVar(s))
-                    error.complain(s + " is not defined");
+            if(currBlock == null) {
+                if(!currMethod.inScope(s)) {
+                    if(!currClass.hasVar(s))
+                        error.complain(s + " is not defined");
+                }
+            } else {
+                if(currBlock.getVar(s) == null) {
+                    if(!currMethod.inScope(s)) {
+                        if(!currClass.hasVar(s))
+                            error.complain(s + " is not defined");
+                    }
+                }
             }
         }
         n.i.accept(this);
@@ -290,7 +332,8 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i;
     // ExpList el;
     public void visit(Call n) {
-        System.out.println(">>> VISIT CALL: " + n.i.toString()); // DEBUG
+        if(DEBUG)
+            System.out.println(">>> VISIT CALL: " + n.i.toString()); // DEBUG
         n.e.accept(this);
         n.i.accept(this);
         for ( int i = 0; i < n.el.size(); i++ ) {

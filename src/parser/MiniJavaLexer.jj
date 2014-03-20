@@ -176,11 +176,13 @@ Type Type() :
 Statement Stmt() :
 {
     StatementList sl = new StatementList(); Statement s, s1, s2;
-    Exp e1, e2; Identifier i;
+    Exp e1, e2; Identifier i; VarDeclList vdl = new VarDeclList();
+    VarDecl vd;
 }
 {
     (
-    "{" ( s1 = Stmt() { sl.addElement(s1); } )* "}" { s = new Block(sl); }
+    "{" (LOOKAHEAD(2) vd = VarDecl() { vdl.addElement(vd); } )*
+        ( s1 = Stmt() { sl.addElement(s1); } )* "}" { s = new Block(sl, vdl); }
     | "if" "(" e1 = Exp() ")" s1 = Stmt() "else" s2 = Stmt() { s = new If(e1, s1, s2); }
     | "while" "(" e1 = Exp() ")" s1 = Stmt() { s = new While(e1, s1); }
     | "System.out.println" "(" e1 = Exp() ")" ";" { s = new Print(e1); }
