@@ -8,12 +8,12 @@ public class Table {
     }
 
     public void put(Symbol key, Object value) {
-        System.out.println("        PUT: " + key.toString() + ", " + value.getClass()); // DEBUG
+        System.out.println("    PUT: " + key.toString() + ", " + value.getClass()); // DEBUG
         hashTable.insert(key.toString(), value);
     }
 
     public Object get(Symbol key) {
-        System.out.println("        GET: " + key.toString()); // DEBUG
+        System.out.println("    GET: " + key.toString()); // DEBUG
         return hashTable.lookup(key.toString());
     }
 

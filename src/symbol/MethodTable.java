@@ -19,7 +19,7 @@ public class MethodTable {
         return s;
     }
 
-    public boolean addVar(Symbol id, Type t) {
+    public boolean addVar(Symbol s, Type t) {
         if(locals.get(s) != null)
             return false;
         else {

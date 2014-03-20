@@ -67,7 +67,6 @@ public class DepthFirstVisitor implements Visitor {
         if(!symTable.addClass(s, ct))
             error.complain("Class " + s + " is already defined");
         else {
-            error.complain("    add ClassDecl " + s); // DEBUG
             currClass = ct;
             currMethod = null; // TODO
         }
@@ -96,7 +95,6 @@ public class DepthFirstVisitor implements Visitor {
         if(!symTable.addClass(s, ct))
             error.complain("Class " + s + " is already defined");
         else {
-            error.complain("    add ClassDecl " + s); // DEBUG
             currClass = ct;
             currMethod = null; // TODO
         }
@@ -122,12 +120,10 @@ public class DepthFirstVisitor implements Visitor {
 
         // TODO May local variables override formals?
         if(currMethod == null) {
-            System.out.println("    currMethod for VarDecl " + s + " was NULL"); // DEBUG
             if(!currClass.addVar(s, n.t))
                 error.complain("VarDecl " + s + " is already defined in " + currClass.getId());
         } else {
-            System.out.println("    currMethod for VarDecl " + s + " was NOT NULL"); // DEBUG
-            if(!currMethod.addVar(s, n.t)); // TODO Must there be a check in class scope here?
+            if(!currMethod.addVar(s, n.t)) // TODO Must there be a check in class scope here?
                 error.complain("VarDecl " + s + " is already defined in " + currMethod.getId());
         }
 
