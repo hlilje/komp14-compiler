@@ -7,14 +7,14 @@ import symbol.*;
 public class DepthFirstVisitor implements Visitor {
     public static final boolean DEBUG = true;
 
-    private ErrorMsg error;
+    private ErrorHandler error;
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
     private BlockTable currBlock;
 
     // Added constructor to inject error message and symtable
-    public DepthFirstVisitor(ErrorMsg error, SymbolTable symTable) {
+    public DepthFirstVisitor(ErrorHandler error, SymbolTable symTable) {
         this.error = error;
         this.symTable = symTable;
         currClass = null;
@@ -43,9 +43,10 @@ public class DepthFirstVisitor implements Visitor {
             System.out.println(">>> VISIT MAIN_CLASS: " + s); // DEBUG
         ClassTable ct = new ClassTable(s);
 
-        if(!symTable.addClass(s, ct))
-            error.complain("Class " + s + " is already defined (main class)");
-        else {
+        if(!symTable.addClass(s, ct)) {
+            error.complain("Class " + s + " is already defined (main class)",
+                    ErrorHandler.ErrorCode.ALREADY_DEFINED);
+        } else {
             currClass = ct;
             currMethod = null;
         }
@@ -74,9 +75,10 @@ public class DepthFirstVisitor implements Visitor {
             System.out.println(">>> VISIT CLASS_DECL_SIMP: " + s); // DEBUG
         ClassTable ct = new ClassTable(s);
 
-        if(!symTable.addClass(s, ct))
-            error.complain("Class " + s + " is already defined");
-        else {
+        if(!symTable.addClass(s, ct)) {
+            error.complain("Class " + s + " is already defined",
+                    ErrorHandler.ErrorCode.ALREADY_DEFINED);
+        } else {
             currClass = ct;
             currMethod = null;
         }
@@ -105,9 +107,10 @@ public class DepthFirstVisitor implements Visitor {
             System.out.println(">>> VISIT CLASS_DECLEXT: " + s); // DEBUG
         ClassTable ct = new ClassTable(s);
 
-        if(!symTable.addClass(s, ct))
-            error.complain("Class " + s + " is already defined");
-        else {
+        if(!symTable.addClass(s, ct)) {
+            error.complain("Class " + s + " is already defined",
+                    ErrorHandler.ErrorCode.ALREADY_DEFINED);
+        } else {
             currClass = ct;
             currMethod = null;
         }
@@ -133,18 +136,26 @@ public class DepthFirstVisitor implements Visitor {
             System.out.println(">>> VISIT VAR_DECL: " + s); // DEBUG
 
         if(currMethod == null) {
-            if(!currClass.addVar(s, n.t))
-                error.complain("VarDecl " + s + " is already defined in " + currClass.getId());
+            if(!currClass.addVar(s, n.t)) {
+                error.complain("VarDecl " + s + " is already defined in " + currClass.getId(),
+                        ErrorHandler.ErrorCode.ALREADY_DEFINED);
+            }
         } else {
             if(currBlock == null) {
-                if(!currMethod.addVar(s, n.t)) // TODO Must there be a check in class scope here?
-                    error.complain("VarDecl " + s + " is already defined in " + currMethod.getId());
+                if(!currMethod.addVar(s, n.t)) { // TODO Must there be a check in class scope here? 
+                    error.complain("VarDecl " + s + " is already defined in " + currMethod.getId(),
+                            ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                }
             } else {
-                if(currMethod.inScope(s))
-                    error.complain("VarDecl " + s + " is already defined in " + currMethod.getId());
-                else
-                    if(!currBlock.addVar(s, n.t))
-                        error.complain("VarDecl " + s + " is already defined in block in " + currMethod.getId());
+                if(currMethod.inScope(s)) {
+                    error.complain("VarDecl " + s + " is already defined in " + currMethod.getId(),
+                            ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                } else {
+                    if(!currBlock.addVar(s, n.t)) {
+                        error.complain("VarDecl " + s + " is already defined in block in " + currMethod.getId(),
+                                ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                    }
+                }
             }
         }
 
@@ -166,9 +177,10 @@ public class DepthFirstVisitor implements Visitor {
             System.out.println(">>> VISIT METHOD_DECL: " + s); // DEBUG
         MethodTable mt = new MethodTable(s, n.t);
 
-        if(!currClass.addMethod(s, mt))
-            error.complain("Method " + s + " is already defined in " + currClass.getId());
-        else
+        if(!currClass.addMethod(s, mt)) {
+            error.complain("Method " + s + " is already defined in " + currClass.getId(),
+                    ErrorHandler.ErrorCode.ALREADY_DEFINED);
+        } else
             currMethod = mt;
 
         n.i.accept(this);
@@ -196,8 +208,10 @@ public class DepthFirstVisitor implements Visitor {
         if(DEBUG)
             System.out.println(">>> VISIT FORMAL: " + s); // DEBUG
 
-        if(!currMethod.addFormal(s, n.t))
-            error.complain("Formal " + s + " is already defined in " + currMethod.getId());
+        if(!currMethod.addFormal(s, n.t)) {
+            error.complain("Formal " + s + " is already defined in " + currMethod.getId(),
+                    ErrorHandler.ErrorCode.ALREADY_DEFINED);
+        }
 
         n.t.accept(this);
         n.i.accept(this);
@@ -258,19 +272,25 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(Assign n) {
         Symbol s = Symbol.symbol(n.i.toString());
         if(currMethod == null) {
-            if(!currClass.hasVar(s))
-                error.complain(s + " is not defined");
+            if(!currClass.hasVar(s)) {
+                error.complain(s + " is not defined",
+                        ErrorHandler.ErrorCode.ALREADY_DEFINED);
+            }
         } else {
             if(currBlock == null) {
                 if(!currMethod.inScope(s)) {
-                    if(!currClass.hasVar(s))
-                        error.complain(s + " is not defined");
+                    if(!currClass.hasVar(s)) {
+                        error.complain(s + " is not defined",
+                                ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                    }
                 }
             } else {
                 if(currBlock.getVar(s) == null) {
                     if(!currMethod.inScope(s)) {
-                        if(!currClass.hasVar(s))
-                            error.complain(s + " is not defined");
+                        if(!currClass.hasVar(s)) {
+                            error.complain(s + " is not defined", 
+                                    ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                        }
                     }
                 }
             }

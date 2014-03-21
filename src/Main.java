@@ -14,7 +14,7 @@ public class Main {
         TypeDepthFirstVisitor typeVisitor;
         Program program;
 
-        ErrorMsg error = new ErrorMsg(System.out);
+        ErrorHandler error = new ErrorHandler();
         SymbolTable symTable = new SymbolTable();
 
         if(args.length == 0) {
@@ -47,6 +47,12 @@ public class Main {
                 System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             typeVisitor = new TypeDepthFirstVisitor(error, symTable);
             typeVisitor.visit(program);
+
+            if(error.anyErrors()) {
+                System.err.println("___THERE WERE COMPILATION ERRORS___");
+                error.printErrors();
+                System.exit(-1);
+            }
         } catch (ParseException e) {
             System.out.println(e.toString());
         }

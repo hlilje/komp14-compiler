@@ -1,16 +1,27 @@
 package error;
 
 public class ErrorMsg {
-    private boolean anyErrors;
-    private java.io.PrintStream out;
+    private ErrorHandler.ErrorCode errorCode;
+    private String errorMessage;
+    private boolean reported;
 
-    public ErrorMsg(java.io.PrintStream o) {
-        anyErrors = false;
-        out = o;
+    // TODO Save line number as well
+    public ErrorMsg(String message, ErrorHandler.ErrorCode code) {
+        errorMessage = message;
+        reported = false;
+        errorCode = code;
     }
 
-    public void complain(String msg) {
-        anyErrors = true;
-        out.println(msg);
+    public boolean isReported() {
+        return reported;
+    }
+
+    public String toString() {
+        reported = true;
+        return errorMessage;
+    }
+
+    public ErrorHandler.ErrorCode getErrorCode() {
+        return errorCode;
     }
 }
