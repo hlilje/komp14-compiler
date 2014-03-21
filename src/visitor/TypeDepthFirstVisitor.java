@@ -43,6 +43,12 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         return b != null ? b.getType() : null;
     }
 
+    // Helper method to use the name of a variable to create a symbol
+    // of its IdentifierType (class).
+    public Symbol getClassNameFromVar(Symbol s) {
+        return Symbol.symbol(((IdentifierType)getVarType(s)).s);
+    }
+
     // MainClass m;
     // ClassDeclList cl;
     public Type visit(Program n) {
@@ -319,13 +325,20 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Symbol s1 = Symbol.symbol(n.i.toString()); // Method name
         Type t; Exp e = n.e; Symbol s2;
         if(e instanceof NewObject) {
+            if(DEBUG)
+                System.out.println("instanceof NewObject");
             s2 = Symbol.symbol(((NewObject)e).i.toString());
             t = symTable.getClass(s2).getMethod(s1).getType();
         } else if(e instanceof IdentifierExp) {
+            if(DEBUG)
+                System.out.println("instanceof IdentifierExp");
             IdentifierExp ie = (IdentifierExp)e;
-            s2 = Symbol.symbol(ie.s);
+            // Use class name to find class
+            s2 = getClassNameFromVar(Symbol.symbol(ie.s));
             t = symTable.getClass(s2).getMethod(s1).getType();
         } else { // instanceof This
+            if(DEBUG)
+                System.out.println("instanceof (else)");
             t = ((MethodTable)currClass.getMethod(s1)).getType();
         }
 
