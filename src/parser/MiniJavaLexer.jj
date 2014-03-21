@@ -191,103 +191,168 @@ Statement Stmt() :
     { return s; }
 }
 
+// Fixes op precedence but not associativity, should be handled in AST
 Exp Exp() :
+{ Exp e; }
+{
+    e = Or()
+    { return e; }
+}
+
+// Binds the loosest
+Exp Or() : // TODO
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = And() ( "||" ea = And() )* { e = new Or(eb, ea); }
+    | e = And()
+    )
+    { return e; }
+}
+
+Exp And() : // TODO
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = LessThan() ( "&&" ea = LessThan() )* { e = new And(eb, ea); }
+    | e = LessThan()
+    )
+    { return e; }
+}
+
+Exp LessThan() :
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = LessThanEquals() "<" ea = LessThanEquals() { e = new LessThan(eb, ea); }
+    | e = LessThanEquals()
+    )
+    { return e; }
+}
+
+Exp LessThanEquals() :
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = GreaterThan() "<=" ea = GreaterThan() { e = new LessThanEquals(eb, ea); }
+    | e = GreaterThan()
+    )
+    { return e; }
+}
+
+Exp GreaterThan() :
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = GreaterThanEquals() ">=" ea = GreaterThanEquals() { e = new GreaterThan(eb, ea); }
+    | e = GreaterThanEquals()
+    )
+    { return e; }
+}
+
+Exp GreaterThanEquals() :
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = Equals() ">" ea = Equals() { e = new GreaterThanEquals(eb, ea); }
+    | e = Equals()
+    )
+    { return e; }
+}
+
+Exp Equals() :
+{ Exp e, eb, ea; }
+{
+
+    (
+    LOOKAHEAD(2) eb = EqualsNot() "==" ea = EqualsNot() { e = new Equals(eb, ea); }
+    | e = EqualsNot()
+    )
+    { return e; }
+}
+
+Exp EqualsNot() :
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = Plus() "!=" Plus() { e = new EqualsNot(eb, ea); }
+    | e = Plus()
+    )
+    { return e; }
+}
+
+Exp Plus() : // TODO Are plus and minus allowed to be separated?
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = Minus() ( "+" ea = Minus() )* { e = new Plus(eb, ea); }
+    | e = Times()
+    )
+    { return e; }
+}
+
+Exp Minus() : // TODO
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = Times() ( "-" ea = Times() )* { e = new Minus(eb, ea); }
+    | e = Times()
+    )
+    { return e; }
+}
+
+Exp Times() : // TODO
+{ Exp e, eb, ea; }
+{
+    (
+    LOOKAHEAD(2) eb = PrefixExp() ( "*" ea = PrefixExp() )* { e = new Times(eb, ea); }
+    | e = PrefixExp()
+    )
+    { return e; }
+}
+
+Exp PrefixExp() :
+{ Exp e; }
+{
+    (
+    e = Not()
+    | e = PostfixExp()
+    )
+    { return e; }
+}
+
+Exp Not() : // TODO Should multiple negations be allowed?
+{ Exp e, pe; }
+{
+    ( "!" )+ pe = PostfixExp() { e = new Not(pe); }
+    { return e; }
+}
+
+Exp PostfixExp() :
+{ Exp e, pe, ie; Identifier i; ExpList el;}
+{
+    (
+    LOOKAHEAD(2) pe = PrimaryExp() ( "[" ie = Exp() "]" { e = new ArrayLookup(pe, ie); }
+        | LOOKAHEAD(2) "." i = Identifier() "(" el = ExpList() ")" { e = new Call(pe, i, el); }
+        | LOOKAHEAD(2) "." "length" { e = new ArrayLength(pe); } )*
+    | e = PrimaryExp()
+    )
+    { return e; }
+}
+
+// Binds the tightest
+Exp PrimaryExp() :
 { Exp e, ie, ep; Token i; Identifier id; }
 {
     (
-    e = IntegerLiteral() ep = ExpPrim(e)
-    | "true" { e = new True(); } ep = ExpPrim(e)
-    | "false" { e = new False(); } ep = ExpPrim(e)
-    | i = <IDENTIFIER> { e = new IdentifierExp(i.toString()); } ep = ExpPrim(e) // TODO Shall this be converted here?
-    | "this" { e = new This(); } ep = ExpPrim(e)
-    | LOOKAHEAD(2) "new" "int" "[" ie = Exp() "]" { e = new NewArray(ie); } ep = ExpPrim(e)
-    | "new" id = Identifier() "(" ")" { e = new NewObject(id); } ep = ExpPrim(e)
-    | "!" ie = Exp() { e = new Not(ie); } ep = ExpPrim(e)
-    | "(" e = Exp() ")" ep = ExpPrim(e)
-    )
-    { return ep; }
-}
-
-// Eliminate left recursion
-// ExpPrim has been removed
-Exp ExpPrim(Exp eb) :
-{ Exp e, ep, ea; Identifier i; ExpList el;}
-{
-    (
-    ep = Op(eb)
-    | "[" ea = Exp() "]" { e = new ArrayLookup(eb, ea); } ep = ExpPrim(e)
-    | LOOKAHEAD(2) "." "length" { e = new ArrayLength(eb); } ep = ExpPrim(e)
-    | "." i = Identifier() "(" el = ExpList() ")" { e = new Call(eb, i, el); } ep = ExpPrim(e)
-    | { ep = eb; } // Else return the other expression
-    )
-    { return ep; }
-}
-
-// Exp moved here to get the right evaluation order
-Exp Op(Exp eb) :
-{ Exp e, ea; }
-{
-    (
-    "&&" ea = Exp() { e = new And(eb, ea); }
-    | "<" ea = Exp() { e = new LessThan(eb, ea); }
-    | "+" ea = Exp() { e = new Plus(eb, ea); }
-    | "-" ea = Exp() { e = new Minus(eb, ea); }
-    | "*" ea = Exp() { e = new Times(eb, ea); }
-    | "<=" ea = Exp() { e = new LessThanEquals(eb, ea); }
-    | ">" ea = Exp() { e = new GreaterThan(eb, ea); }
-    | ">=" ea = Exp() { e = new GreaterThanEquals(eb, ea); }
-    | "==" ea = Exp() { e = new Equals(eb, ea); }
-    | "!=" ea = Exp() { e = new EqualsNot(eb, ea); }
-    | "||" ea = Exp() { e = new Or(eb, ea); } // Binds looser than &&
-    )
-    { return e; }
-}
-
-Exp Exp() :
-{ Exp e; }
-{
-    e = And()
-    { return e; }
-}
-
-Exp And() :
-{ Exp e; }
-{
-    e = LessThan() ( "&&" LessThan() )*
-    { return e; }
-}
-
-Exp ArithmeticOp(Exp eb) :
-{ Exp e, ea; }
-{
-    (
-    "+" ea = Exp() { e = new Plus(eb, ea); }
-    | "-" ea = Exp() { e = new Minus(eb, ea); }
-    | "*" ea = Exp() { e = new Times(eb, ea); }
-    )
-    { return e; }
-}
-
-Exp LogicalOp(Exp eb) :
-{ Exp e, ea; }
-{
-    (
-    "&&" ea = Exp() { e = new And(eb, ea); }
-    | "||" ea = Exp() { e = new Or(eb, ea); } // Binds looser than &&
-    )
-    { return e; }
-}
-
-Exp CompareOp(Exp eb) :
-{ Exp e, ea; }
-{
-    (
-    "<" ea = Exp() { e = new LessThan(eb, ea); }
-    | "<=" ea = Exp() { e = new LessThanEquals(eb, ea); }
-    | ">" ea = Exp() { e = new GreaterThan(eb, ea); }
-    | ">=" ea = Exp() { e = new GreaterThanEquals(eb, ea); }
-    | "==" ea = Exp() { e = new Equals(eb, ea); }
-    | "!=" ea = Exp() { e = new EqualsNot(eb, ea); }
+    e = IntegerLiteral()
+    | "true" { e = new True(); }
+    | "false" { e = new False(); }
+    | i = <IDENTIFIER> { e = new IdentifierExp(i.toString()); }
+    | "this" { e = new This(); }
+    | "(" e = Exp() ")"
+    | LOOKAHEAD(2) "new" "int" "[" ie = Exp() "]" { e = new NewArray(ie); }
+    | LOOKAHEAD(2) "new" id = Identifier() "(" ")" { e = new NewObject(id); }
     )
     { return e; }
 }

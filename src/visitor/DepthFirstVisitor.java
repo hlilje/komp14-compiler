@@ -47,7 +47,7 @@ public class DepthFirstVisitor implements Visitor {
             error.complain("Class " + s + " is already defined (main class)");
         else {
             currClass = ct;
-            currMethod = null; // TODO
+            currMethod = null;
         }
 
         n.i1.accept(this);
@@ -78,7 +78,7 @@ public class DepthFirstVisitor implements Visitor {
             error.complain("Class " + s + " is already defined");
         else {
             currClass = ct;
-            currMethod = null; // TODO
+            currMethod = null;
         }
 
         n.i.accept(this);
@@ -109,7 +109,7 @@ public class DepthFirstVisitor implements Visitor {
             error.complain("Class " + s + " is already defined");
         else {
             currClass = ct;
-            currMethod = null; // TODO
+            currMethod = null;
         }
 
         n.i.accept(this);
