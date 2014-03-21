@@ -204,7 +204,7 @@ Exp Or() : // TODO
 { Exp e, eb, ea; }
 {
     (
-    LOOKAHEAD(2) eb = And() ( "||" ea = And() )* { e = new Or(eb, ea); }
+    LOOKAHEAD(2) eb = And() ( "||" ea = And() )+ { e = new Or(eb, ea); }
     | e = And()
     )
     { return e; }
@@ -214,7 +214,7 @@ Exp And() : // TODO
 { Exp e, eb, ea; }
 {
     (
-    LOOKAHEAD(2) eb = LessThan() ( "&&" ea = LessThan() )* { e = new And(eb, ea); }
+    LOOKAHEAD(2) eb = LessThan() ( "&&" ea = LessThan() )+ { e = new And(eb, ea); }
     | e = LessThan()
     )
     { return e; }
@@ -275,7 +275,7 @@ Exp EqualsNot() :
 { Exp e, eb, ea; }
 {
     (
-    LOOKAHEAD(2) eb = Plus() "!=" Plus() { e = new EqualsNot(eb, ea); }
+    LOOKAHEAD(2) eb = Plus() "!=" ea = Plus() { e = new EqualsNot(eb, ea); }
     | e = Plus()
     )
     { return e; }
@@ -285,8 +285,8 @@ Exp Plus() : // TODO Are plus and minus allowed to be separated?
 { Exp e, eb, ea; }
 {
     (
-    LOOKAHEAD(2) eb = Minus() ( "+" ea = Minus() )* { e = new Plus(eb, ea); }
-    | e = Times()
+    LOOKAHEAD(2) eb = Minus() ( "+" ea = Minus() )+ { e = new Plus(eb, ea); }
+    | e = Minus()
     )
     { return e; }
 }
@@ -295,7 +295,7 @@ Exp Minus() : // TODO
 { Exp e, eb, ea; }
 {
     (
-    LOOKAHEAD(2) eb = Times() ( "-" ea = Times() )* { e = new Minus(eb, ea); }
+    LOOKAHEAD(2) eb = Times() ( "-" ea = Times() )+ { e = new Minus(eb, ea); }
     | e = Times()
     )
     { return e; }
@@ -305,7 +305,7 @@ Exp Times() : // TODO
 { Exp e, eb, ea; }
 {
     (
-    LOOKAHEAD(2) eb = PrefixExp() ( "*" ea = PrefixExp() )* { e = new Times(eb, ea); }
+    LOOKAHEAD(2) eb = PrefixExp() ( "*" ea = PrefixExp() )+ { e = new Times(eb, ea); }
     | e = PrefixExp()
     )
     { return e; }
@@ -334,7 +334,7 @@ Exp PostfixExp() :
     (
     LOOKAHEAD(2) pe = PrimaryExp() ( "[" ie = Exp() "]" { e = new ArrayLookup(pe, ie); }
         | LOOKAHEAD(2) "." i = Identifier() "(" el = ExpList() ")" { e = new Call(pe, i, el); }
-        | LOOKAHEAD(2) "." "length" { e = new ArrayLength(pe); } )*
+        | LOOKAHEAD(2) "." "length" { e = new ArrayLength(pe); } )+
     | e = PrimaryExp()
     )
     { return e; }
