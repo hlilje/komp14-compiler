@@ -274,14 +274,14 @@ public class DepthFirstVisitor implements Visitor {
         if(currMethod == null) {
             if(!currClass.hasVar(s)) {
                 error.complain(s + " is not defined",
-                        ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                        ErrorHandler.ErrorCode.NOT_FOUND);
             }
         } else {
             if(currBlock == null) {
                 if(!currMethod.inScope(s)) {
                     if(!currClass.hasVar(s)) {
                         error.complain(s + " is not defined",
-                                ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                                ErrorHandler.ErrorCode.NOT_FOUND);
                     }
                 }
             } else {
@@ -289,7 +289,7 @@ public class DepthFirstVisitor implements Visitor {
                     if(!currMethod.inScope(s)) {
                         if(!currClass.hasVar(s)) {
                             error.complain(s + " is not defined", 
-                                    ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                                    ErrorHandler.ErrorCode.NOT_FOUND);
                         }
                     }
                 }
