@@ -210,66 +210,86 @@ Exp Or() :
 Exp And() :
 { Exp e1, e2; }
 {
-    e1 = LessThan() ( "&&" e2 = LessThan() { e1 = new And(e1, e2); } )*
+    e1 = Compare() ( "&&" e2 = Compare() { e1 = new And(e1, e2); } )*
     { return e1; }
 }
 
-Exp LessThan() :
-{ Exp e1, e2; }
+Exp Compare() :
+{ Exp e1, e2; String op; }
 {
-    e1 = LessThanEquals() [ "<" e2 = LessThanEquals() { e1 = new LessThan(e1, e2); } ]
+    e1 = Additive() [ op = CompareOpHelper() e2 = Additive() { e1 = CompareOp(op, e1, e2); } ]
     { return e1; }
 }
 
-Exp LessThanEquals() :
-{ Exp e1, e2; }
+String CompareOpHelper() :
+{ String op; }
 {
-    e1 = GreaterThan() [ "<=" e2 = GreaterThan() { e1 = new LessThanEquals(e1, e2); } ]
+    (
+    "<" { op = "<"; }
+    | "<=" { op = "<="; }
+    | ">" { op = ">"; }
+    | ">=" { op = ">="; }
+    | "==" { op = "=="; }
+    | "!=" { op = "!="; }
+    )
+    { return op; }
+}
+
+Exp CompareOp(String op, Exp e1, Exp e2) :
+{ Exp e; }
+{
+    {
+        switch(op) {
+            case "<": e = new LessThan(e1, e2);
+                break;
+            case "<=": e = new LessThanEquals(e1, e2);
+                break;
+            case ">": e = new GreaterThan(e1, e2);
+                break;
+            case ">=": e = new GreaterThanEquals(e1, e2);
+                break;
+            case "==": e = new Equals(e1, e2);
+                break;
+            case "!=": e = new EqualsNot(e1, e2);
+                break;
+            default: e = null;
+                break;
+        }
+    }
+    { return e; }
+}
+
+Exp Additive() :
+{ Exp e1, e2; String op; }
+{
+    e1 = Times() ( op = AdditiveOpHelper() e2 = Times() { e1 = AdditiveOp(op, e1, e2); } )*
     { return e1; }
 }
 
-Exp GreaterThan() :
-{ Exp e1, e2; }
+String AdditiveOpHelper() :
+{ String op; }
 {
-    e1 = GreaterThanEquals() [ ">=" e2 = GreaterThanEquals() { e1 = new GreaterThan(e1, e2); } ]
-    { return e1; }
+    (
+    "+" { op = "+"; }
+    | "-" { op = "-"; }
+    )
+    { return op; }
 }
 
-Exp GreaterThanEquals() :
-{ Exp e1, e2; }
+Exp AdditiveOp(String op, Exp e1, Exp e2) :
+{ Exp e; }
 {
-    e1 = Equals() [ ">" e2 = Equals() { e1 = new GreaterThanEquals(e1, e2); } ]
-    { return e1; }
-}
-
-Exp Equals() :
-{ Exp e1, e2; }
-{
-
-    e1 = EqualsNot() [ "==" e2 = EqualsNot() { e1 = new Equals(e1, e2); } ]
-    { return e1; }
-}
-
-Exp EqualsNot() :
-{ Exp e1, e2; }
-{
-    e1 = Plus() [ "!=" e2 = Plus() { e1 = new EqualsNot(e1, e2); } ]
-    { return e1; }
-}
-
-// TODO Are plus and minus allowed to be separated?
-Exp Plus() :
-{ Exp e1, e2; }
-{
-    e1 = Minus() ( "+" e2 = Minus() { e1 = new Plus(e1, e2); } )*
-    { return e1; }
-}
-
-Exp Minus() :
-{ Exp e1, e2; }
-{
-    e1 = Times() ( "-" e2 = Times() { e1 = new Minus(e1, e2); } )*
-    { return e1; }
+    {
+        switch(op) {
+            case "+": e = new Plus(e1, e2);
+                break;
+            case "-": e = new Minus(e1, e2);
+                break;
+            default: e = null;
+                break;
+        }
+    }
+    { return e; }
 }
 
 Exp Times() :

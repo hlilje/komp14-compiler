@@ -378,7 +378,7 @@ e1 = new Or(e1, e2);
   }
 
   final public Exp And() throws ParseException {Exp e1, e2;
-    e1 = LessThan();
+    e1 = Compare();
     label_12:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -391,20 +391,25 @@ e1 = new Or(e1, e2);
         break label_12;
       }
       jj_consume_token(AND);
-      e2 = LessThan();
+      e2 = Compare();
 e1 = new And(e1, e2);
     }
 {if ("" != null) return e1;}
     throw new Error("Missing return statement in function");
   }
 
-  final public Exp LessThan() throws ParseException {Exp e1, e2;
-    e1 = LessThanEquals();
+  final public Exp Compare() throws ParseException {Exp e1, e2; String op;
+    e1 = Additive();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case LT:{
-      jj_consume_token(LT);
-      e2 = LessThanEquals();
-e1 = new LessThan(e1, e2);
+    case LT:
+    case LEQ:
+    case GT:
+    case GEQ:
+    case EQ:
+    case NEQ:{
+      op = CompareOpHelper();
+      e2 = Additive();
+e1 = CompareOp(op, e1, e2);
       break;
       }
     default:
@@ -415,137 +420,127 @@ e1 = new LessThan(e1, e2);
     throw new Error("Missing return statement in function");
   }
 
-  final public Exp LessThanEquals() throws ParseException {Exp e1, e2;
-    e1 = GreaterThan();
+  final public String CompareOpHelper() throws ParseException {String op;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case LT:{
+      jj_consume_token(LT);
+op = "<";
+      break;
+      }
     case LEQ:{
       jj_consume_token(LEQ);
-      e2 = GreaterThan();
-e1 = new LessThanEquals(e1, e2);
+op = "<=";
+      break;
+      }
+    case GT:{
+      jj_consume_token(GT);
+op = ">";
+      break;
+      }
+    case GEQ:{
+      jj_consume_token(GEQ);
+op = ">=";
+      break;
+      }
+    case EQ:{
+      jj_consume_token(EQ);
+op = "==";
+      break;
+      }
+    case NEQ:{
+      jj_consume_token(NEQ);
+op = "!=";
       break;
       }
     default:
       jj_la1[14] = jj_gen;
-      ;
+      jj_consume_token(-1);
+      throw new ParseException();
     }
-{if ("" != null) return e1;}
+{if ("" != null) return op;}
     throw new Error("Missing return statement in function");
   }
 
-  final public Exp GreaterThan() throws ParseException {Exp e1, e2;
-    e1 = GreaterThanEquals();
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case GEQ:{
-      jj_consume_token(GEQ);
-      e2 = GreaterThanEquals();
-e1 = new GreaterThan(e1, e2);
-      break;
-      }
-    default:
-      jj_la1[15] = jj_gen;
-      ;
-    }
-{if ("" != null) return e1;}
+  final public Exp CompareOp(String op, Exp e1, Exp e2) throws ParseException {Exp e;
+switch(op) {
+            case "<": e = new LessThan(e1, e2);
+                break;
+            case "<=": e = new LessThanEquals(e1, e2);
+                break;
+            case ">": e = new GreaterThan(e1, e2);
+                break;
+            case ">=": e = new GreaterThanEquals(e1, e2);
+                break;
+            case "==": e = new Equals(e1, e2);
+                break;
+            case "!=": e = new EqualsNot(e1, e2);
+                break;
+            default: e = null;
+                break;
+        }
+{if ("" != null) return e;}
     throw new Error("Missing return statement in function");
   }
 
-  final public Exp GreaterThanEquals() throws ParseException {Exp e1, e2;
-    e1 = Equals();
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case GT:{
-      jj_consume_token(GT);
-      e2 = Equals();
-e1 = new GreaterThanEquals(e1, e2);
-      break;
-      }
-    default:
-      jj_la1[16] = jj_gen;
-      ;
-    }
-{if ("" != null) return e1;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Exp Equals() throws ParseException {Exp e1, e2;
-    e1 = EqualsNot();
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case EQ:{
-      jj_consume_token(EQ);
-      e2 = EqualsNot();
-e1 = new Equals(e1, e2);
-      break;
-      }
-    default:
-      jj_la1[17] = jj_gen;
-      ;
-    }
-{if ("" != null) return e1;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Exp EqualsNot() throws ParseException {Exp e1, e2;
-    e1 = Plus();
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case NEQ:{
-      jj_consume_token(NEQ);
-      e2 = Plus();
-e1 = new EqualsNot(e1, e2);
-      break;
-      }
-    default:
-      jj_la1[18] = jj_gen;
-      ;
-    }
-{if ("" != null) return e1;}
-    throw new Error("Missing return statement in function");
-  }
-
-// TODO Are plus and minus allowed to be separated?
-  final public Exp Plus() throws ParseException {Exp e1, e2;
-    e1 = Minus();
+  final public Exp Additive() throws ParseException {Exp e1, e2; String op;
+    e1 = Times();
     label_13:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case PLUS:{
-        ;
-        break;
-        }
-      default:
-        jj_la1[19] = jj_gen;
-        break label_13;
-      }
-      jj_consume_token(PLUS);
-      e2 = Minus();
-e1 = new Plus(e1, e2);
-    }
-{if ("" != null) return e1;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Exp Minus() throws ParseException {Exp e1, e2;
-    e1 = Times();
-    label_14:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case PLUS:
       case MINUS:{
         ;
         break;
         }
       default:
-        jj_la1[20] = jj_gen;
-        break label_14;
+        jj_la1[15] = jj_gen;
+        break label_13;
       }
-      jj_consume_token(MINUS);
+      op = AdditiveOpHelper();
       e2 = Times();
-e1 = new Minus(e1, e2);
+e1 = AdditiveOp(op, e1, e2);
     }
 {if ("" != null) return e1;}
     throw new Error("Missing return statement in function");
   }
 
+  final public String AdditiveOpHelper() throws ParseException {String op;
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case PLUS:{
+      jj_consume_token(PLUS);
+op = "+";
+      break;
+      }
+    case MINUS:{
+      jj_consume_token(MINUS);
+op = "-";
+      break;
+      }
+    default:
+      jj_la1[16] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+{if ("" != null) return op;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Exp AdditiveOp(String op, Exp e1, Exp e2) throws ParseException {Exp e;
+switch(op) {
+            case "+": e = new Plus(e1, e2);
+                break;
+            case "-": e = new Minus(e1, e2);
+                break;
+            default: e = null;
+                break;
+        }
+{if ("" != null) return e;}
+    throw new Error("Missing return statement in function");
+  }
+
   final public Exp Times() throws ParseException {Exp e1, e2;
     e1 = PrefixExp();
-    label_15:
+    label_14:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case STAR:{
@@ -553,8 +548,8 @@ e1 = new Minus(e1, e2);
         break;
         }
       default:
-        jj_la1[21] = jj_gen;
-        break label_15;
+        jj_la1[17] = jj_gen;
+        break label_14;
       }
       jj_consume_token(STAR);
       e2 = PrefixExp();
@@ -581,7 +576,7 @@ e1 = new Times(e1, e2);
       break;
       }
     default:
-      jj_la1[22] = jj_gen;
+      jj_la1[18] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -590,7 +585,7 @@ e1 = new Times(e1, e2);
   }
 
   final public Exp Not() throws ParseException {Exp e;
-    label_16:
+    label_15:
     while (true) {
       jj_consume_token(BANG);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -599,8 +594,8 @@ e1 = new Times(e1, e2);
         break;
         }
       default:
-        jj_la1[23] = jj_gen;
-        break label_16;
+        jj_la1[19] = jj_gen;
+        break label_15;
       }
     }
     e = PostfixExp();
@@ -611,7 +606,7 @@ e = new Not(e);
 
   final public Exp PostfixExp() throws ParseException {Exp e, ie; Identifier i; ExpList el;
     e = PrimaryExp();
-    label_17:
+    label_16:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case LBRACKET:
@@ -620,8 +615,8 @@ e = new Not(e);
         break;
         }
       default:
-        jj_la1[24] = jj_gen;
-        break label_17;
+        jj_la1[20] = jj_gen;
+        break label_16;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case LBRACKET:{
@@ -632,7 +627,7 @@ e = new ArrayLookup(e, ie);
         break;
         }
       default:
-        jj_la1[25] = jj_gen;
+        jj_la1[21] = jj_gen;
         if (jj_2_6(2)) {
           jj_consume_token(DOT);
           i = Identifier();
@@ -688,7 +683,7 @@ e = new This();
       break;
       }
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[22] = jj_gen;
       if (jj_2_8(2)) {
         jj_consume_token(NEW);
         jj_consume_token(INT);
@@ -723,7 +718,7 @@ e = new NewObject(id);
     case INTEGER_LITERAL:{
       e1 = Exp();
 el.addElement(e1);
-      label_18:
+      label_17:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case COMMA:{
@@ -731,8 +726,8 @@ el.addElement(e1);
           break;
           }
         default:
-          jj_la1[27] = jj_gen;
-          break label_18;
+          jj_la1[23] = jj_gen;
+          break label_17;
         }
         e2 = ExpRest();
 el.addElement(e2);
@@ -740,7 +735,7 @@ el.addElement(e2);
       break;
       }
     default:
-      jj_la1[28] = jj_gen;
+      jj_la1[24] = jj_gen;
 
     }
 {if ("" != null) return el;}
@@ -840,26 +835,26 @@ el.addElement(e2);
     finally { jj_save(8, xla); }
   }
 
-  private boolean jj_3R_19()
+  private boolean jj_3R_18()
  {
-    if (jj_3R_21()) return true;
     if (jj_3R_20()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_24()
- {
-    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_3R_19()) return true;
     return false;
   }
 
   private boolean jj_3R_23()
  {
-    if (jj_scan_token(INT)) return true;
+    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
   private boolean jj_3R_22()
+ {
+    if (jj_scan_token(INT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21()
  {
     if (jj_scan_token(BOOLEAN)) return true;
     return false;
@@ -872,13 +867,6 @@ el.addElement(e2);
     return false;
   }
 
-  private boolean jj_3_6()
- {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_3R_20()) return true;
-    return false;
-  }
-
   private boolean jj_3_3()
  {
     if (jj_scan_token(INT)) return true;
@@ -888,49 +876,56 @@ el.addElement(e2);
 
   private boolean jj_3_5()
  {
-    if (jj_3R_20()) return true;
+    if (jj_3R_19()) return true;
     if (jj_scan_token(ASSIGN)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_21()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_3()) {
-    jj_scanpos = xsp;
-    if (jj_3R_22()) {
-    jj_scanpos = xsp;
-    if (jj_3R_23()) {
-    jj_scanpos = xsp;
-    if (jj_3R_24()) return true;
-    }
-    }
-    }
     return false;
   }
 
   private boolean jj_3R_20()
  {
-    if (jj_scan_token(IDENTIFIER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_3R_21()) {
+    jj_scanpos = xsp;
+    if (jj_3R_22()) {
+    jj_scanpos = xsp;
+    if (jj_3R_23()) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3_6()
+ {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_3R_19()) return true;
     return false;
   }
 
   private boolean jj_3_4()
  {
-    if (jj_3R_19()) return true;
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3_2()
+ {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
   private boolean jj_3_9()
  {
     if (jj_scan_token(NEW)) return true;
-    if (jj_3R_20()) return true;
-    return false;
-  }
-
-  private boolean jj_3_2()
- {
     if (jj_3R_19()) return true;
     return false;
   }
@@ -944,7 +939,7 @@ el.addElement(e2);
 
   private boolean jj_3_1()
  {
-    if (jj_3R_19()) return true;
+    if (jj_3R_18()) return true;
     return false;
   }
 
@@ -959,7 +954,7 @@ el.addElement(e2);
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[29];
+  final private int[] jj_la1 = new int[25];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -967,10 +962,10 @@ el.addElement(e2);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x100,0xd0000,0xc000,0x200,0xd0000,0x0,0xc000,0xc000,0xd0000,0xd0000,0x0,0x0,0x2000000,0x4000000,0x0,0x0,0x0,0x0,0x0,0x8000000,0x10000000,0x20000000,0x41e00000,0x40000000,0x0,0x0,0xe00000,0x0,0x41e00000,};
+      jj_la1_0 = new int[] {0x100,0xd0000,0xc000,0x200,0xd0000,0x0,0xc000,0xc000,0xd0000,0xd0000,0x0,0x0,0x2000000,0x4000000,0x4000000,0x18000000,0x18000000,0x20000000,0x41e00000,0x40000000,0x0,0x0,0xe00000,0x0,0x41e00000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x8040,0x8000,0x0,0x8040,0x2000,0x8000,0x8000,0x8040,0x40,0x8000,0x20,0x0,0x0,0x1,0x4,0x2,0x8,0x10,0x0,0x0,0x0,0x18100,0x0,0x4400,0x400,0x18100,0x2000,0x18100,};
+      jj_la1_1 = new int[] {0x0,0x8040,0x8000,0x0,0x8040,0x2000,0x8000,0x8000,0x8040,0x40,0x8000,0x20,0x0,0x1f,0x1f,0x0,0x0,0x0,0x18100,0x0,0x4400,0x400,0x18100,0x2000,0x18100,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[9];
   private boolean jj_rescan = false;
@@ -987,7 +982,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1002,7 +997,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1013,7 +1008,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1024,7 +1019,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1034,7 +1029,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1044,7 +1039,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 25; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1162,7 +1157,7 @@ el.addElement(e2);
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 29; i++) {
+    for (int i = 0; i < 25; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
