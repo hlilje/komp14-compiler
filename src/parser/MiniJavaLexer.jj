@@ -98,7 +98,7 @@ Program Program() :
 
 MainClass MainClass() :
 {
-    Identifier i1, i2; StatementList sl = new StatementList(); Statement s; // TODO Remove init to null
+    Identifier i1, i2; StatementList sl = new StatementList(); Statement s;
     VarDeclList vdl = new VarDeclList(); VarDecl vd;
 }
 {
@@ -167,7 +167,7 @@ Type Type() :
     LOOKAHEAD(2) "int" "[" "]" { t = new IntArrayType(); }
     | "boolean" { t = new BooleanType(); }
     | "int" { t = new IntegerType(); }
-    | tok = <IDENTIFIER> { t  = new IdentifierType(tok.toString()); } // TODO toString here?
+    | tok = <IDENTIFIER> { t  = new IdentifierType(tok.toString()); }
     )
     { return t; }
 }
@@ -200,115 +200,83 @@ Exp Exp() :
 }
 
 // Binds the loosest
-Exp Or() : // TODO
-{ Exp e, eb, ea; }
+Exp Or() :
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = And() ( "||" ea = And() )+ { e = new Or(eb, ea); }
-    | e = And()
-    )
-    { return e; }
+    e1 = And() ( "||" e2 = And() { e1 = new Or(e1, e2); } )*
+    { return e1; }
 }
 
-Exp And() : // TODO
-{ Exp e, eb, ea; }
+Exp And() :
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = LessThan() ( "&&" ea = LessThan() )+ { e = new And(eb, ea); }
-    | e = LessThan()
-    )
-    { return e; }
+    e1 = LessThan() ( "&&" e2 = LessThan() { e1 = new And(e1, e2); } )*
+    { return e1; }
 }
 
 Exp LessThan() :
-{ Exp e, eb, ea; }
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = LessThanEquals() "<" ea = LessThanEquals() { e = new LessThan(eb, ea); }
-    | e = LessThanEquals()
-    )
-    { return e; }
+    e1 = LessThanEquals() [ "<" e2 = LessThanEquals() { e1 = new LessThan(e1, e2); } ]
+    { return e1; }
 }
 
 Exp LessThanEquals() :
-{ Exp e, eb, ea; }
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = GreaterThan() "<=" ea = GreaterThan() { e = new LessThanEquals(eb, ea); }
-    | e = GreaterThan()
-    )
-    { return e; }
+    e1 = GreaterThan() [ "<=" e2 = GreaterThan() { e1 = new LessThanEquals(e1, e2); } ]
+    { return e1; }
 }
 
 Exp GreaterThan() :
-{ Exp e, eb, ea; }
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = GreaterThanEquals() ">=" ea = GreaterThanEquals() { e = new GreaterThan(eb, ea); }
-    | e = GreaterThanEquals()
-    )
-    { return e; }
+    e1 = GreaterThanEquals() [ ">=" e2 = GreaterThanEquals() { e1 = new GreaterThan(e1, e2); } ]
+    { return e1; }
 }
 
 Exp GreaterThanEquals() :
-{ Exp e, eb, ea; }
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = Equals() ">" ea = Equals() { e = new GreaterThanEquals(eb, ea); }
-    | e = Equals()
-    )
-    { return e; }
+    e1 = Equals() [ ">" e2 = Equals() { e1 = new GreaterThanEquals(e1, e2); } ]
+    { return e1; }
 }
 
 Exp Equals() :
-{ Exp e, eb, ea; }
+{ Exp e1, e2; }
 {
 
-    (
-    LOOKAHEAD(2) eb = EqualsNot() "==" ea = EqualsNot() { e = new Equals(eb, ea); }
-    | e = EqualsNot()
-    )
-    { return e; }
+    e1 = EqualsNot() [ "==" e2 = EqualsNot() { e1 = new Equals(e1, e2); } ]
+    { return e1; }
 }
 
 Exp EqualsNot() :
-{ Exp e, eb, ea; }
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = Plus() "!=" ea = Plus() { e = new EqualsNot(eb, ea); }
-    | e = Plus()
-    )
-    { return e; }
+    e1 = Plus() [ "!=" e2 = Plus() { e1 = new EqualsNot(e1, e2); } ]
+    { return e1; }
 }
 
-Exp Plus() : // TODO Are plus and minus allowed to be separated?
-{ Exp e, eb, ea; }
+// TODO Are plus and minus allowed to be separated?
+Exp Plus() :
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = Minus() ( "+" ea = Minus() )+ { e = new Plus(eb, ea); }
-    | e = Minus()
-    )
-    { return e; }
+    e1 = Minus() ( "+" e2 = Minus() { e1 = new Plus(e1, e2); } )*
+    { return e1; }
 }
 
-Exp Minus() : // TODO
-{ Exp e, eb, ea; }
+Exp Minus() :
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = Times() ( "-" ea = Times() )+ { e = new Minus(eb, ea); }
-    | e = Times()
-    )
-    { return e; }
+    e1 = Times() ( "-" e2 = Times() { e1 = new Minus(e1, e2); } )*
+    { return e1; }
 }
 
-Exp Times() : // TODO
-{ Exp e, eb, ea; }
+Exp Times() :
+{ Exp e1, e2; }
 {
-    (
-    LOOKAHEAD(2) eb = PrefixExp() ( "*" ea = PrefixExp() )+ { e = new Times(eb, ea); }
-    | e = PrefixExp()
-    )
-    { return e; }
+    e1 = PrefixExp() ( "*" e2 = PrefixExp() { e1 = new Times(e1, e2); } )*
+    { return e1; }
 }
 
 Exp PrefixExp() :
@@ -321,22 +289,22 @@ Exp PrefixExp() :
     { return e; }
 }
 
-Exp Not() : // TODO Should multiple negations be allowed?
-{ Exp e, pe; }
+Exp Not() :
+{ Exp e; }
 {
-    ( "!" )+ pe = PostfixExp() { e = new Not(pe); }
+    ( "!" )+ e = PostfixExp() { e = new Not(e); }
     { return e; }
 }
 
 Exp PostfixExp() :
-{ Exp e, pe, ie; Identifier i; ExpList el;}
+{ Exp e, ie; Identifier i; ExpList el;}
 {
+    e = PrimaryExp()
     (
-    LOOKAHEAD(2) pe = PrimaryExp() ( "[" ie = Exp() "]" { e = new ArrayLookup(pe, ie); }
-        | LOOKAHEAD(2) "." i = Identifier() "(" el = ExpList() ")" { e = new Call(pe, i, el); }
-        | LOOKAHEAD(2) "." "length" { e = new ArrayLength(pe); } )+
-    | e = PrimaryExp()
-    )
+    "[" ie = Exp() "]" { e = new ArrayLookup(e, ie); }
+    | LOOKAHEAD(2) "." i = Identifier() "(" el = ExpList() ")" { e = new Call(e, i, el); }
+    | LOOKAHEAD(2) "." "length" { e = new ArrayLength(e); }
+    )*
     { return e; }
 }
 
@@ -361,7 +329,7 @@ ExpList ExpList() :
 { Exp e1, e2; ExpList el = new ExpList(); }
 {
     (
-    e1 = Exp() { el.addElement(e1); }( e2 = ExpRest() { el.addElement(e2); } )*
+    e1 = Exp() { el.addElement(e1); } ( e2 = ExpRest() { el.addElement(e2); } )*
     | {}
     )
     { return el; }
