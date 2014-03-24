@@ -330,7 +330,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(ArrayLookup n) {
-        n.e1.accept(this);
+        if(!(n.e1.accept(this) instanceof IntArrayType)) {
+            error.complain("Outer expression of ArrayLookup must be of type IntArrayType",
+                    ErrorHandler.ErrorCode.TYPE_ERROR);
+        }
         n.e2.accept(this);
         return new IntegerType();
     }
@@ -359,6 +362,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             // Use class name to find class
             s2 = getClassNameFromVar(Symbol.symbol(ie.s));
             t = symTable.getClass(s2).getMethod(s1).getType();
+        } else if(e instanceof Call) {
+            if(DEBUG)
+                System.out.println("instance of Call"); // DEBUG
+            s2 = Symbol.symbol(((IdentifierType)e.accept(this)).s);
+            t = symTable.getClass(s2).getMethod(s1).getType();
         } else { // instanceof This
             if(DEBUG)
                 System.out.println("instanceof (else)"); // DEBUG
@@ -371,6 +379,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         for ( int i = 0; i < n.el.size(); i++ ) {
             n.el.elementAt(i).accept(this);
         }
+
         return t;
     }
 
