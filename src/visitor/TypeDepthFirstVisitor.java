@@ -144,7 +144,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-        n.e.accept(this);
+
+        if(!(n.e.accept(this).equals(n.t))) {
+            error.complain("Returned type is not same as declared type",
+                    ErrorHandler.ErrorCode.TYPE_ERROR);
+        }
 
         return n.t;
     }
