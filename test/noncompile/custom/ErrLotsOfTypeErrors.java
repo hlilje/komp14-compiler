@@ -90,10 +90,10 @@ class B {
     }
 
     /*  can only have one of this type of comment
-        gives nullpointer exception atm (on undeclare variables)
+        gives nullpointer exception atm (on undeclare variables)*/
     public int notdecl() {
         return x;
-    }*/
+    }
 }
 
 class C {
