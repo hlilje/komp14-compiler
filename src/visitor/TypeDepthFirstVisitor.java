@@ -232,11 +232,13 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(Assign n) {
         Symbol s = Symbol.symbol(n.i.toString());
         Type t = getVarType(s);
+        Type ti = n.i.accept(this); // To avoid nullpointer exception
 
-        if(DEBUG)
-            System.out.println("ASSIGN: " + n.i.accept(this) + " TO: " + n.e.accept(this)); // DEBUG
+        if(DEBUG) {
+            System.out.println("ASSIGN: " + ti + " TO: " + n.e.accept(this)); // DEBUG
+        }
 
-        if(!(n.i.accept(this).equals(n.e.accept(this)))) {
+        if((ti != null) && (!(ti.equals(n.e.accept(this))))) {
             error.complain("Expression is not of type " + t,
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }

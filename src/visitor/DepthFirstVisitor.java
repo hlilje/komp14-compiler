@@ -295,6 +295,7 @@ public class DepthFirstVisitor implements Visitor {
                 }
             }
         }
+
         n.i.accept(this);
         n.e.accept(this);
     }
