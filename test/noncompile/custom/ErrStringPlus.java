@@ -6,13 +6,11 @@ class Main
         boolean b;
         int c;
         int x;
-        int x;
 
         a = 1;
         x = 2;
         b = true;
-        //c = a + b;
-        c = a + x;
+        c = a + b;
 
         System.out.println(1);
     }

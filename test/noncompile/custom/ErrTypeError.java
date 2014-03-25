@@ -11,6 +11,7 @@ class Test {
     Other c;
 
     public int start() {
+        c = a + b;
         return 1;
     }
 
@@ -24,17 +25,13 @@ class Test2 {
     public int v() {
         return 1;
     }
-    public int v() {
-        return 1;
-    }
 }
 
 class Other {
     int a;
-    boolean a;
+    boolean b;
 
     public Other v() {
-        //return new Other;
         return false;
     }
 }
