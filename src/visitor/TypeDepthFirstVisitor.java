@@ -488,13 +488,17 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Equals n) {
-        if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of Equals must be of type integer",
-                    ErrorHandler.ErrorCode.TYPE_ERROR);
-        }
-        if(!(n.e2.accept(this) instanceof IntegerType)) {
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+
+        if((t1 instanceof IntegerType) && !(t2 instanceof IntegerType)) {
             error.complain("Right side of Equals must be of type integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
+        } else if((t1 instanceof BooleanType) && !(t2 instanceof BooleanType)) {
+            error.complain("Right side of Equals must be of type boolean",
+                    ErrorHandler.ErrorCode.TYPE_ERROR);
+        } else {
+            // Do nothing
         }
 
         return new BooleanType();
@@ -502,13 +506,17 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(EqualsNot n) {
-        if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of EqualsNot must be of type integer",
-                    ErrorHandler.ErrorCode.TYPE_ERROR);
-        }
-        if(!(n.e2.accept(this) instanceof IntegerType)) {
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+
+        if((t1 instanceof IntegerType) && !(t2 instanceof IntegerType)) {
             error.complain("Right side of EqualsNot must be of type integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
+        } else if((t1 instanceof BooleanType) && !(t2 instanceof BooleanType)) {
+            error.complain("Right side of EqualsNot must be of type boolean",
+                    ErrorHandler.ErrorCode.TYPE_ERROR);
+        } else {
+            // Do nothing
         }
 
         return new BooleanType();
