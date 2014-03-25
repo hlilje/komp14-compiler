@@ -10,7 +10,7 @@ class A {
     int[] ia;
     B b;
     C c;
-    Boolean bool;
+    boolean bool;
 
     public int geti() {
         return i;
@@ -43,10 +43,14 @@ class B {
     int i;
     boolean b;
     int[] ia;
-/*
-    a = new A();
-    c = new C();
-*/
+
+
+    public void foo() {
+        // TODO
+        a = new A();
+        c = new C();
+    }
+
     public int notanint() {
         return true;
     }
@@ -72,16 +76,23 @@ class B {
     }
 
     public B notab() {
-        return x;
+        return i;
     }
 
     public B notab2() {
         return a.geta();
     }
 
+    // Compiler doesnt check types of parameters
     public boolean wrongparams() {
         return c.formals(ia, c, b, i);
     }
+
+    /*  can only have on of this type of comment
+        gives nullpointer exception atm
+    public int notdecl() {
+        return x;
+    }*/
 }
 
 class C {
