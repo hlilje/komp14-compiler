@@ -357,11 +357,13 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(Call n) {
         Symbol s1 = Symbol.symbol(n.i.toString()); // Method name
         Type t; Exp e = n.e; Symbol s2;
+        FormalList fl; // To be able to check for formal type in call
         if(e instanceof NewObject) {
             if(DEBUG)
                 System.out.println("instanceof NewObject"); // DEBUG
             s2 = Symbol.symbol(((NewObject)e).i.toString());
             t = symTable.getClass(s2).getMethod(s1).getType();
+            fl = symTable.getClass(s2).getMethod(s1).fl; // TODO Get it from the table
         } else if(e instanceof IdentifierExp) {
             if(DEBUG)
                 System.out.println("instanceof IdentifierExp"); // DEBUG
@@ -383,8 +385,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         n.e.accept(this);
         n.i.accept(this);
 
+        // TODO Check for type
         for ( int i = 0; i < n.el.size(); i++ ) {
-            n.el.elementAt(i).accept(this);
+            Type ft = n.el.elementAt(i).accept(this);
         }
 
         return t;

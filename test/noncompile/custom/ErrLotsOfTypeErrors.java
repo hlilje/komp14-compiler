@@ -89,8 +89,7 @@ class B {
         return c.formals(ia, c, b, i);
     }
 
-    /*  can only have one of this type of comment
-        gives nullpointer exception atm (on undeclare variables)*/
+    /*  can only have one of this type of comment*/
     public int notdecl() {
         return x;
     }
