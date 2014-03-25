@@ -4,6 +4,7 @@ class Main {
         boolean b;
         int c;
         int _d;
+        int x;
         Objection obj;
 
         a = 1;
@@ -11,6 +12,12 @@ class Main {
         b = true;
         c = a + b;
         obj = new Objection().object();
+
+        if(1 == true) {
+            x = 0;
+        } else {
+            x = 24;
+        }
 
         System.out.println(1);
     }
