@@ -405,7 +405,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     }
 
     public Type visit(This n) {
-        return null;
+        return new IdentifierType(currClass.getId().toString());
     }
 
     // Exp e;

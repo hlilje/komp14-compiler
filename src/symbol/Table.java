@@ -1,7 +1,7 @@
 package symbol;
 
 public class Table {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private HashT hashTable;
 
