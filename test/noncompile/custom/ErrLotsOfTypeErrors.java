@@ -38,31 +38,58 @@ class A {
 }
 
 class B {
-    int x;
-    boolean s;
-
+    A a;
+    C c;
+    int i;
+    boolean b;
+    int[] ia;
+/*
+    a = new A();
+    c = new C();
+*/
     public int notanint() {
         return true;
+    }
+
+    public int notanint2() {
+        return a.getc();
     }
 
     public boolean notabool() {
         return 1;
     }
 
+    public boolean notabool2() {
+        return a.getia();
+    }
+
     public int[] notanarray() {
         return this;
+    }
+
+    public int[] notanarray2() {
+        return a.geti();
     }
 
     public B notab() {
         return x;
     }
+
+    public B notab2() {
+        return a.geta();
+    }
+
+    public boolean wrongparams() {
+        return c.formals(ia, c, b, i);
+    }
 }
 
 class C {
-    int y;
-    boolean t;
+    int i;
+    boolean b;
+    A a;
 
-    public Other v() {
+    public boolean formals(int i, boolean b, int[] ia, A a) {
         return false;
     }
 }
