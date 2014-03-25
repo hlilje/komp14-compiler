@@ -10,9 +10,10 @@ class Main {
         a = 1;
         x = 2;
         b = true;
-        c = a + b;
-        obj = new Objection().object();
+        c = a + b; // Wrong type
+        obj = new Objection().object(); // TODO
 
+        // Wrong type
         if(1 == true) {
             x = 0;
         } else {

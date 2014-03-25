@@ -145,7 +145,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        if(!(n.e.accept(this).equals(n.t))) {
+        Type t = n.e.accept(this); // Avoid nullpointer exception
+        if((t != null) && (!(t.equals(n.t)))) {
             error.complain("Returned type is not same as declared type",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
