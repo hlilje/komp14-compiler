@@ -45,10 +45,11 @@ class B {
     int[] ia;
 
 
-    public void foo() {
+    public int foo() {
         // TODO
         a = new A();
         c = new C();
+        return 1;
     }
 
     public int notanint() {
@@ -88,8 +89,8 @@ class B {
         return c.formals(ia, c, b, i);
     }
 
-    /*  can only have on of this type of comment
-        gives nullpointer exception atm
+    /*  can only have one of this type of comment
+        gives nullpointer exception atm (on undeclare variables)
     public int notdecl() {
         return x;
     }*/
