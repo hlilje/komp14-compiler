@@ -26,3 +26,30 @@ class Help {
         return u;
     }
 }
+
+class Hello {
+    int b;
+    int c;
+
+    public int method() {
+        b = 123;
+        while(false) {
+            int a;
+            b = 12;
+            a = 3;
+            while(false) {
+                int a; // Not allowed
+                int z;
+                b = 13;
+                z = b + 2;
+                while(false) {
+                    int a; // Not allowed
+                    int b; // Not allowed
+                    int u;
+                    u = a + b;
+                }
+            }
+        }
+        return 0;
+    }
+}

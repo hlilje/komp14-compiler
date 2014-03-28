@@ -64,8 +64,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Statement s;
     public Type visit(MainClass n) {
         currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
-        // TODO Handle the fake method in main
-        currMethod = null;
+        // Hard coded method name, actual name is ignored
+        currMethod = currClass.getMethod(Symbol.symbol("main"));
         currBlock = null;
 
         n.i1.accept(this);
@@ -188,16 +188,18 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // StatementList sl;
     public Type visit(Block n) {
-        AbstractTable at;
-        if(currBlock == null)
-            at = new BlockTable(currMethod);
-        else
-            at = new BlockTable(currBlock);
+        // TODO Find a way to get the current block!
+        // Doesn't work yet!
+        if(currBlock == null) {
+            currBlock = (BlockTable)currMethod.getBlock();
+        } else {
+            currBlock = (BlockTable)currBlock.getBlock();
+        }
 
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-        currBlock = null;
+        currBlock = null; // End scope
         return null;
     }
 
@@ -238,7 +240,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Type it = n.i.accept(this); // To avoid nullpointer exception
         Type et = n.e.accept(this);
 
-        if(DEBUG) System.out.println("ASSIGN: " + it + " TO: " + et);
+        if(DEBUG) System.out.println("ASSIGN: " + et + " TO: " + it);
 
         if((it != null) && (!it.equals(et))) {
             error.complain("Assigned type " + et + " should be of type " + it,

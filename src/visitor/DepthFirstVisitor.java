@@ -55,7 +55,8 @@ public class DepthFirstVisitor implements Visitor {
     // Statement s;
     public void visit(MainClass n) {
         if(DEBUG) System.out.println("====== BEGIN SCOPE ====== ");
-        Symbol s = Symbol.symbol(n.i1.toString());
+        // Hard coded method name, actual name is ignored
+        Symbol s = Symbol.symbol(n.i1.toString()); Symbol s2 = Symbol.symbol("main");
         if(DEBUG) System.out.println(">>> VISIT MAIN_CLASS: " + s);
         ClassTable ct = new ClassTable(s);
 
@@ -65,7 +66,9 @@ public class DepthFirstVisitor implements Visitor {
         } else {
             currClass = ct;
             // TODO Handle the fake method in main
-            currMethod = null;
+            MethodTable mt = new MethodTable(s2, null); // TODO null type?
+            currClass.addMethod(s2, mt);
+            currMethod = mt;
             currBlock = null;
         }
 
@@ -191,7 +194,7 @@ public class DepthFirstVisitor implements Visitor {
         MethodTable mt = new MethodTable(s, n.t);
 
         if(!currClass.addMethod(s, mt)) {
-            error.complain("Method " + s + " is already defined in " + currClass.getId(),
+            error.complain("Method " + s + " is already defined in class " + currClass.getId(),
                     ErrorHandler.ErrorCode.ALREADY_DEFINED);
         } else
             currMethod = mt;
@@ -220,6 +223,7 @@ public class DepthFirstVisitor implements Visitor {
         Symbol s = Symbol.symbol(n.i.toString());
         if(DEBUG) System.out.println(">>> VISIT FORMAL: " + s);
 
+        // Here we assume it's ok to override class decls in formal decls
         if(!currMethod.addFormal(s, n.t)) {
             error.complain("Formal " + s + " is already defined in " + currMethod.getId(),
                     ErrorHandler.ErrorCode.ALREADY_DEFINED);
@@ -244,18 +248,21 @@ public class DepthFirstVisitor implements Visitor {
 
     // StatementList sl;
     public void visit(Block n) {
+        if(DEBUG) System.out.println("====== BEGIN SCOPE ====== ");
         if(DEBUG) System.out.println(">>> VISIT BLOCK");
         BlockTable bt;
         if(currBlock == null)
-            bt = new BlockTable(currMethod);
+            bt = new BlockTable(currMethod); // TODO Doesn't work in main
         else
             bt = new BlockTable(currBlock);
+        currMethod.newBlock(bt);
         currBlock = bt;
 
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-        currBlock = null;
+        currBlock = null; // End scope
+        if(DEBUG) System.out.println("======= END SCOPE =======");
     }
 
     // Exp e;

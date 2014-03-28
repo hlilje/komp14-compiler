@@ -59,6 +59,8 @@ public class MethodTable extends AbstractTable {
         return true;
     }
 
+    // Will be called in the outmost block if several are nested, provided
+    // the 'block before' was set to a method table
     public Binding getVar(Symbol s) {
         Binding b = (Binding)locals.get(s);
         if(b == null)
@@ -70,6 +72,11 @@ public class MethodTable extends AbstractTable {
     // Should be set to a MethodTable for the outmost block
     public void newBlock(AbstractTable at) {
         block = new BlockTable(at);
+    }
+
+    // To set the current block initially in type visitor
+    public AbstractTable getBlock() {
+        return block;
     }
 
     // Added for type checking

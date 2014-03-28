@@ -3,8 +3,6 @@ package symbol;
 import syntaxtree.*;
 
 public class BlockTable extends AbstractTable {
-    private Symbol s;
-    private Type t;
     private AbstractTable bt;
     private Table locals;
 
@@ -28,5 +26,10 @@ public class BlockTable extends AbstractTable {
         if(b == null)
             return bt.getVar(s);
         return b;
+    }
+
+    // To be able to traverse the nested blocks
+    public AbstractTable getBlock() {
+        return bt;
     }
 }

@@ -13,16 +13,40 @@ class ValidBlock {
 }
 
 class A {
+    int z;
+    int x;
+
+    public int method() {
+        z = 3;
+        x = 3;
+        while(false) {
+            z = z + i; // TODO? Gives type error, not undeclared error
+            x = x + z;
+        }
+        return b;
+    }
+}
+
+class B {
     int b;
     int c;
 
     public int method() {
-        b = 3;
-        c = 3;
+        b = 123;
         while(false) {
-            b = b + i; // TODO? Gives type error, not undeclared error
-            b = b + c;
+            int u;
+            b = 12;
+            u = 3;
+            while(false) {
+                int v;
+                b = 13;
+                v = 0;
+                while(false) {
+                    int w;
+                    w = a + b;
+                }
+            }
         }
-        return b;
+        return 0;
     }
 }
