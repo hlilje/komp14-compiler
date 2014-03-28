@@ -147,27 +147,29 @@ public class DepthFirstVisitor implements Visitor {
         Symbol s = Symbol.symbol(n.i.toString());
         if(DEBUG) System.out.println(">>> VISIT VAR_DECL: " + s);
 
+        // We only need to check class decls here since they are visited first
         if(currMethod == null) {
             if(!currClass.addVar(s, n.t)) {
                 error.complain("VarDecl " + s + " is already defined in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.ALREADY_DEFINED);
             }
-        } else {
-            if(currBlock == null) {
-                if(!currMethod.addVar(s, n.t)) { // TODO Must there be a check in class scope here?
-                    error.complain("VarDecl " + s + " is already defined in method " + currMethod.getId() +
-                            " in class " + currClass.getId(), ErrorHandler.ErrorCode.ALREADY_DEFINED);
-                }
-            } else {
-                if(currMethod.inScope(s)) {
-                    error.complain("VarDecl " + s + " is already defined in method " + currMethod.getId() +
-                            " in class " + currClass.getId(), ErrorHandler.ErrorCode.ALREADY_DEFINED);
-                } else {
-                    if(!currBlock.addVar(s, n.t)) {
-                        error.complain("VarDecl " + s + " is already defined in block in method " +
-                                currMethod.getId() + " in class " + currClass.getId(),
-                                ErrorHandler.ErrorCode.ALREADY_DEFINED);
-                    }
+        } else if(currBlock == null) { // A decl in a method
+            // Here we assume it's ok to override class decls in methods
+            if(!currMethod.addVar(s, n.t)) {
+                error.complain("VarDecl " + s + " is already defined in method " + currMethod.getId() +
+                        " in class " + currClass.getId(), ErrorHandler.ErrorCode.ALREADY_DEFINED);
+            }
+        } else { // A decl in a block
+            // Here we assume it's ok to override class decls in blocks
+            if(currMethod.inScope(s)) { // Not allowed to override method decls in blocks
+                error.complain("VarDecl " + s + " is already defined in method " + currMethod.getId() +
+                        " in class " + currClass.getId() + ", not allowed to be overridden in block",
+                        ErrorHandler.ErrorCode.ALREADY_DEFINED);
+            } else { // Finally try the block
+                if(!currBlock.addVar(s, n.t)) {
+                    error.complain("VarDecl " + s + " is already defined in block in method " +
+                            currMethod.getId() + " in class " + currClass.getId(),
+                            ErrorHandler.ErrorCode.ALREADY_DEFINED);
                 }
             }
         }
