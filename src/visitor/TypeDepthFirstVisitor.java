@@ -230,14 +230,13 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e;
     public Type visit(Assign n) {
-        Symbol s = Symbol.symbol(n.i.toString());
-        Type t = getVarType(s);
-        Type ti = n.i.accept(this); // To avoid nullpointer exception
+        Type it = n.i.accept(this); // To avoid nullpointer exception
+        Type et = n.e.accept(this);
 
-        if(DEBUG) System.out.println("ASSIGN: " + ti + " TO: " + n.e.accept(this));
+        if(DEBUG) System.out.println("ASSIGN: " + it + " TO: " + et);
 
-        if((ti != null) && (!(ti.equals(n.e.accept(this))))) {
-            error.complain("Expression is not of type " + t,
+        if((it != null) && (!it.equals(et))) {
+            error.complain("Assigned type " + et + " should be of type " + it,
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -354,26 +353,26 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         java.util.ArrayList<Binding> fl; // To be able to check for formal type in call
 
         if(e instanceof NewObject) {
-            if(DEBUG) System.out.println("instanceof NewObject");
+            if(DEBUG) System.out.println("  instanceof NewObject");
             s2 = Symbol.symbol(((NewObject)e).i.toString());
             t = symTable.getClass(s2).getMethod(s1).getType();
             fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
 
         } else if(e instanceof IdentifierExp) {
-            if(DEBUG) System.out.println("instanceof IdentifierExp");
+            if(DEBUG) System.out.println("  instanceof IdentifierExp");
             IdentifierExp ie = (IdentifierExp)e;
             s2 = getClassNameFromVar(Symbol.symbol(ie.s)); // Use class name to find class
             t = symTable.getClass(s2).getMethod(s1).getType();
             fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
 
         } else if(e instanceof Call) {
-            if(DEBUG) System.out.println("instance of Call");
+            if(DEBUG) System.out.println("  instance of Call");
             s2 = Symbol.symbol(((IdentifierType)e.accept(this)).s);
             t = symTable.getClass(s2).getMethod(s1).getType();
             fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
 
-        } else { // instanceof This
-            if(DEBUG) System.out.println("instanceof (else)");
+        } else { // instanceof 'this'
+            if(DEBUG) System.out.println("  instanceof (else i.e. this)");
             t = ((MethodTable)currClass.getMethod(s1)).getType();
             fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
         }
@@ -386,7 +385,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             Type ft = n.el.elementAt(i).accept(this);
             Type ct = fl.get(i).getType();
             if(!ft.equals(ct)) {
-                error.complain("Parameter in call not of type " + ct + " for method " +
+                error.complain("Parameter type " + ft + " in call not of type " + ct + " for method " +
                         currMethod.getId(), ErrorHandler.ErrorCode.TYPE_ERROR);
             }
         }

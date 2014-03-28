@@ -10,7 +10,7 @@ public class IdentifierType extends Type {
     public boolean equals(Type tp)
     {
         if(DEBUG) {
-            System.out.println("Check equals for IdentifierType");
+            System.out.println("  Check equals for IdentifierType");
             if(tp == null)
                 System.out.println("    WAS NULL");
         }
@@ -28,5 +28,10 @@ public class IdentifierType extends Type {
 
     public Type accept(TypeVisitor v) {
         return v.visit(this);
+    }
+
+    // Added method to get type name
+    public String toString() {
+        return s;
     }
 }

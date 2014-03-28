@@ -12,6 +12,7 @@ class Test {
 
     public int start() {
         c = a + b; // Wrong type
+        c = true; // Wrong type
         return 1;
     }
 

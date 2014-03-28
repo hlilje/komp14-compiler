@@ -46,7 +46,6 @@ class B {
 
 
     public int foo() {
-        // TODO
         a = new A();
         c = new C();
         return 1;
