@@ -149,22 +149,23 @@ public class DepthFirstVisitor implements Visitor {
 
         if(currMethod == null) {
             if(!currClass.addVar(s, n.t)) {
-                error.complain("VarDecl " + s + " is already defined in " + currClass.getId(),
+                error.complain("VarDecl " + s + " is already defined in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.ALREADY_DEFINED);
             }
         } else {
             if(currBlock == null) {
                 if(!currMethod.addVar(s, n.t)) { // TODO Must there be a check in class scope here?
-                    error.complain("VarDecl " + s + " is already defined in " + currMethod.getId(),
-                            ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                    error.complain("VarDecl " + s + " is already defined in method " + currMethod.getId() +
+                            " in class " + currClass.getId(), ErrorHandler.ErrorCode.ALREADY_DEFINED);
                 }
             } else {
                 if(currMethod.inScope(s)) {
-                    error.complain("VarDecl " + s + " is already defined in " + currMethod.getId(),
-                            ErrorHandler.ErrorCode.ALREADY_DEFINED);
+                    error.complain("VarDecl " + s + " is already defined in method " + currMethod.getId() +
+                            " in class " + currClass.getId(), ErrorHandler.ErrorCode.ALREADY_DEFINED);
                 } else {
                     if(!currBlock.addVar(s, n.t)) {
-                        error.complain("VarDecl " + s + " is already defined in block in " + currMethod.getId(),
+                        error.complain("VarDecl " + s + " is already defined in block in method " +
+                                currMethod.getId() + " in class " + currClass.getId(),
                                 ErrorHandler.ErrorCode.ALREADY_DEFINED);
                     }
                 }
@@ -289,6 +290,10 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i;
     // Exp e1,e2;
     public void visit(ArrayAssign n) {
+        Symbol s = Symbol.symbol(n.i.toString());
+        if(!varInScope(s)) // TODO Not tested
+            error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
+
         n.i.accept(this);
         n.e1.accept(this);
         n.e2.accept(this);
