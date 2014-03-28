@@ -11,7 +11,7 @@ class Test {
     Other c;
 
     public int start() {
-        c = a + b;
+        c = a + b; // Wrong type
         return 1;
     }
 
@@ -21,9 +21,9 @@ class Test {
 }
 
 class Test2 {
-    int x;
+    boolean x;
     public int v() {
-        return 1;
+        return x; // Wrong type
     }
 }
 
@@ -32,6 +32,6 @@ class Other {
     boolean b;
 
     public Other v() {
-        return false;
+        return false; // Wrong type
     }
 }

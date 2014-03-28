@@ -147,8 +147,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
         Type t = n.e.accept(this); // Avoid nullpointer exception
         if((t != null) && (!(t.equals(n.t)))) {
-            error.complain("Returned type is not same as declared type",
-                    ErrorHandler.ErrorCode.TYPE_ERROR);
+            error.complain("Returned type " + t + " is not same as declared type " +
+                    n.t, ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
         return n.t;
@@ -200,7 +200,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Statement s1,s2;
     public Type visit(If n) {
         if(!(n.e.accept(this) instanceof BooleanType)) {
-            error.complain("If is only applicable to boolean type",
+            error.complain("If is only applicable to Boolean type",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         n.s1.accept(this);
@@ -213,7 +213,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Statement s;
     public Type visit(While n) {
         if(!(n.e.accept(this) instanceof BooleanType)) {
-            error.complain("While is only applicable to boolean type",
+            error.complain("While is only applicable to Boolean type",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         n.s.accept(this);
@@ -258,11 +258,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("AND E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this));
 
         if(!(n.e1.accept(this) instanceof BooleanType)) {
-            error.complain("Left side of And must be of type boolean",
+            error.complain("Left side of And must be of type Boolean",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         if(!(n.e2.accept(this) instanceof BooleanType)) {
-            error.complain("Right side of And must be of type boolean",
+            error.complain("Right side of And must be of type Boolean",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -274,11 +274,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("LESS_THAN E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this));
 
         if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of LessThan must be of type integer",
+            error.complain("Left side of LessThan must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of LessThan must be of type integer",
+            error.complain("Right side of LessThan must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -290,11 +290,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("PLUS E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this));
 
         if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of Plus must be of type integer",
+            error.complain("Left side of Plus must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of Plus must be of type integer",
+            error.complain("Right side of Plus must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -304,11 +304,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(Minus n) {
         if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of Minus must be of type integer",
+            error.complain("Left side of Minus must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of Minus must be of type integer",
+            error.complain("Right side of Minus must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -318,11 +318,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(Times n) {
         if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of Times must be of type integer",
+            error.complain("Left side of Times must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of Times must be of type integer",
+            error.complain("Right side of Times must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -385,20 +385,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         for ( int i = 0; i < n.el.size(); i++ ) {
             Type ft = n.el.elementAt(i).accept(this);
             Type ct = fl.get(i).getType();
-            if(ft instanceof IntegerType && !(ct instanceof IntegerType)) {
-                error.complain("Parameter in call not of type IntegerType for method " +
+            if(!ft.equals(ct)) {
+                error.complain("Parameter in call not of type " + ct + " for method " +
                         currMethod.getId(), ErrorHandler.ErrorCode.TYPE_ERROR);
-            } else if(ft instanceof BooleanType && !(ct instanceof BooleanType)) {
-                error.complain("Parameter in call not of type BooleanType for method " +
-                        currMethod.getId(), ErrorHandler.ErrorCode.TYPE_ERROR);
-            } else if(ft instanceof IntArrayType && !(ct instanceof IntArrayType)) {
-                error.complain("Parameter in call not of type IntArrayType for method " +
-                        currMethod.getId(), ErrorHandler.ErrorCode.TYPE_ERROR);
-            } else if(ft instanceof IdentifierType) {
-                IdentifierType it = (IdentifierType)ft;
-                if(!it.equals(ct))
-                    error.complain("Parameter in call not of type " + it.s + " for method " +
-                            currMethod.getId(), ErrorHandler.ErrorCode.TYPE_ERROR);
             }
         }
 
@@ -443,7 +432,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e;
     public Type visit(Not n) {
         if(!(n.e.accept(this) instanceof BooleanType)) {
-            error.complain("Not is only applicable to type boolean",
+            error.complain("Not is only applicable to type Boolean",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -461,11 +450,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(LessThanEquals n) {
         if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of LessThanEquals must be of type integer",
+            error.complain("Left side of LessThanEquals must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of LessThanEquals must be of type integer",
+            error.complain("Right side of LessThanEquals must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -475,11 +464,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(GreaterThan n) {
         if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of GreaterThan must be of type integer",
+            error.complain("Left side of GreaterThan must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of GreaterThan must be of type integer",
+            error.complain("Right side of GreaterThan must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -489,11 +478,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(GreaterThanEquals n) {
         if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of GreateThanEquals must be of type integer",
+            error.complain("Left side of GreateThanEquals must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of GreateThanEquals must be of type integer",
+            error.complain("Right side of GreateThanEquals must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 
@@ -506,10 +495,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Type t2 = n.e2.accept(this);
 
         if((t1 instanceof IntegerType) && !(t2 instanceof IntegerType)) {
-            error.complain("Right side of Equals must be of type integer",
+            error.complain("Right side of Equals must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         } else if((t1 instanceof BooleanType) && !(t2 instanceof BooleanType)) {
-            error.complain("Right side of Equals must be of type boolean",
+            error.complain("Right side of Equals must be of type Boolean",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         } else {
             // Do nothing
@@ -524,10 +513,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Type t2 = n.e2.accept(this);
 
         if((t1 instanceof IntegerType) && !(t2 instanceof IntegerType)) {
-            error.complain("Right side of EqualsNot must be of type integer",
+            error.complain("Right side of EqualsNot must be of type Integer",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         } else if((t1 instanceof BooleanType) && !(t2 instanceof BooleanType)) {
-            error.complain("Right side of EqualsNot must be of type boolean",
+            error.complain("Right side of EqualsNot must be of type Boolean",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         } else {
             // Do nothing
@@ -539,11 +528,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(Or n) {
         if(!(n.e1.accept(this) instanceof BooleanType)) {
-            error.complain("Left side of Or must be of type boolean",
+            error.complain("Left side of Or must be of type Boolean",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
         if(!(n.e2.accept(this) instanceof BooleanType)) {
-            error.complain("Right side of Or must be of type boolean",
+            error.complain("Right side of Or must be of type Boolean",
                     ErrorHandler.ErrorCode.TYPE_ERROR);
         }
 

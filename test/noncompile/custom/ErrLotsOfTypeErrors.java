@@ -84,7 +84,6 @@ class B {
         return a.geta();
     }
 
-    // Compiler doesnt check types of parameters
     public boolean wrongparams() {
         return c.formals(ia, c, b, i);
     }
