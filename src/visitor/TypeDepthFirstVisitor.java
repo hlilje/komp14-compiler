@@ -64,7 +64,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Statement s;
     public Type visit(MainClass n) {
         currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
+        // TODO Handle the fake method in main
         currMethod = null;
+        currBlock = null;
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -84,6 +86,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(ClassDeclSimple n) {
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
         currMethod = null;
+        currBlock = null;
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -103,6 +106,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(ClassDeclExtends n) {
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
         currMethod = null;
+        currBlock = null;
 
         n.i.accept(this);
         n.j.accept(this);
@@ -132,6 +136,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e;
     public Type visit(MethodDecl n) {
         currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
+        currBlock = null;
 
         n.t.accept(this);
         n.i.accept(this);

@@ -22,6 +22,25 @@ public class DepthFirstVisitor implements Visitor {
         currBlock = null;
     }
 
+    // Added helper method to find out if a variable is declared
+    public boolean varInScope(Symbol s) {
+        if(currMethod == null) {
+            if(!currClass.hasVar(s)) return false;
+        } else if(currBlock == null) {
+            if(!currMethod.inScope(s)) {
+                if(!currClass.hasVar(s)) return false;
+            }
+        } else { // Check in block
+            if(currBlock.getVar(s) == null) {
+                if(!currMethod.inScope(s)) {
+                    if(!currClass.hasVar(s)) return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     // MainClass m;
     // ClassDeclList cl;
     public void visit(Program n) {
@@ -45,7 +64,9 @@ public class DepthFirstVisitor implements Visitor {
                     ErrorHandler.ErrorCode.ALREADY_DEFINED);
         } else {
             currClass = ct;
+            // TODO Handle the fake method in main
             currMethod = null;
+            currBlock = null;
         }
 
         n.i1.accept(this);
@@ -75,6 +96,7 @@ public class DepthFirstVisitor implements Visitor {
         } else {
             currClass = ct;
             currMethod = null;
+            currBlock = null;
         }
 
         n.i.accept(this);
@@ -104,6 +126,7 @@ public class DepthFirstVisitor implements Visitor {
         } else {
             currClass = ct;
             currMethod = null;
+            currBlock = null;
         }
 
         n.i.accept(this);
@@ -131,7 +154,7 @@ public class DepthFirstVisitor implements Visitor {
             }
         } else {
             if(currBlock == null) {
-                if(!currMethod.addVar(s, n.t)) { // TODO Must there be a check in class scope here? 
+                if(!currMethod.addVar(s, n.t)) { // TODO Must there be a check in class scope here?
                     error.complain("VarDecl " + s + " is already defined in " + currMethod.getId(),
                             ErrorHandler.ErrorCode.ALREADY_DEFINED);
                 }
@@ -169,6 +192,7 @@ public class DepthFirstVisitor implements Visitor {
                     ErrorHandler.ErrorCode.ALREADY_DEFINED);
         } else
             currMethod = mt;
+        currBlock = null;
 
         n.i.accept(this);
 
@@ -255,30 +279,8 @@ public class DepthFirstVisitor implements Visitor {
     // Exp e;
     public void visit(Assign n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        if(currMethod == null) {
-            if(!currClass.hasVar(s)) {
-                error.complain(s + " is not defined",
-                        ErrorHandler.ErrorCode.NOT_FOUND);
-            }
-        } else {
-            if(currBlock == null) {
-                if(!currMethod.inScope(s)) {
-                    if(!currClass.hasVar(s)) {
-                        error.complain(s + " is not defined",
-                                ErrorHandler.ErrorCode.NOT_FOUND);
-                    }
-                }
-            } else {
-                if(currBlock.getVar(s) == null) {
-                    if(!currMethod.inScope(s)) {
-                        if(!currClass.hasVar(s)) {
-                            error.complain(s + " is not defined", 
-                                    ErrorHandler.ErrorCode.NOT_FOUND);
-                        }
-                    }
-                }
-            }
-        }
+        if(!varInScope(s))
+            error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
 
         n.i.accept(this);
         n.e.accept(this);
@@ -337,8 +339,7 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i;
     // ExpList el;
     public void visit(Call n) {
-        if(DEBUG)
-            System.out.println(">>> VISIT CALL: " + n.i.toString()); // DEBUG
+        if(DEBUG) System.out.println(">>> VISIT CALL: " + n.i.toString());
         n.e.accept(this);
         n.i.accept(this);
         for ( int i = 0; i < n.el.size(); i++ ) {

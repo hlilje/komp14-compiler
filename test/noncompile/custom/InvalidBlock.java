@@ -1,5 +1,6 @@
 // EXT:NBD
 
+// TODO Check that this works
 class InvalidBlock {
     public static void main(String[] args) {
         int i;
