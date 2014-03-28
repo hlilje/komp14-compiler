@@ -5,9 +5,10 @@ import syntaxtree.*;
 public class MethodTable extends AbstractTable {
     private Symbol s;
     private Type t;
-    private Table formals;
-    private Table locals;
-    private BlockTable block;
+    private Table formals; // Method params
+    private Table locals; // Local vars
+    private BlockTable block; // Nested blocks
+    private java.util.ArrayList<Binding> orderedFormals; // Formals in decl order
 
     public MethodTable(Symbol s, Type t) {
         this.s = s;
@@ -15,6 +16,7 @@ public class MethodTable extends AbstractTable {
         formals = new Table();
         locals = new Table();
         block = null;
+        orderedFormals = new java.util.ArrayList<Binding>();
     }
 
     public Symbol getId() {
@@ -44,6 +46,7 @@ public class MethodTable extends AbstractTable {
             return false;
         else {
             formals.put(s, new Binding(s, t));
+            orderedFormals.add(new Binding(s, t)); // To keep track of formal order
             return true;
         }
     }
@@ -67,5 +70,10 @@ public class MethodTable extends AbstractTable {
     // Should be set to a MethodTable for the outmost block
     public void newBlock(AbstractTable at) {
         block = new BlockTable(at);
+    }
+
+    // Added for type checking
+    public java.util.ArrayList<Binding> getOrderedFormals() {
+        return orderedFormals;
     }
 }

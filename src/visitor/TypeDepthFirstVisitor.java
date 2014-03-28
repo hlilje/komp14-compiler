@@ -176,8 +176,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // String s;
     public Type visit(IdentifierType n) {
-        if(DEBUG)
-            System.out.println("ID_TYPE: " + n.s); // DEBUG
+        if(DEBUG) System.out.println("ID_TYPE: " + n.s);
 
         return n;
     }
@@ -235,9 +234,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Type t = getVarType(s);
         Type ti = n.i.accept(this); // To avoid nullpointer exception
 
-        if(DEBUG) {
-            System.out.println("ASSIGN: " + ti + " TO: " + n.e.accept(this)); // DEBUG
-        }
+        if(DEBUG) System.out.println("ASSIGN: " + ti + " TO: " + n.e.accept(this));
 
         if((ti != null) && (!(ti.equals(n.e.accept(this))))) {
             error.complain("Expression is not of type " + t,
@@ -258,8 +255,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(And n) {
-        if(DEBUG)
-            System.out.println("AND E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
+        if(DEBUG) System.out.println("AND E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this));
 
         if(!(n.e1.accept(this) instanceof BooleanType)) {
             error.complain("Left side of And must be of type boolean",
@@ -275,8 +271,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(LessThan n) {
-        if(DEBUG)
-            System.out.println("LESS_THAN E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
+        if(DEBUG) System.out.println("LESS_THAN E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this));
 
         if(!(n.e1.accept(this) instanceof IntegerType)) {
             error.complain("Left side of LessThan must be of type integer",
@@ -292,8 +287,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Plus n) {
-        if(DEBUG)
-            System.out.println("PLUS E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this)); // DEBUG
+        if(DEBUG) System.out.println("PLUS E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this));
 
         if(!(n.e1.accept(this) instanceof IntegerType)) {
             error.complain("Left side of Plus must be of type integer",
@@ -357,37 +351,55 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(Call n) {
         Symbol s1 = Symbol.symbol(n.i.toString()); // Method name
         Type t; Exp e = n.e; Symbol s2;
-        FormalList fl; // To be able to check for formal type in call
+        java.util.ArrayList<Binding> fl; // To be able to check for formal type in call
+
         if(e instanceof NewObject) {
-            if(DEBUG)
-                System.out.println("instanceof NewObject"); // DEBUG
+            if(DEBUG) System.out.println("instanceof NewObject");
             s2 = Symbol.symbol(((NewObject)e).i.toString());
             t = symTable.getClass(s2).getMethod(s1).getType();
-            fl = symTable.getClass(s2).getMethod(s1).fl; // TODO Get it from the table
+            fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
+
         } else if(e instanceof IdentifierExp) {
-            if(DEBUG)
-                System.out.println("instanceof IdentifierExp"); // DEBUG
+            if(DEBUG) System.out.println("instanceof IdentifierExp");
             IdentifierExp ie = (IdentifierExp)e;
-            // Use class name to find class
-            s2 = getClassNameFromVar(Symbol.symbol(ie.s));
+            s2 = getClassNameFromVar(Symbol.symbol(ie.s)); // Use class name to find class
             t = symTable.getClass(s2).getMethod(s1).getType();
+            fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
+
         } else if(e instanceof Call) {
-            if(DEBUG)
-                System.out.println("instance of Call"); // DEBUG
+            if(DEBUG) System.out.println("instance of Call");
             s2 = Symbol.symbol(((IdentifierType)e.accept(this)).s);
             t = symTable.getClass(s2).getMethod(s1).getType();
+            fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
+
         } else { // instanceof This
-            if(DEBUG)
-                System.out.println("instanceof (else)"); // DEBUG
+            if(DEBUG) System.out.println("instanceof (else)");
             t = ((MethodTable)currClass.getMethod(s1)).getType();
+            fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
         }
 
         n.e.accept(this);
         n.i.accept(this);
 
-        // TODO Check for type
+        // Type check formals
         for ( int i = 0; i < n.el.size(); i++ ) {
             Type ft = n.el.elementAt(i).accept(this);
+            Type ct = fl.get(i).getType();
+            if(ft instanceof IntegerType && !(ct instanceof IntegerType)) {
+                error.complain("Parameter in call not of type IntegerType for method " +
+                        currMethod.getId(), ErrorHandler.ErrorCode.TYPE_ERROR);
+            } else if(ft instanceof BooleanType && !(ct instanceof BooleanType)) {
+                error.complain("Parameter in call not of type BooleanType for method " +
+                        currMethod.getId(), ErrorHandler.ErrorCode.TYPE_ERROR);
+            } else if(ft instanceof IntArrayType && !(ct instanceof IntArrayType)) {
+                error.complain("Parameter in call not of type IntArrayType for method " +
+                        currMethod.getId(), ErrorHandler.ErrorCode.TYPE_ERROR);
+            } else if(ft instanceof IdentifierType) {
+                IdentifierType it = (IdentifierType)ft;
+                if(!it.equals(ct))
+                    error.complain("Parameter in call not of type " + it.s + " for method " +
+                            currMethod.getId(), ErrorHandler.ErrorCode.TYPE_ERROR);
+            }
         }
 
         return t;
@@ -408,8 +420,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // String s;
     public Type visit(IdentifierExp n) {
-        if(DEBUG)
-            System.out.println("ID_EXP: " + n.s); // DEBUG
+        if(DEBUG) System.out.println("ID_EXP: " + n.s);
         Symbol s = Symbol.symbol(n.s);
         return getVarType(s);
     }
@@ -441,8 +452,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // String s;
     public Type visit(Identifier n) {
-        if(DEBUG)
-            System.out.println("ID: " + n.s); // DEBUG
+        if(DEBUG) System.out.println("ID: " + n.s);
         Symbol s = Symbol.symbol(n.s);
 
         return getVarType(s);

@@ -17,8 +17,7 @@ public class HashT {
     // Changed from Binding b, possible error in Appel book
     public void insert(String s, Object b) {
         int index = hash(s) % SIZE;
-        if(DEBUG)
-            System.out.println("      INDEX FROM HASH: " + index); // DEBUG
+        if(DEBUG) System.out.println("      INDEX FROM HASH: " + index);
         table[index] = new Bucket(s,b,table[index]);
     }
 

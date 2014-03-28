@@ -18,8 +18,7 @@ public class ErrorHandler {
         anyErrors = true;
         errors.add(new ErrorMsg(msg, code));
 
-        if(DEBUG)
-            System.err.println(msg);
+        if(DEBUG) System.err.println(msg);
     }
 
     public boolean anyErrors() {

@@ -33,18 +33,15 @@ public class Main {
         try {
             program = parser.Program();
 
-            if(DEBUG)
-                System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>"); // DEBUG
+            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             //printVisitor = new ASTPrintVisitor();
             //printVisitor.visit(program);
 
-            if(DEBUG)
-                System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>"); // DEBUG
+            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             depthVisitor = new DepthFirstVisitor(error, symTable);
             depthVisitor.visit(program);
 
-            if(DEBUG)
-                System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>"); // DEBUG
+            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>"); // DEBUG
             typeVisitor = new TypeDepthFirstVisitor(error, symTable);
             typeVisitor.visit(program);
 
