@@ -64,6 +64,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Statement s;
     public Type visit(MainClass n) {
         currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
+        // TODO Handle the fake method in main
         // Hard coded method name, actual name is ignored
         currMethod = currClass.getMethod(Symbol.symbol("main"));
         currBlock = null;
@@ -188,14 +189,16 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // StatementList sl;
     public Type visit(Block n) {
-        // TODO Find a way to get the current block!
-        // Doesn't work yet!
+        // TODO Does this work?
         if(currBlock == null) {
             currBlock = (BlockTable)currMethod.getBlock();
         } else {
             currBlock = (BlockTable)currBlock.getBlock();
         }
 
+        for ( int i = 0; i < n.vl.size(); i++ ) {
+            n.vl.elementAt(i).accept(this);
+        }
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }

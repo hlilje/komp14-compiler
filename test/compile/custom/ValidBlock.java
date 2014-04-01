@@ -5,7 +5,6 @@ class ValidBlock {
         int i;
         i = 1;
         while(i < 10) {
-            int a; // TODO Not found
             i = i + 1;
             a = i * 2;
         }
@@ -20,7 +19,7 @@ class A {
         z = 3;
         x = 3;
         while(false) {
-            z = z + i; // TODO? Gives type error, not undeclared error
+            z = z + i; // TODO Gives type error, not undeclared error
             x = x + z;
         }
         return b;
@@ -43,7 +42,7 @@ class B {
                 v = 0;
                 while(false) {
                     int w;
-                    w = a + b;
+                    w = c + b;
                 }
             }
         }

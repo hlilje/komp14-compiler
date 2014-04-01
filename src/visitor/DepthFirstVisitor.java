@@ -252,12 +252,15 @@ public class DepthFirstVisitor implements Visitor {
         if(DEBUG) System.out.println(">>> VISIT BLOCK");
         BlockTable bt;
         if(currBlock == null)
-            bt = new BlockTable(currMethod); // TODO Doesn't work in main
+            bt = new BlockTable(currMethod);
         else
             bt = new BlockTable(currBlock);
         currMethod.newBlock(bt);
         currBlock = bt;
 
+        for ( int i = 0; i < n.vl.size(); i++ ) {
+            n.vl.elementAt(i).accept(this);
+        }
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
