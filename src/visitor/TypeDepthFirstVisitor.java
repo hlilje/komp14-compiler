@@ -11,7 +11,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
-    private BlockTable currBlock;
+    private AbstractTable currBlock;
 
     // Added constructor to inject error message and symtable
     public TypeDepthFirstVisitor(ErrorHandler error, SymbolTable symTable) {
@@ -189,11 +189,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // StatementList sl;
     public Type visit(Block n) {
-        // TODO Does this work?
+        // The currBlock will become a MethodTable at the outmost scope
         if(currBlock == null) {
-            currBlock = (BlockTable)currMethod.getBlock();
+            currBlock = currMethod.getBlock();
         } else {
-            currBlock = (BlockTable)currBlock.getBlock();
+            currBlock = currBlock.getBlock();
         }
 
         for ( int i = 0; i < n.vl.size(); i++ ) {

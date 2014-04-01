@@ -3,6 +3,7 @@
 class ValidBlock {
     public static void main(String[] args) {
         int i;
+        int a;
         i = 1;
         while(i < 10) {
             i = i + 1;
@@ -19,7 +20,7 @@ class A {
         z = 3;
         x = 3;
         while(false) {
-            z = z + i; // TODO Gives type error, not undeclared error
+            z = z + 2;
             x = x + z;
         }
         return b;

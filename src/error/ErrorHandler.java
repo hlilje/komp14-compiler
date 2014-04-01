@@ -26,8 +26,10 @@ public class ErrorHandler {
     }
 
     public void printErrors() {
-        for(ErrorMsg e : errors)
-            System.err.println(e.getErrorCode() + ": " + e);
+        for(int i=0; i<errors.size(); i++) {
+            ErrorMsg e = errors.get(i);
+            System.err.println("(" + (i + 1) + "/" + errors.size() + ") " + e.getErrorCode() + ": " + e);
+        }
     }
 
     public void clearReportedErrors() {
