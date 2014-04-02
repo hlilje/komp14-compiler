@@ -1,10 +1,12 @@
+package mjc;
+
 import parser.*;
 import syntaxtree.*;
 import visitor.*;
 import error.*;
 import symbol.*;
 
-public class Main {
+public class JVMMain {
     public static final boolean DEBUG = true;
 
     public static void main(String[] args) {
@@ -23,10 +25,11 @@ public class Main {
             try {
                 parser = new MiniJavaParser(new java.io.FileInputStream(args[0]));
             } catch (java.io.FileNotFoundException e) {
+                System.err.println("File not found");
                 return;
             }
         } else {
-            System.out.println("Give no argument to read from stdin, otherwise specify a sinle input file.");
+            System.err.println("Give no argument to read from stdin, otherwise specify a single input file");
             return;
         }
 
@@ -51,7 +54,7 @@ public class Main {
                 System.exit(-1);
             }
         } catch (ParseException e) {
-            System.out.println(e.toString());
+            System.err.println(e.toString());
         }
     }
 }
