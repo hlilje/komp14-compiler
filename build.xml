@@ -9,10 +9,13 @@
     <property name="lib.dir" location="lib" />
     <property name="parser.dir" location="src/parser" />
 
-    <!-- Delete created dirs -->
+    <!-- Delete created dirs and generated files -->
     <target name="clean">
         <delete dir="${build.dir}" />
         <delete file="${jar.file}" />
+        <delete>
+            <fileset dir="${src.dir}" includes="**/*.s, **/*.j"/>
+        </delete>
     </target>
 
     <!-- Create dirs -->
