@@ -8,17 +8,19 @@ import symbol.*;
 
 public class JVMMain {
     public static final boolean DEBUG = true;
-    public static boolean ASSEM = false;
+    public static boolean ASSEM = true;
 
     public static void main(String[] args) {
         MiniJavaParser parser;
         ASTPrintVisitor printVisitor;
         DepthFirstVisitor depthVisitor;
         TypeDepthFirstVisitor typeVisitor;
+        AssemVisitor assemVisitor;
         Program program;
 
         ErrorHandler error = new ErrorHandler();
         SymbolTable symTable = new SymbolTable();
+        String testFilePath = "";
 
         switch(args.length) {
             case 0:
@@ -33,8 +35,10 @@ public class JVMMain {
                 }
                 break;
             case 2:
-                if(args[2].equals("-S")) { // Tigris command line invokation
+                if(args[1].equals("-S")) { // Tigris command line invokation
                     ASSEM = true;
+                    testFilePath = ".";
+                    
                     try {
                         parser = new MiniJavaParser(new java.io.FileInputStream(args[0]));
                     } catch (java.io.FileNotFoundException e) {
@@ -42,7 +46,7 @@ public class JVMMain {
                         return;
                     }
                 } else {
-                    System.err.println("Invalid copiler argument");
+                    System.err.println("Invalid compiler argument");
                     return;
                 }
                 break;
@@ -66,13 +70,15 @@ public class JVMMain {
         depthVisitor = new DepthFirstVisitor(error, symTable);
         depthVisitor.visit(program);
 
+        if(ASSEM) {
+            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< ASSEM VISITOR >>>>>>>>>>>>>>>");
+            assemVisitor = new AssemVisitor(error, symTable, testFilePath);
+            assemVisitor.visit(program);
+        }
+
         if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>");
         typeVisitor = new TypeDepthFirstVisitor(error, symTable);
         typeVisitor.visit(program);
-
-        // TODO Generates fake assembler files
-        if(ASSEM) {
-        }
 
         if(error.anyErrors()) {
             System.err.println("___THERE WERE COMPILATION ERRORS___");
