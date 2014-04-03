@@ -8,7 +8,7 @@ import symbol.*;
 
 public class JVMMain {
     public static final boolean DEBUG = false;
-    public static boolean ASSEM = true;
+    public static boolean ASSEM = false;
 
     public static void main(String[] args) {
         MiniJavaParser parser;
