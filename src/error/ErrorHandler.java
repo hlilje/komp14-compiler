@@ -1,7 +1,7 @@
 package error;
 
 public class ErrorHandler {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     public static enum ErrorCode {
         NOT_FOUND, ALREADY_DEFINED, TYPE_ERROR

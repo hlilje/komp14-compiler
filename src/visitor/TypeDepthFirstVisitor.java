@@ -5,7 +5,7 @@ import error.*;
 import symbol.*;
 
 public class TypeDepthFirstVisitor implements TypeVisitor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
     private SymbolTable symTable;
@@ -35,9 +35,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                 b = (Binding)currMethod.getVar(s);
         } else {
             if(currBlock.getVar(s) == null) { // Also checks method
-                    b = (Binding)currClass.getVar(s);
+                b = (Binding)currClass.getVar(s);
             } else
-                    b = (Binding)currBlock.getVar(s);
+                b = (Binding)currBlock.getVar(s);
         }
 
         return b != null ? b.getType() : null;
@@ -358,9 +358,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // ExpList el;
     public Type visit(Call n) {
+        // TODO This method generates a nullpointer exception for test FactorInteger.java
         Symbol s1 = Symbol.symbol(n.i.toString()); // Method name
-        Type t; Exp e = n.e; Symbol s2;
-        java.util.ArrayList<Binding> fl; // To be able to check for formal type in call
+        // TODO Remove null
+        Type t = null; Exp e = n.e; Symbol s2;
+        java.util.ArrayList<Binding> fl = null; // To be able to check for formal type in call
 
         if(e instanceof NewObject) {
             if(DEBUG) System.out.println("  instanceof NewObject");
@@ -382,9 +384,15 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
 
         } else { // instanceof 'this'
-            if(DEBUG) System.out.println("  instanceof (else i.e. this)");
-            t = ((MethodTable)currClass.getMethod(s1)).getType();
-            fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
+            try {
+                if(DEBUG) System.out.println("  instanceof (else) i.e. 'this'");
+                //t = ((MethodTable)currClass.getMethod(s1)).getType();
+                //fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
+                t = ((MethodTable)currClass.getMethod(s1)).getType();
+                fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
+            } catch(Exception ex) {
+                System.err.println("else error: " + ex);
+            }
         }
 
         n.e.accept(this);

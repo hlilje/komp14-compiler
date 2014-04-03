@@ -3,7 +3,7 @@ import visitor.Visitor;
 import visitor.TypeVisitor;
 
 public class IdentifierType extends Type {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     public String s;
 

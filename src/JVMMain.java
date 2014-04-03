@@ -7,7 +7,7 @@ import error.*;
 import symbol.*;
 
 public class JVMMain {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static boolean ASSEM = true;
 
     public static void main(String[] args) {

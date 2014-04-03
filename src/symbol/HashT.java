@@ -1,7 +1,7 @@
 package symbol;
 
 public class HashT {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     final int SIZE = 256;
     private Bucket table[] = new Bucket[SIZE];
