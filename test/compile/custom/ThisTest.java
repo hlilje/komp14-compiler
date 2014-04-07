@@ -1,16 +1,23 @@
 /* A test with tricky uses of 'this' that should succeed */
+// EXT:NBD
+// EXT:CEQ
+// EXT:BDJ
+
 class ThisTest {
     public static void main(String[] args) {
         A a;
         B b;
+        C c;
         a = new A();
         b = new B();
+        c = new C();
     }
 }
 
 class A {
     C cvar;
     A retA;
+    int intVar;
 
     public A a(int asd) {
         return this;
@@ -29,6 +36,12 @@ class A {
     }
 
     public A recs(A recs) {
+        while(false) {
+            if(this.inter() < 0) {
+                intVar = this.inter();
+            } else {}
+        }
+
         return retA;
     }
 
@@ -71,5 +84,40 @@ class B {
 
     public boolean v(boolean param) {
         return param && j < k;
+    }
+}
+
+class C {
+    int v1;
+    int v2;
+    int v3;
+
+    public int m1() {
+        v1 = this.m2();
+
+        if(v1 < this.m2()) {
+
+        } else {}
+
+        return 0;
+    }
+
+    public int m2() {
+        if(this.m1() < this.m2() && this.m3(1) < this.m4()) {
+
+        } else {}
+
+        return this.m3(v3);
+    }
+
+    public int m3(int f1) {
+        if(this.m3(this.m3(this.m3(0))) < this.m2()) {
+
+        } else {}
+        return 0;
+    }
+
+    public int m4() {
+        return 0;
     }
 }
