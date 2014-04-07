@@ -10,9 +10,10 @@ class ThisTest {
 
 class A {
     C cvar;
+    A retA;
 
     public A a(int asd) {
-        return this; // TODO Should this be allowed?
+        return this;
     }
 
     public C c(int p1, A p2) {
@@ -24,8 +25,11 @@ class A {
     }
 
     public A rec(A recs) {
-        // TODO Nullpointer exception, seems to be for every 'undeclared' param (this should however work)
         return this.recs(this);
+    }
+
+    public A recs(A recs) {
+        return retA;
     }
 
     public int inter() {
