@@ -9,10 +9,12 @@ class ThisTest {
         B b;
         C c;
         D d;
+        E e;
         a = new A();
         b = new B();
         c = new C();
         d = new D();
+        e = new E();
     }
 }
 
@@ -141,5 +143,21 @@ class D {
         }
 
         return this.method(v, v, this.method2(w));
+    }
+}
+
+class E {
+    A a;
+    B b;
+    C c;
+
+    public A m1() {
+        a = new A();
+        return this.m1(a);
+    }
+
+    public A m2(B f1) {
+        b = new B();
+        return a;
     }
 }
