@@ -1,3 +1,7 @@
+/**
+ * Visitor for generating Jasmine code.
+ */
+
 package visitor;
 
 import syntaxtree.*;

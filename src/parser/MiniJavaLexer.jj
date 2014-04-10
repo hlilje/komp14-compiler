@@ -1,3 +1,8 @@
+/**
+ * A JavaCC lexer/parser which recognises proper MiniJava
+ * grammar and creates objects for an AST.
+ */
+
 options {
     JAVA_UNICODE_ESCAPE = true;
 }

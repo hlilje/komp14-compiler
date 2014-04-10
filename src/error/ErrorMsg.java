@@ -1,3 +1,7 @@
+/**
+ * Class representing a compilation error.
+ */
+
 package error;
 
 public class ErrorMsg {
@@ -5,7 +9,6 @@ public class ErrorMsg {
     private String errorMessage;
     private boolean reported;
 
-    // TODO Save line number as well
     public ErrorMsg(String message, ErrorHandler.ErrorCode code) {
         errorMessage = message;
         reported = false;

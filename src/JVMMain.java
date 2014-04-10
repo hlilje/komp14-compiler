@@ -1,3 +1,7 @@
+/**
+ * The main class for running the komp14 MiniJava compiler.
+ */
+
 package mjc;
 
 import parser.*;

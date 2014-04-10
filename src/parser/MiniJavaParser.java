@@ -860,13 +860,6 @@ el.addElement(e2);
     return false;
   }
 
-  private boolean jj_3_7()
- {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_scan_token(LENGTH)) return true;
-    return false;
-  }
-
   private boolean jj_3_3()
  {
     if (jj_scan_token(INT)) return true;
@@ -878,6 +871,13 @@ el.addElement(e2);
  {
     if (jj_3R_19()) return true;
     if (jj_scan_token(ASSIGN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_7()
+ {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_scan_token(LENGTH)) return true;
     return false;
   }
 

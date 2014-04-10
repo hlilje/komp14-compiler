@@ -1,3 +1,7 @@
+/**
+ * Depth first which traverses and prints an AST.
+ */
+
 package visitor;
 
 import syntaxtree.*;

@@ -1,3 +1,7 @@
+/**
+ * Error handler which stores and prints error messages.
+ */
+
 package error;
 
 public class ErrorHandler {

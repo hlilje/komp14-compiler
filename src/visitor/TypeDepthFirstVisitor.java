@@ -1,3 +1,7 @@
+/**
+ * Depth first visitor which typechecks an AST.
+ */
+
 package visitor;
 
 import syntaxtree.*;
