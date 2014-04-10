@@ -3,14 +3,19 @@ package visitor;
 import syntaxtree.*;
 import error.*;
 import symbol.*;
+import jvm.*;
+import frame.VMAccess;
 
 public class AssemVisitor implements Visitor {
+    public static final boolean DEBUG = true;
+
     private ErrorHandler error;
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
     private AbstractTable currBlock;
-    private String testFilePath;
+    private String filePath; // Where to generate Jasmin files
+    private java.lang.StringBuilder sb; // The Jasmin string to write to file
 
     public AssemVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
@@ -18,7 +23,8 @@ public class AssemVisitor implements Visitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
-        testFilePath = tfp; // To be able to know where the tested file is located
+        filePath = tfp;
+        sb = new java.lang.StringBuilder();
     }
 
     // MainClass m;
@@ -37,8 +43,13 @@ public class AssemVisitor implements Visitor {
         currMethod = currClass.getMethod(Symbol.symbol("main"));
         currBlock = null;
 
+        Record record = new Record(n.i1.toString());
+        if(DEBUG) System.out.println(record.toString());
+        Frame frame = new Frame("main", null, null); // Hard coded main method
+        if(DEBUG) System.out.println(frame.toString());
+
         try {
-            String fileName = testFilePath + java.io.File.separator + n.i1.toString() + ".j";
+            String fileName = filePath + java.io.File.separator + n.i1.toString() + ".j";
             java.io.File f = new java.io.File(fileName);
             f.createNewFile(); // Create file in the same dir
         } catch(java.io.IOException e) {
@@ -48,7 +59,15 @@ public class AssemVisitor implements Visitor {
         n.i1.accept(this);
         n.i2.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            n.vl.elementAt(i).accept(this);
+            VarDecl vd = n.vl.elementAt(i);
+            VMAccess vma = frame.allocLocal(vd.i.toString(), vd.t);
+            if(DEBUG) {
+                if(vma instanceof IntegerInFrame)
+                    System.out.println(((IntegerInFrame)vma).toString());
+                else // instanceof ObjectInFrame
+                    System.out.println(((ObjectInFrame)vma).toString());
+            }
+            vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
@@ -63,8 +82,11 @@ public class AssemVisitor implements Visitor {
         currMethod = null;
         currBlock = null;
 
+        Record record = new Record(n.i.toString());
+        if(DEBUG) System.out.println(record.toString());
+
         try {
-            String fileName = testFilePath + java.io.File.separator + n.i.toString() + ".j";
+            String fileName = filePath + java.io.File.separator + n.i.toString() + ".j";
             java.io.File f = new java.io.File(fileName);
             f.createNewFile(); // Create file in the same dir
         } catch(java.io.IOException e) {
@@ -73,7 +95,10 @@ public class AssemVisitor implements Visitor {
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            n.vl.elementAt(i).accept(this);
+            VarDecl vd = n.vl.elementAt(i);
+            VMAccess vma = record.allocField(vd.i.toString(), vd.t);
+            if(DEBUG) System.out.println(((OnHeap)vma).toString());
+            vd.accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
@@ -89,8 +114,11 @@ public class AssemVisitor implements Visitor {
         currMethod = null;
         currBlock = null;
 
+        Record record = new Record(n.i.toString());
+        if(DEBUG) System.out.println(record.toString());
+
         try {
-            String fileName = testFilePath + java.io.File.separator + n.i.toString() + ".j";
+            String fileName = filePath + java.io.File.separator + n.i.toString() + ".j";
             java.io.File f = new java.io.File(fileName);
             f.createNewFile(); // Create file in the same dir
         } catch(java.io.IOException e) {
@@ -100,7 +128,10 @@ public class AssemVisitor implements Visitor {
         n.i.accept(this);
         n.j.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            n.vl.elementAt(i).accept(this);
+            VarDecl vd = n.vl.elementAt(i);
+            VMAccess vma = record.allocField(vd.i.toString(), vd.t);
+            if(DEBUG) System.out.println(((OnHeap)vma).toString());
+            vd.accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
@@ -124,13 +155,26 @@ public class AssemVisitor implements Visitor {
         currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
         currBlock = null;
 
+        Frame frame = new Frame("main", n.fl, currMethod.getType());
+        if(DEBUG) System.out.println(frame.toString());
+
         n.t.accept(this);
         n.i.accept(this);
         for ( int i = 0; i < n.fl.size(); i++ ) {
-            n.fl.elementAt(i).accept(this);
+            Formal f = n.fl.elementAt(i);
+            frame.allocFormal(f.i.toString(), f.t);
+            f.accept(this);
         }
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            n.vl.elementAt(i).accept(this);
+            VarDecl vd = n.vl.elementAt(i);
+            VMAccess vma = frame.allocLocal(vd.i.toString(), vd.t);
+            if(DEBUG) {
+                if(vma instanceof IntegerInFrame)
+                    System.out.println(((IntegerInFrame)vma).toString());
+                else // instanceof ObjectInFrame
+                    System.out.println(((ObjectInFrame)vma).toString());
+            }
+            vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);

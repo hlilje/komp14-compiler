@@ -7,7 +7,7 @@ import error.*;
 import symbol.*;
 
 public class JVMMain {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
     public static boolean ASSEM = false;
 
     public static void main(String[] args) {
@@ -20,7 +20,7 @@ public class JVMMain {
 
         ErrorHandler error = new ErrorHandler();
         SymbolTable symTable = new SymbolTable();
-        String testFilePath = "";
+        String filePath = ""; // Where to generate Jasmin files
 
         switch(args.length) {
             case 0:
@@ -37,7 +37,7 @@ public class JVMMain {
             case 2:
                 if(args[1].equals("-S")) { // Tigris command line invokation
                     ASSEM = true;
-                    testFilePath = ".";
+                    filePath = ".";
                     
                     try {
                         parser = new MiniJavaParser(new java.io.FileInputStream(args[0]));
@@ -72,7 +72,7 @@ public class JVMMain {
 
         if(ASSEM) {
             if(DEBUG) System.out.println("<<<<<<<<<<<<<<< ASSEM VISITOR >>>>>>>>>>>>>>>");
-            assemVisitor = new AssemVisitor(error, symTable, testFilePath);
+            assemVisitor = new AssemVisitor(error, symTable, filePath);
             assemVisitor.visit(program);
         }
 

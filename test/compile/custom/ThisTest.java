@@ -150,14 +150,34 @@ class E {
     A a;
     B b;
     C c;
+    E e;
 
     public A m1() {
         a = new A();
-        return this.m1(a);
+        c = this.m3(this);
+        return this.m2(b);
     }
 
     public A m2(B f1) {
         b = new B();
         return a;
+    }
+
+    public C m3(E f1) {
+        e = f1;
+        c = new C();
+        return c;
+    }
+}
+
+class F {
+    E e;
+
+    public boolean m1(B b) {
+        return this.m2().m3(e).m1() < this.m2().m3(e).m3(0);
+    }
+
+    public E m2() {
+        return e;
     }
 }
