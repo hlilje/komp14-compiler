@@ -1,5 +1,5 @@
 /**
- * Visitor for generating Jasmine code.
+ * Visitor for generating Jasmin code.
  */
 
 package visitor;
@@ -208,12 +208,16 @@ public class JasminVisitor implements Visitor {
     }
 
     // StatementList sl;
+    // TODO Handle VarDecl in Blocks
     public void visit(Block n) {
         if(currBlock == null) {
             currBlock = currMethod.getBlock();
         } else {
             currBlock = currBlock.getBlock();
         }
+
+        //Frame frame = new Frame();
+        //if(DEBUG) System.out.println(frame.toString());
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
