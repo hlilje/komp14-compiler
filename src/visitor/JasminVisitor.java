@@ -6,7 +6,7 @@ import symbol.*;
 import jvm.*;
 import frame.VMAccess;
 
-public class AssemVisitor implements Visitor {
+public class JasminVisitor implements Visitor {
     public static final boolean DEBUG = true;
 
     private ErrorHandler error;
@@ -17,7 +17,7 @@ public class AssemVisitor implements Visitor {
     private String filePath; // Where to generate Jasmin files
     private java.lang.StringBuilder sb; // The Jasmin string to write to file
 
-    public AssemVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
+    public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
         this.symTable = symTable;
         currClass = null;

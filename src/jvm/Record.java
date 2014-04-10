@@ -28,5 +28,4 @@ public class Record implements frame.VMRecord
     public int numberOfFields() {
 	return offset;
     }
-
 }

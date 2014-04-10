@@ -15,7 +15,7 @@ public class JVMMain {
         ASTPrintVisitor printVisitor;
         DepthFirstVisitor depthVisitor;
         TypeDepthFirstVisitor typeVisitor;
-        AssemVisitor assemVisitor;
+        JasminVisitor jasminVisitor;
         Program program;
 
         ErrorHandler error = new ErrorHandler();
@@ -72,8 +72,8 @@ public class JVMMain {
 
         if(ASSEM) {
             if(DEBUG) System.out.println("<<<<<<<<<<<<<<< ASSEM VISITOR >>>>>>>>>>>>>>>");
-            assemVisitor = new AssemVisitor(error, symTable, filePath);
-            assemVisitor.visit(program);
+            jasminVisitor = new JasminVisitor(error, symTable, filePath);
+            jasminVisitor.visit(program);
         }
 
         if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>");
