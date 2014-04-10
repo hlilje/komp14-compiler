@@ -388,8 +388,13 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                 if(DEBUG) System.out.println("  instanceof (else) i.e. 'this'");
                 //t = ((MethodTable)currClass.getMethod(s1)).getType();
                 //fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
-                t = ((MethodTable)currClass.getMethod(s1)).getType();
-                fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
+                if(((MethodTable)currClass.getMethod(s1)) != null) {
+                    t = ((MethodTable)currClass.getMethod(s1)).getType();
+                    fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
+                } else {
+                    error.complain("Method " + s1 + " was not found in class " + currClass,
+                            ErrorHandler.ErrorCode.COMPILER_ERROR);
+                }
             } catch(Exception ex) {
                 System.err.println("else error: " + ex);
             }

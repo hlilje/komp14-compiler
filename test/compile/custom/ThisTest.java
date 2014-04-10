@@ -8,9 +8,11 @@ class ThisTest {
         A a;
         B b;
         C c;
+        D d;
         a = new A();
         b = new B();
         c = new C();
+        d = new D();
     }
 }
 
@@ -119,5 +121,25 @@ class C {
 
     public int m4() {
         return 0;
+    }
+}
+
+class D {
+    int v;
+    int w;
+
+    public int method(int a, int b, int c) {
+        w = 88;
+
+        return this.method(this.method2(), this.method2(),
+                this.method(1, 2, this.method2(1)));
+    }
+
+    public int method2(int a) {
+        while(this.method(1, 3, w) < 10) {
+            v = this.method(1, 2, 3);
+        }
+
+        return this.method(v, v, this.method2(w));
     }
 }

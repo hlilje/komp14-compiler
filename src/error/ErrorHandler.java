@@ -4,7 +4,7 @@ public class ErrorHandler {
     public static final boolean DEBUG = false;
 
     public static enum ErrorCode {
-        NOT_FOUND, ALREADY_DEFINED, TYPE_ERROR
+        NOT_FOUND, ALREADY_DEFINED, TYPE_ERROR, COMPILER_ERROR
     }
     private boolean anyErrors;
     private java.util.ArrayList<ErrorMsg> errors;
