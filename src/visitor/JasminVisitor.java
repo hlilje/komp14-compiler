@@ -43,6 +43,7 @@ public class JasminVisitor implements Visitor {
     // Identifier i1,i2;
     // Statement s;
     public void visit(MainClass n) {
+        if(DEBUG) System.out.println(">>>> MainClass");
         currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
         currMethod = currClass.getMethod(Symbol.symbol("main"));
         currBlock = null;
@@ -82,6 +83,7 @@ public class JasminVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
+        if(DEBUG) System.out.println(">>>> ClassDeclSimple");
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
         currMethod = null;
         currBlock = null;
@@ -114,6 +116,7 @@ public class JasminVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
+        if(DEBUG) System.out.println(">>>> ClassDeclExtends");
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
         currMethod = null;
         currBlock = null;
@@ -156,6 +159,7 @@ public class JasminVisitor implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
+        if(DEBUG) System.out.println(">>>> MethodDecl");
         currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
         currBlock = null;
 
@@ -208,19 +212,28 @@ public class JasminVisitor implements Visitor {
     }
 
     // StatementList sl;
-    // TODO Handle VarDecl in Blocks
     public void visit(Block n) {
+        if(DEBUG) System.out.println(">>>> Block");
         if(currBlock == null) {
             currBlock = currMethod.getBlock();
         } else {
             currBlock = currBlock.getBlock();
         }
 
-        //Frame frame = new Frame();
-        //if(DEBUG) System.out.println(frame.toString());
+        // TODO Handle VarDecl in Blocks
+        Frame frame = new Frame(currMethod.getId().toString(), null, null);
+        if(DEBUG) System.out.println(frame.toString());
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            n.vl.elementAt(i).accept(this);
+            VarDecl vd = n.vl.elementAt(i);
+            VMAccess vma = frame.allocLocal(vd.i.toString(), vd.t);
+            if(DEBUG) {
+                if(vma instanceof IntegerInFrame)
+                    System.out.println(((IntegerInFrame)vma).toString());
+                else // instanceof ObjectInFrame
+                    System.out.println(((ObjectInFrame)vma).toString());
+            }
+            vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
