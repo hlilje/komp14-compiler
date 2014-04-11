@@ -14,12 +14,16 @@ public class JasminVisitor implements Visitor {
     public static final boolean DEBUG = true;
 
     private ErrorHandler error;
+    private String filePath; // Where to generate Jasmin files
+    private java.lang.StringBuilder sb; // The Jasmin string to write to file
+
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
     private AbstractTable currBlock;
-    private String filePath; // Where to generate Jasmin files
-    private java.lang.StringBuilder sb; // The Jasmin string to write to file
+
+    // Holds the currently stored variables accesses
+    private java.util.HashMap<String, VMAccess> accesses;
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
@@ -29,6 +33,30 @@ public class JasminVisitor implements Visitor {
         currBlock = null;
         filePath = tfp;
         sb = new java.lang.StringBuilder();
+        accesses = new java.util.HashMap<String, VMAccess>();
+    }
+
+    // Helper method to write a class declaration in Jasmin syntax
+    private void jDeclareClass(String src, String clss, String spr) {
+        // Declare Jasmin source file
+        sb.append(".source "); sb.append(src); sb.append(".j");
+        sb.append(System.getProperty("line.separator"));
+        sb.append(".class "); sb.append(clss);
+        sb.append(System.getProperty("line.separator"));
+        sb.append(".super "); sb.append(spr);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Helper method which creates a Jasmin source file
+    private void jCreateSourceFile(String className) {
+        try {
+            String fileName = filePath + java.io.File.separator + className + ".j";
+            java.io.File f = new java.io.File(fileName);
+            f.createNewFile(); // Create file in the same dir
+        } catch(java.io.IOException e) {
+            error.complain("Error while creating Jasmin file for class " +
+                    className + ":\n" + e, ErrorHandler.ErrorCode.INTERNAL_ERROR);
+        }
     }
 
     // MainClass m;
@@ -44,22 +72,19 @@ public class JasminVisitor implements Visitor {
     // Statement s;
     public void visit(MainClass n) {
         if(DEBUG) System.out.println(">>>> MainClass");
-        currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
+        String className = n.i1.toString();
+        currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = currClass.getMethod(Symbol.symbol("main"));
         currBlock = null;
 
-        Record record = new Record(n.i1.toString());
+        Record record = new Record(className);
         if(DEBUG) System.out.println(record.toString());
         Frame frame = new Frame("main", null, null); // Hard coded main method
         if(DEBUG) System.out.println(frame.toString());
 
-        try {
-            String fileName = filePath + java.io.File.separator + n.i1.toString() + ".j";
-            java.io.File f = new java.io.File(fileName);
-            f.createNewFile(); // Create file in the same dir
-        } catch(java.io.IOException e) {
-            System.err.println(e);
-        }
+        // No inheritance
+        jDeclareClass(className, className, "java/lang/Object");
+        jCreateSourceFile(className);
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -83,21 +108,18 @@ public class JasminVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
+        String className = n.i.toString();
         if(DEBUG) System.out.println(">>>> ClassDeclSimple");
-        currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
+        currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = null;
         currBlock = null;
 
-        Record record = new Record(n.i.toString());
+        Record record = new Record(className);
         if(DEBUG) System.out.println(record.toString());
 
-        try {
-            String fileName = filePath + java.io.File.separator + n.i.toString() + ".j";
-            java.io.File f = new java.io.File(fileName);
-            f.createNewFile(); // Create file in the same dir
-        } catch(java.io.IOException e) {
-            System.err.println(e);
-        }
+        // No inheritance
+        jDeclareClass(className, className, "java/lang/Object");
+        jCreateSourceFile(className);
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -117,20 +139,17 @@ public class JasminVisitor implements Visitor {
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
         if(DEBUG) System.out.println(">>>> ClassDeclExtends");
-        currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
+        String className = n.i.toString();
+        currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = null;
         currBlock = null;
 
-        Record record = new Record(n.i.toString());
+        Record record = new Record(className);
         if(DEBUG) System.out.println(record.toString());
 
-        try {
-            String fileName = filePath + java.io.File.separator + n.i.toString() + ".j";
-            java.io.File f = new java.io.File(fileName);
-            f.createNewFile(); // Create file in the same dir
-        } catch(java.io.IOException e) {
-            System.err.println(e);
-        }
+        // No inheritance
+        jDeclareClass(className, className, "java/lang/Object");
+        jCreateSourceFile(className);
 
         n.i.accept(this);
         n.j.accept(this);

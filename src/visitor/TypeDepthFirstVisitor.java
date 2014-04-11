@@ -395,7 +395,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
                 } else {
                     error.complain("Method " + s1 + " was not found in class " + currClass.getId().toString(),
-                            ErrorHandler.ErrorCode.BROKEN_COMPILER);
+                            ErrorHandler.ErrorCode.INTERNAL_ERROR);
                 }
             } catch(Exception ex) {
                 System.err.println("else error: " + ex);

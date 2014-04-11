@@ -8,7 +8,7 @@ public class ErrorHandler {
     public static final boolean DEBUG = false;
 
     public static enum ErrorCode {
-        NOT_FOUND, ALREADY_DEFINED, TYPE_MISMATCH, BROKEN_COMPILER
+        NOT_FOUND, ALREADY_DEFINED, TYPE_MISMATCH, INTERNAL_ERROR
     }
     private boolean anyErrors;
     private java.util.ArrayList<ErrorMsg> errors;
