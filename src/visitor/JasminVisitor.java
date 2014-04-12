@@ -23,7 +23,7 @@ public class JasminVisitor implements Visitor {
     private AbstractTable currBlock;
 
     // Holds the currently stored variables accesses
-    private java.util.HashMap<String, VMAccess> accesses;
+    private java.util.HashMap<String, VMAccess> accesses; // TODO Not implemented
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
@@ -53,6 +53,14 @@ public class JasminVisitor implements Visitor {
             String fileName = filePath + java.io.File.separator + className + ".j";
             java.io.File f = new java.io.File(fileName);
             f.createNewFile(); // Create file in the same dir
+
+            // Write the accumulated string to the file
+            java.io.FileWriter fw = new java.io.FileWriter(f.getAbsoluteFile());
+			java.io.BufferedWriter bw = new java.io.BufferedWriter(fw);
+			bw.write(sb.toString());
+			bw.close();
+
+            sb.setLength(0); // Reset the accumulated string
         } catch(java.io.IOException e) {
             error.complain("Error while creating Jasmin file for class " +
                     className + ":\n" + e, ErrorHandler.ErrorCode.INTERNAL_ERROR);
@@ -84,24 +92,30 @@ public class JasminVisitor implements Visitor {
 
         // No inheritance
         jDeclareClass(className, className, "java/lang/Object");
-        jCreateSourceFile(className);
 
         n.i1.accept(this);
         n.i2.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
             VarDecl vd = n.vl.elementAt(i);
-            VMAccess vma = frame.allocLocal(vd.i.toString(), vd.t);
+            String fieldName = vd.i.toString();
+            VMAccess vma = frame.allocLocal(fieldName, vd.t);
+
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
                     System.out.println(((IntegerInFrame)vma).toString());
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
+            sb.append(vma.declare()); // Declare field
+            sb.append(System.getProperty("line.separator"));
+
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
+
+        jCreateSourceFile(className);
     }
 
     // Identifier i;
@@ -119,18 +133,24 @@ public class JasminVisitor implements Visitor {
 
         // No inheritance
         jDeclareClass(className, className, "java/lang/Object");
-        jCreateSourceFile(className);
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
             VarDecl vd = n.vl.elementAt(i);
+            String fieldName = vd.i.toString();
             VMAccess vma = record.allocField(vd.i.toString(), vd.t);
+
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
+            sb.append(vma.declare()); // Declare field
+            sb.append(System.getProperty("line.separator"));
+
             vd.accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
+
+        jCreateSourceFile(className);
     }
 
     // Identifier i;
@@ -149,19 +169,25 @@ public class JasminVisitor implements Visitor {
 
         // No inheritance
         jDeclareClass(className, className, "java/lang/Object");
-        jCreateSourceFile(className);
 
         n.i.accept(this);
         n.j.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
             VarDecl vd = n.vl.elementAt(i);
+            String fieldName = vd.i.toString();
             VMAccess vma = record.allocField(vd.i.toString(), vd.t);
+
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
+            sb.append(vma.declare()); // Declare field
+            sb.append(System.getProperty("line.separator"));
+
             vd.accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
+
+        jCreateSourceFile(className);
     }
 
     // void t;
