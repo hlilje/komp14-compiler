@@ -9,6 +9,7 @@ import error.*;
 import symbol.*;
 import jvm.*;
 import frame.VMAccess;
+import frame.VMFrame;
 
 public class JasminVisitor implements Visitor {
     public static final boolean DEBUG = true;
@@ -45,6 +46,26 @@ public class JasminVisitor implements Visitor {
         sb.append(System.getProperty("line.separator"));
         sb.append(".super "); sb.append(spr);
         sb.append(System.getProperty("line.separator"));
+    }
+
+    // Wrapper method to declare a field in a Jasmin source file
+    private void jDeclareField(VMAccess vma) {
+            sb.append(vma.declare());
+            sb.append(System.getProperty("line.separator"));
+    }
+
+    // Helper method to declare a method for a Jasmin source file
+    // Doesn't close the method tag since it must happen after visit
+    private void jDeclareMethod(String acs, VMFrame vmf) {
+            sb.append(".method "); sb.append(acs); sb.append(" ");
+            sb.append(vmf.procEntry()); // Name decl according to Jasmin spec
+            sb.append(System.getProperty("line.separator"));
+    }
+
+    // Helper method to end a Jasmin method declaration
+    private void jDeclareMethodEnd() {
+            sb.append(".end method");
+            sb.append(System.getProperty("line.separator"));
     }
 
     // Helper method which creates a Jasmin source file
@@ -106,8 +127,7 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            sb.append(vma.declare()); // Declare field
-            sb.append(System.getProperty("line.separator"));
+            jDeclareField(vma);
 
             vd.accept(this);
         }
@@ -141,8 +161,7 @@ public class JasminVisitor implements Visitor {
             VMAccess vma = record.allocField(vd.i.toString(), vd.t);
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
-            sb.append(vma.declare()); // Declare field
-            sb.append(System.getProperty("line.separator"));
+            jDeclareField(vma);
 
             vd.accept(this);
         }
@@ -178,8 +197,7 @@ public class JasminVisitor implements Visitor {
             VMAccess vma = record.allocField(vd.i.toString(), vd.t);
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
-            sb.append(vma.declare()); // Declare field
-            sb.append(System.getProperty("line.separator"));
+            jDeclareField(vma);
 
             vd.accept(this);
         }
@@ -210,6 +228,7 @@ public class JasminVisitor implements Visitor {
 
         Frame frame = new Frame("main", n.fl, currMethod.getType());
         if(DEBUG) System.out.println(frame.toString());
+        jDeclareMethod("public", frame);
 
         n.t.accept(this);
         n.i.accept(this);
@@ -234,6 +253,7 @@ public class JasminVisitor implements Visitor {
         }
 
         n.e.accept(this);
+        jDeclareMethodEnd(); // Close the declaration
     }
 
     // void t;
