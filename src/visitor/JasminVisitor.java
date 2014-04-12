@@ -50,22 +50,36 @@ public class JasminVisitor implements Visitor {
 
     // Wrapper method to declare a field in a Jasmin source file
     private void jDeclareField(VMAccess vma) {
-            sb.append(vma.declare());
-            sb.append(System.getProperty("line.separator"));
+        sb.append(vma.declare());
+        sb.append(System.getProperty("line.separator"));
     }
 
     // Helper method to declare a method for a Jasmin source file
     // Doesn't close the method tag since it must happen after visit
     private void jDeclareMethod(String acs, VMFrame vmf) {
-            sb.append(".method "); sb.append(acs); sb.append(" ");
-            sb.append(vmf.procEntry()); // Name decl according to Jasmin spec
-            sb.append(System.getProperty("line.separator"));
+        sb.append(".method "); sb.append(acs); sb.append(" ");
+        sb.append(vmf.procEntry()); // Name decl according to Jasmin spec
+        sb.append(System.getProperty("line.separator"));
     }
 
     // Helper method to end a Jasmin method declaration
     private void jDeclareMethodEnd() {
-            sb.append(".end method");
-            sb.append(System.getProperty("line.separator"));
+        sb.append(".end method");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Helper method to set which directives to use for the Jasmin method decl
+    private void jLimitMethod(int stack, int locals) {
+        sb.append(".limit stack "); sb.append(stack);
+        sb.append(System.getProperty("line.separator"));
+        sb.append(".limit locals "); sb.append(locals);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Wrapper method to declare a local Jasmin variable in a method
+    private void jDeclareLocal(VMAccess vma) {
+        sb.append(vma.declare());
+        sb.append(System.getProperty("line.separator"));
     }
 
     // Helper method which creates a Jasmin source file
@@ -77,9 +91,9 @@ public class JasminVisitor implements Visitor {
 
             // Write the accumulated string to the file
             java.io.FileWriter fw = new java.io.FileWriter(f.getAbsoluteFile());
-			java.io.BufferedWriter bw = new java.io.BufferedWriter(fw);
-			bw.write(sb.toString());
-			bw.close();
+            java.io.BufferedWriter bw = new java.io.BufferedWriter(fw);
+            bw.write(sb.toString());
+            bw.close();
 
             sb.setLength(0); // Reset the accumulated string
         } catch(java.io.IOException e) {
@@ -128,7 +142,6 @@ public class JasminVisitor implements Visitor {
                     System.out.println(((ObjectInFrame)vma).toString());
             }
             jDeclareField(vma);
-
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
@@ -162,7 +175,6 @@ public class JasminVisitor implements Visitor {
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
             jDeclareField(vma);
-
             vd.accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
@@ -198,7 +210,6 @@ public class JasminVisitor implements Visitor {
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
             jDeclareField(vma);
-
             vd.accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
@@ -229,6 +240,7 @@ public class JasminVisitor implements Visitor {
         Frame frame = new Frame("main", n.fl, currMethod.getType());
         if(DEBUG) System.out.println(frame.toString());
         jDeclareMethod("public", frame);
+        jLimitMethod(0, n.vl.size()); // TODO Calculate local stack size
 
         n.t.accept(this);
         n.i.accept(this);
@@ -246,6 +258,7 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
+            jDeclareLocal(vma);
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
@@ -298,6 +311,7 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
+            jDeclareLocal(vma); // TODO This might need to be handled differently
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
