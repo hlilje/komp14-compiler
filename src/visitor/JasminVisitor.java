@@ -23,9 +23,6 @@ public class JasminVisitor implements Visitor {
     private MethodTable currMethod;
     private AbstractTable currBlock;
 
-    // Holds the currently stored variables accesses
-    private java.util.HashMap<String, VMAccess> accesses; // TODO Not implemented
-
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
         this.symTable = symTable;
@@ -34,7 +31,6 @@ public class JasminVisitor implements Visitor {
         currBlock = null;
         filePath = tfp;
         sb = new java.lang.StringBuilder();
-        accesses = new java.util.HashMap<String, VMAccess>();
     }
 
     // Helper method to write a class declaration in Jasmin syntax
@@ -79,6 +75,31 @@ public class JasminVisitor implements Visitor {
     // Wrapper method to declare a local Jasmin variable in a method
     private void jDeclareLocal(VMAccess vma) {
         sb.append(vma.declare());
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Wrapper method to push an interger literal to the stack
+    private void jPushInt(IntegerLiteral n) {
+        sb.append("bipush "); sb.append(n.i);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin add op
+    private void jAdd() {
+        sb.append("iadd");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin minus op
+    private void jMinus() {
+        sb.append("ineg");
+        sb.append(System.getProperty("line.separator"));
+        jAdd(); // Add negated number
+    }
+
+    // Jasmin multiplication op
+    private void jMul() {
+        sb.append("imul");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -245,13 +266,16 @@ public class JasminVisitor implements Visitor {
         n.t.accept(this);
         n.i.accept(this);
         for ( int i = 0; i < n.fl.size(); i++ ) {
-            Formal f = n.fl.elementAt(i);
-            frame.allocFormal(f.i.toString(), f.t);
+            Formal f = n.fl.elementAt(i); String formName = f.i.toString();
+            VMAccess vma = frame.allocFormal(formName, f.t);
+            currMethod.addFormalAccess(Symbol.symbol(formName), vma);
             f.accept(this);
         }
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            VarDecl vd = n.vl.elementAt(i);
-            VMAccess vma = frame.allocLocal(vd.i.toString(), vd.t);
+            VarDecl vd = n.vl.elementAt(i); String varName = vd.i.toString();
+            VMAccess vma = frame.allocLocal(varName, vd.t);
+            currMethod.addLocalAccess(Symbol.symbol(varName), vma);
+
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
                     System.out.println(((IntegerInFrame)vma).toString());
@@ -369,18 +393,21 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(Plus n) {
+        jAdd();
         n.e1.accept(this);
         n.e2.accept(this);
     }
 
     // Exp e1,e2;
     public void visit(Minus n) {
+        jMinus();
         n.e1.accept(this);
         n.e2.accept(this);
     }
 
     // Exp e1,e2;
     public void visit(Times n) {
+        jMul();
         n.e1.accept(this);
         n.e2.accept(this);
     }
@@ -410,6 +437,7 @@ public class JasminVisitor implements Visitor {
 
     // int i;
     public void visit(IntegerLiteral n) {
+        jPushInt(n);
     }
 
     public void visit(True n) {

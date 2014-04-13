@@ -1,6 +1,7 @@
 package symbol;
 
 import syntaxtree.*;
+import frame.VMAccess;
 
 public class MethodTable extends AbstractTable {
     private Symbol s;
@@ -9,6 +10,8 @@ public class MethodTable extends AbstractTable {
     private Table locals; // Local vars
     private BlockTable block; // Nested blocks
     private java.util.ArrayList<Binding> orderedFormals; // Formals in decl order
+    private Table formalAccesses; // VMAccesses for formals
+    private Table localAccesses; // VMAccesses for locals
 
     public MethodTable(Symbol s, Type t) {
         this.s = s;
@@ -17,6 +20,8 @@ public class MethodTable extends AbstractTable {
         locals = new Table();
         block = null;
         orderedFormals = new java.util.ArrayList<Binding>();
+        formalAccesses = new Table();
+        localAccesses = new Table();
     }
 
     public Symbol getId() {
@@ -82,5 +87,24 @@ public class MethodTable extends AbstractTable {
     // Added for type checking
     public java.util.ArrayList<Binding> getOrderedFormals() {
         return orderedFormals;
+    }
+
+    // TODO Are these VMAccess methods needed?
+    // Save a VMAccess for a formal parameter
+    public void addFormalAccess(Symbol s, VMAccess vma) {
+        formalAccesses.put(s, vma);
+    }
+
+    // Save a VMAccess for a variable
+    public void addLocalAccess(Symbol s, VMAccess vma) {
+        localAccesses.put(s, vma);
+    }
+
+    public VMAccess getFormalAccess(Symbol s) {
+        return (VMAccess)formalAccesses.get(s);
+    }
+
+    public VMAccess getLocalAccesses(Symbol s) {
+        return (VMAccess)localAccesses.get(s);
     }
 }
