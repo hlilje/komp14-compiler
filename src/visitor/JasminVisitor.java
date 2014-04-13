@@ -80,26 +80,26 @@ public class JasminVisitor implements Visitor {
 
     // Wrapper method to push an interger literal to the stack
     private void jPushInt(IntegerLiteral n) {
-        sb.append("bipush "); sb.append(n.i);
+        sb.append("    bipush "); sb.append(n.i);
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin add op
     private void jAdd() {
-        sb.append("iadd");
+        sb.append("    iadd");
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin minus op
     private void jMinus() {
-        sb.append("ineg");
+        sb.append("    ineg");
         sb.append(System.getProperty("line.separator"));
         jAdd(); // Add negated number
     }
 
     // Jasmin multiplication op
     private void jMul() {
-        sb.append("imul");
+        sb.append("    imul");
         sb.append(System.getProperty("line.separator"));
     }
 
