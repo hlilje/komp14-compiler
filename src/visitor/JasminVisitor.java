@@ -103,6 +103,19 @@ public class JasminVisitor implements Visitor {
         sb.append(System.getProperty("line.separator"));
     }
 
+    // Declare new Jasmin class
+    // No inheritance
+    private void jNewObject(String className) {
+        sb.append("    new java/lang/Object/"); sb.append(className);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Declare new Jasmin int array
+    private void jNewArray() {
+        sb.append("    newarray int");
+        sb.append(System.getProperty("line.separator"));
+    }
+
     // Helper method which creates a Jasmin source file
     private void jCreateSourceFile(String className) {
         try {
@@ -455,11 +468,13 @@ public class JasminVisitor implements Visitor {
 
     // Exp e;
     public void visit(NewArray n) {
+        jNewArray();
         n.e.accept(this);
     }
 
     // Identifier i;
     public void visit(NewObject n) {
+        jNewObject(n.i.s);
     }
 
     // Exp e;
