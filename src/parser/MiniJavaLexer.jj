@@ -27,7 +27,16 @@ SKIP :
 SPECIAL_TOKEN:
 {
     < SINGLE_LINE_COMMENT: "//" (~["\n","\n"])* ("\n"|"\r"|"\r\n") >
-    | < MULTI_LINE_COMMENT: "/*" (~["*"] | "*" ~["/"])* "*/" >
+    | < MULTI_LINE_COMMENT: "/*" > : WithinComment
+}
+
+<WithinComment> SKIP :
+{
+    "*/" : DEFAULT
+}
+<WithinComment> MORE :
+{
+    <~[]>
 }
 
 // Reserved words
