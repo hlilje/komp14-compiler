@@ -116,6 +116,18 @@ public class JasminVisitor implements Visitor {
         sb.append(System.getProperty("line.separator"));
     }
 
+    // Call Java's print method with Jasmin
+    private void jPrint() {
+        sb.append("    getstatic java/lang/System/out Ljava/io/PrintStream;");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to finish the print call
+    private void jPrintAfter() {
+        sb.append("    invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
+        sb.append(System.getProperty("line.separator"));
+    }
+
     // Helper method which creates a Jasmin source file
     private void jCreateSourceFile(String className) {
         try {
@@ -374,7 +386,9 @@ public class JasminVisitor implements Visitor {
 
     // Exp e;
     public void visit(Print n) {
+        jPrint();
         n.e.accept(this);
+        jPrintAfter();
     }
 
     // Identifier i;
