@@ -15,14 +15,13 @@ public class JasminVisitor implements Visitor {
     public static final boolean DEBUG = true;
 
     private ErrorHandler error;
-    private String filePath; // Where to generate Jasmin files
-    private java.lang.StringBuilder sb; // The Jasmin string to write to file
-    private int stackDepth; // Keep track of needed stack depth
 
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
     private AbstractTable currBlock;
+
+    private JasminFileWriter jfw;
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
@@ -30,150 +29,7 @@ public class JasminVisitor implements Visitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
-        filePath = tfp;
-        sb = new java.lang.StringBuilder();
-        stackDepth = 0;
-    }
-
-    // Helper method to write a class declaration in Jasmin syntax
-    private void jDeclareClass(String src, String clss, String spr) {
-        // Declare Jasmin source file
-        sb.append(".source "); sb.append(src); sb.append(".j");
-        sb.append(System.getProperty("line.separator"));
-        sb.append(".class "); sb.append(clss);
-        sb.append(System.getProperty("line.separator"));
-        sb.append(".super "); sb.append(spr);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Wrapper method to declare a field in a Jasmin source file
-    private void jDeclareField(VMAccess vma) {
-        sb.append(vma.declare());
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Helper method to declare a method for a Jasmin source file
-    // Doesn't close the method tag since it must happen after visit
-    private void jDeclareMethod(String acs, VMFrame vmf) {
-        sb.append(".method "); sb.append(acs); sb.append(" ");
-        sb.append(vmf.procEntry()); // Name decl according to Jasmin spec
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Special method to handle the main method with Jasmin
-    private void jDeclareMainMethod() {
-        sb.append(".method public static main([Ljava/lang/String;)V");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Helper method to end a Jasmin method declaration
-    private void jDeclareMethodEnd(Type t) {
-        if(t == null)
-            sb.append("    return");
-        else
-            sb.append(returnWithType(t));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(".end method");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Helper method to format the return type for Jasmin
-    private String returnWithType(Type t) {
-        if(t instanceof IntegerType)
-            return "    ireturn";
-        else if(t instanceof BooleanType)
-            return "    ireturn"; // TODO Float?
-        else if(t instanceof IdentifierType)
-            return "    areturn"; // TODO Object?
-        else {
-            error.complain("Invalid return type " + t + " in method " + currMethod.getId() +
-                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
-            return "";
-        }
-    }
-
-    // Helper method to set which directives to use for the Jasmin method decl
-    private void jLimitMethod(int stack, int locals) {
-        sb.append(".limit stack "); sb.append(stack);
-        sb.append(System.getProperty("line.separator"));
-        sb.append(".limit locals "); sb.append(locals);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Wrapper method to declare a local Jasmin variable in a method
-    private void jDeclareLocal(VMAccess vma) {
-        sb.append(vma.declare());
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Wrapper method to push an interger literal to the stack
-    private void jPushInt(IntegerLiteral n) {
-        sb.append("    bipush "); sb.append(n.i);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin add op
-    private void jAdd() {
-        sb.append("    iadd");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin minus op
-    private void jMinus() {
-        sb.append("    ineg");
-        sb.append(System.getProperty("line.separator"));
-        jAdd(); // Add negated number
-    }
-
-    // Jasmin multiplication op
-    private void jMul() {
-        sb.append("    imul");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Declare new Jasmin class
-    // No inheritance
-    private void jNewObject(String className) {
-        sb.append("    new java/lang/Object/"); sb.append(className);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Declare new Jasmin int array
-    private void jNewArray() {
-        sb.append("    newarray int");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Call Java's print method with Jasmin
-    private void jPrint() {
-        sb.append("    getstatic java/lang/System/out Ljava/io/PrintStream;");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin method to finish the print call
-    private void jPrintAfter() {
-        sb.append("    invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Helper method which creates a Jasmin source file
-    private void jCreateSourceFile(String className) {
-        try {
-            String fileName = filePath + java.io.File.separator + className + ".j";
-            java.io.File f = new java.io.File(fileName);
-            f.createNewFile(); // Create file in the same dir
-
-            // Write the accumulated string to the file
-            java.io.FileWriter fw = new java.io.FileWriter(f.getAbsoluteFile());
-            java.io.BufferedWriter bw = new java.io.BufferedWriter(fw);
-            bw.write(sb.toString());
-            bw.close();
-
-            sb.setLength(0); // Reset the accumulated string
-        } catch(java.io.IOException e) {
-            error.complain("Error while creating Jasmin file for class " +
-                    className + ":\n" + e, ErrorHandler.ErrorCode.INTERNAL_ERROR);
-        }
+        jfw = new JasminFileWriter(error, tfp);
     }
 
     // MainClass m;
@@ -200,10 +56,10 @@ public class JasminVisitor implements Visitor {
         if(DEBUG) System.out.println(frame.toString());
 
         // No inheritance
-        jDeclareClass(className, className, "java/lang/Object");
-        jDeclareMainMethod();
+        jfw.declareClass(className, className, "java/lang/Object");
+        jfw.declareMainMethod();
         // TODO Calculate needed stack depth
-        jLimitMethod(stackDepth, n.vl.size() + 1); // Add one local for args
+        jfw.limitMethod(n.vl.size() + 1); // Add one local for args
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -218,15 +74,15 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            jDeclareLocal(vma);
+            jfw.declareLocal(vma);
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
 
-        jDeclareMethodEnd(null);
-        jCreateSourceFile(className);
+        jfw.declareMethodEnd(null);
+        jfw.createSourceFile(className);
     }
 
     // Identifier i;
@@ -243,7 +99,7 @@ public class JasminVisitor implements Visitor {
         if(DEBUG) System.out.println(record.toString());
 
         // No inheritance
-        jDeclareClass(className, className, "java/lang/Object");
+        jfw.declareClass(className, className, "java/lang/Object");
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -252,14 +108,14 @@ public class JasminVisitor implements Visitor {
             VMAccess vma = record.allocField(vd.i.toString(), vd.t);
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
-            jDeclareField(vma);
+            jfw.declareField(vma);
             vd.accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
 
-        jCreateSourceFile(className);
+        jfw.createSourceFile(className);
     }
 
     // Identifier i;
@@ -277,7 +133,7 @@ public class JasminVisitor implements Visitor {
         if(DEBUG) System.out.println(record.toString());
 
         // No inheritance
-        jDeclareClass(className, className, "java/lang/Object");
+        jfw.declareClass(className, className, "java/lang/Object");
 
         n.i.accept(this);
         n.j.accept(this);
@@ -287,14 +143,14 @@ public class JasminVisitor implements Visitor {
             VMAccess vma = record.allocField(vd.i.toString(), vd.t);
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
-            jDeclareField(vma);
+            jfw.declareField(vma);
             vd.accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
 
-        jCreateSourceFile(className);
+        jfw.createSourceFile(className);
     }
 
     // void t;
@@ -317,7 +173,7 @@ public class JasminVisitor implements Visitor {
 
         Frame frame = new Frame("main", n.fl, currMethod.getType());
         if(DEBUG) System.out.println(frame.toString());
-        jDeclareMethod("public", frame);
+        jfw.declareMethod("public", frame);
 
         n.t.accept(this);
         n.i.accept(this);
@@ -338,7 +194,7 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            jDeclareLocal(vma);
+            jfw.declareLocal(vma);
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
@@ -347,8 +203,8 @@ public class JasminVisitor implements Visitor {
 
         n.e.accept(this);
         // TODO Calculate needed stack depth
-        jLimitMethod(stackDepth, n.vl.size() + n.fl.size());
-        jDeclareMethodEnd(currMethod.getType());
+        jfw.limitMethod(n.vl.size() + n.fl.size());
+        jfw.declareMethodEnd(currMethod.getType());
     }
 
     // void t;
@@ -393,7 +249,7 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            jDeclareLocal(vma); // TODO This might need to be handled differently
+            jfw.declareLocal(vma); // TODO This might need to be handled differently
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
@@ -419,9 +275,9 @@ public class JasminVisitor implements Visitor {
 
     // Exp e;
     public void visit(Print n) {
-        jPrint();
+        jfw.print();
         n.e.accept(this);
-        jPrintAfter();
+        jfw.printAfter();
     }
 
     // Identifier i;
@@ -453,21 +309,21 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(Plus n) {
-        jAdd();
+        jfw.add();
         n.e1.accept(this);
         n.e2.accept(this);
     }
 
     // Exp e1,e2;
     public void visit(Minus n) {
-        jMinus();
+        jfw.minus();
         n.e1.accept(this);
         n.e2.accept(this);
     }
 
     // Exp e1,e2;
     public void visit(Times n) {
-        jMul();
+        jfw.mul();
         n.e1.accept(this);
         n.e2.accept(this);
     }
@@ -497,8 +353,8 @@ public class JasminVisitor implements Visitor {
 
     // int i;
     public void visit(IntegerLiteral n) {
-        jPushInt(n);
-        stackDepth++;
+        jfw.pushInt(n);
+        jfw.incStackDepth();
     }
 
     public void visit(True n) {
@@ -516,13 +372,13 @@ public class JasminVisitor implements Visitor {
 
     // Exp e;
     public void visit(NewArray n) {
-        jNewArray();
+        jfw.newArray();
         n.e.accept(this);
     }
 
     // Identifier i;
     public void visit(NewObject n) {
-        jNewObject(n.i.s);
+        jfw.newObject(n.i.s);
     }
 
     // Exp e;
