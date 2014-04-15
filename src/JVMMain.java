@@ -74,15 +74,17 @@ public class JVMMain {
         depthVisitor = new DepthFirstVisitor(error, symTable);
         depthVisitor.visit(program);
 
-        if(ASSEM) {
-            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< JASMIN VISITOR >>>>>>>>>>>>>>");
-            jasminVisitor = new JasminVisitor(error, symTable, filePath);
-            jasminVisitor.visit(program);
-        }
 
         if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>>");
         typeVisitor = new TypeDepthFirstVisitor(error, symTable);
         typeVisitor.visit(program);
+
+        // Avoid generating Jasmin files if erorrs are encountered beforehand
+        if(ASSEM && !error.anyErrors()) {
+            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< JASMIN VISITOR >>>>>>>>>>>>>>");
+            jasminVisitor = new JasminVisitor(error, symTable, filePath);
+            jasminVisitor.visit(program);
+        }
 
         if(error.anyErrors()) {
             System.err.println("___THERE WERE COMPILATION ERRORS___");

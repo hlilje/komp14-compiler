@@ -100,6 +100,8 @@ public class JasminFileWriter {
             return "    ireturn"; // TODO Float?
         else if(t instanceof IdentifierType)
             return "    areturn"; // TODO Object?
+        else if(t instanceof IntArrayType)
+            return "    areturn"; // TODO Object?
         else {
             error.complain("Invalid return type in JasminFileWriter",
                     ErrorHandler.ErrorCode.INTERNAL_ERROR);

@@ -30,7 +30,7 @@ cdl.addElement(cd);
     throw new Error("Missing return statement in function");
   }
 
-  final public MainClass MainClass() throws ParseException {Identifier i1, i2; StatementList sl = new StatementList(); Statement s;
+  final public MainClass MainClass() throws ParseException {Identifier i1, i2, i3; StatementList sl = new StatementList(); Statement s;
     VarDeclList vdl = new VarDeclList(); VarDecl vd;
     jj_consume_token(CLASS);
     i1 = Identifier();
@@ -38,7 +38,7 @@ cdl.addElement(cd);
     jj_consume_token(PUBLIC);
     jj_consume_token(STATIC);
     jj_consume_token(VOID);
-    jj_consume_token(IDENTIFIER);
+    i3 = Identifier();
     jj_consume_token(LPAREN);
     jj_consume_token(STRING);
     jj_consume_token(LBRACKET);
@@ -76,7 +76,7 @@ sl.addElement(s);
     }
     jj_consume_token(RBRACE);
     jj_consume_token(RBRACE);
-{if ("" != null) return new MainClass(i1, i2, sl, vdl);}
+{if ("" != null) return new MainClass(i1, i2, i3, sl, vdl);}
     throw new Error("Missing return statement in function");
   }
 

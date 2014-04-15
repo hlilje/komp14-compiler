@@ -64,6 +64,11 @@ public class DepthFirstVisitor implements Visitor {
         if(DEBUG) System.out.println(">>> VISIT MAIN_CLASS: " + s);
         ClassTable ct = new ClassTable(s);
 
+        if(!(n.i3.s.equals("main"))) {
+            error.complain("Main method not defined, was named: " + n.i3,
+                    ErrorHandler.ErrorCode.MISSING_MAIN);
+        }
+
         if(!symTable.addClass(s, ct)) {
             error.complain("Class " + s + " is already defined (main class)",
                     ErrorHandler.ErrorCode.ALREADY_DEFINED);
