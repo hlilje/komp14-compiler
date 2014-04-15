@@ -86,13 +86,17 @@ public class JasminFileWriter {
     }
 
     // Helper method to end a Jasmin method declaration
-    public void declareMethodEnd(Type t) {
+    public void declareMethodEnd() {
+        sb.append(".end method");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Sets the return op based on given type
+    public void setReturn(Type t) {
         if(t == null)
             sb.append("    return");
         else
             sb.append(returnWithType(t));
-        sb.append(System.getProperty("line.separator"));
-        sb.append(".end method");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -112,9 +116,9 @@ public class JasminFileWriter {
 
     // Helper method to set which directives to use for the Jasmin method decl
     public void limitMethod(int locals) {
-        sb.append(".limit stack "); sb.append(stackDepth);
+        sb.append("    .limit stack "); sb.append(stackDepth);
         sb.append(System.getProperty("line.separator"));
-        sb.append(".limit locals "); sb.append(locals);
+        sb.append("    .limit locals "); sb.append(locals);
         sb.append(System.getProperty("line.separator"));
     }
 

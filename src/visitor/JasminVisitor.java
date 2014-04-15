@@ -58,8 +58,6 @@ public class JasminVisitor implements Visitor {
         // No inheritance
         jfw.declareClass(className, className, "java/lang/Object");
         jfw.declareMainMethod();
-        // TODO Calculate needed stack depth
-        jfw.limitMethod(n.vl.size() + 1); // Add one local for args
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -81,7 +79,10 @@ public class JasminVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        jfw.declareMethodEnd(null);
+        // TODO Calculate needed stack depth
+        jfw.setReturn(null);
+        jfw.limitMethod(n.vl.size() + 1); // Add one local for args
+        jfw.declareMethodEnd();
         jfw.createSourceFile(className);
     }
 
@@ -202,9 +203,10 @@ public class JasminVisitor implements Visitor {
         }
 
         n.e.accept(this);
-        // TODO Calculate needed stack depth
+        jfw.setReturn(currMethod.getType());
         jfw.limitMethod(n.vl.size() + n.fl.size());
-        jfw.declareMethodEnd(currMethod.getType());
+        jfw.declareMethodEnd();
+        // TODO Calculate needed stack depth
     }
 
     // void t;
