@@ -17,6 +17,7 @@ public class JasminVisitor implements Visitor {
     private ErrorHandler error;
     private String filePath; // Where to generate Jasmin files
     private java.lang.StringBuilder sb; // The Jasmin string to write to file
+    private int stackDepth; // Keep track of needed stack depth
 
     private SymbolTable symTable;
     private ClassTable currClass;
@@ -31,6 +32,7 @@ public class JasminVisitor implements Visitor {
         currBlock = null;
         filePath = tfp;
         sb = new java.lang.StringBuilder();
+        stackDepth = 0;
     }
 
     // Helper method to write a class declaration in Jasmin syntax
@@ -58,8 +60,16 @@ public class JasminVisitor implements Visitor {
         sb.append(System.getProperty("line.separator"));
     }
 
+    // Special method to handle the main method with Jasmin
+    private void jDeclareMainMethod() {
+        sb.append(".method public static main([Ljava/lang/String;)V");
+        sb.append(System.getProperty("line.separator"));
+    }
+
     // Helper method to end a Jasmin method declaration
     private void jDeclareMethodEnd() {
+        sb.append("    return"); // TODO Return different values
+        sb.append(System.getProperty("line.separator"));
         sb.append(".end method");
         sb.append(System.getProperty("line.separator"));
     }
@@ -173,13 +183,15 @@ public class JasminVisitor implements Visitor {
 
         // No inheritance
         jDeclareClass(className, className, "java/lang/Object");
+        jDeclareMainMethod();
+        jLimitMethod(stackDepth, n.vl.size()); // TODO Calculate local stack size
 
         n.i1.accept(this);
         n.i2.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
             VarDecl vd = n.vl.elementAt(i);
-            String fieldName = vd.i.toString();
-            VMAccess vma = frame.allocLocal(fieldName, vd.t);
+            String varName = vd.i.toString();
+            VMAccess vma = frame.allocLocal(varName, vd.t);
 
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
@@ -187,13 +199,14 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            jDeclareField(vma);
+            jDeclareLocal(vma);
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
 
+        jDeclareMethodEnd();
         jCreateSourceFile(className);
     }
 
@@ -465,6 +478,7 @@ public class JasminVisitor implements Visitor {
     // int i;
     public void visit(IntegerLiteral n) {
         jPushInt(n);
+        stackDepth++;
     }
 
     public void visit(True n) {
