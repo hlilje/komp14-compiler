@@ -41,7 +41,7 @@ public class BlockTable extends AbstractTable {
         localAccesses.put(s, vma);
     }
 
-    public VMAccess getLocalAccess(Symbol s) {
+    public VMAccess getAccess(Symbol s) {
         return (VMAccess)localAccesses.get(s);
     }
 }

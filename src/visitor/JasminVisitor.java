@@ -45,8 +45,8 @@ public class JasminVisitor implements Visitor {
             else
                 access = currClass.getFieldAccess(s);
         } else {
-            if(((BlockTable)currBlock).getLocalAccess(s) != null)
-                access = ((BlockTable)currBlock).getLocalAccess(s);
+            if(currBlock.getAccess(s) != null)
+                access = currBlock.getAccess(s);
             else if(currMethod.getAccess(s) != null)
                 access = currMethod.getAccess(s);
             else
@@ -273,7 +273,7 @@ public class JasminVisitor implements Visitor {
         for ( int i = 0; i < n.vl.size(); i++ ) {
             VarDecl vd = n.vl.elementAt(i); String varName = vd.i.toString();
             VMAccess vma = frame.allocLocal(varName, vd.t);
-            ((BlockTable)currBlock).addLocalAccess(Symbol.symbol(varName), vma);
+            currBlock.addLocalAccess(Symbol.symbol(varName), vma);
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
                     System.out.println(((IntegerInFrame)vma).toString());
