@@ -32,6 +32,34 @@ public class JasminVisitor implements Visitor {
         jfw = new JasminFileWriter(error, tfp);
     }
 
+    // Helper method to search the scopes for the given string
+    private VMAccess getVMAccess(String str) {
+        Symbol s = Symbol.symbol(str);
+        VMAccess access;
+
+        if(currMethod == null)
+            access = currClass.getFieldAccess(s);
+        else if(currBlock == null) {
+            if(currMethod.getAccess(s) != null)
+                access = currMethod.getAccess(s);
+            else
+                access = currClass.getFieldAccess(s);
+        } else {
+            if(((BlockTable)currBlock).getLocalAccess(s) != null)
+                access = ((BlockTable)currBlock).getLocalAccess(s);
+            else if(currMethod.getAccess(s) != null)
+                access = currMethod.getAccess(s);
+            else
+                access = currClass.getFieldAccess(s);
+        }
+
+        if(access == null) {
+            error.complain(str + " missing VMAccess",
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
+        }
+        return access;
+    }
+
     // MainClass m;
     // ClassDeclList cl;
     public void visit(Program n) {
@@ -366,6 +394,7 @@ public class JasminVisitor implements Visitor {
 
     // String s;
     public void visit(IdentifierExp n) {
+        getVMAccess(n.s);
     }
 
     public void visit(This n) {
