@@ -63,16 +63,18 @@ public class JasminFileWriter {
 
     // Helper method to declare a method for a Jasmin source file
     // Doesn't close the method tag since it must happen after visit
-    public void declareMethod(String acs, VMFrame vmf) {
+    public void declareMethod(String acs, VMFrame vmf, int numFormals) {
         sb.append(".method "); sb.append(acs); sb.append(" ");
         sb.append(vmf.procEntry()); // Name decl according to Jasmin spec
         sb.append(System.getProperty("line.separator"));
+        stackDepth = stackDepth + numFormals;
     }
 
     // Special method to handle the main method with Jasmin
     public void declareMainMethod() {
         sb.append(".method public static main([Ljava/lang/String;)V");
         sb.append(System.getProperty("line.separator"));
+        stackDepth++;
     }
 
     // Helper method to end a Jasmin method declaration
@@ -155,12 +157,14 @@ public class JasminFileWriter {
         //sb.append("    new java/lang/Object/"); sb.append(className);
         sb.append("    new "); sb.append(className);
         sb.append(System.getProperty("line.separator"));
+        stackDepth++; // TODO
     }
 
     // Declare new Jasmin int array
     public void newArray() {
         sb.append("    newarray int");
         sb.append(System.getProperty("line.separator"));
+        stackDepth++; // TODO
     }
 
     // Call Java's print method with Jasmin
@@ -173,5 +177,12 @@ public class JasminFileWriter {
     public void printAfter() {
         sb.append("    invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
         sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to load the given VMAccess
+    public void loadAccess(VMAccess vma) {
+        sb.append("    "); sb.append(vma.load());
+        sb.append(System.getProperty("line.separator"));
+        stackDepth++; // TODO
     }
 }

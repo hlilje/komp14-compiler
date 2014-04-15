@@ -202,7 +202,7 @@ public class JasminVisitor implements Visitor {
 
         Frame frame = new Frame("main", n.fl, currMethod.getType());
         if(DEBUG) System.out.println(frame.toString());
-        jfw.declareMethod("public", frame);
+        jfw.declareMethod("public", frame, n.fl.size());
 
         n.t.accept(this);
         n.i.accept(this);
@@ -395,7 +395,7 @@ public class JasminVisitor implements Visitor {
 
     // String s;
     public void visit(IdentifierExp n) {
-        getVMAccess(n.s);
+        jfw.loadAccess(getVMAccess(n.s));
     }
 
     public void visit(This n) {

@@ -75,12 +75,12 @@ public class JVMMain {
         depthVisitor.visit(program);
 
         if(ASSEM) {
-            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< ASSEM VISITOR >>>>>>>>>>>>>>>");
+            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< JASMIN VISITOR >>>>>>>>>>>>>>");
             jasminVisitor = new JasminVisitor(error, symTable, filePath);
             jasminVisitor.visit(program);
         }
 
-        if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>");
+        if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>>");
         typeVisitor = new TypeDepthFirstVisitor(error, symTable);
         typeVisitor.visit(program);
 
