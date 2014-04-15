@@ -11,7 +11,7 @@ import error.*;
 import symbol.*;
 
 public class JVMMain {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static boolean ASSEM = false;
 
     public static void main(String[] args) {
@@ -42,7 +42,7 @@ public class JVMMain {
                 if(args[1].equals("-S")) { // Tigris command line invokation
                     ASSEM = true;
                     filePath = ".";
-                    
+
                     try {
                         parser = new MiniJavaParser(new java.io.FileInputStream(args[0]));
                     } catch (java.io.FileNotFoundException e) {

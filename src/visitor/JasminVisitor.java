@@ -12,7 +12,7 @@ import frame.VMAccess;
 import frame.VMFrame;
 
 public class JasminVisitor implements Visitor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
 
