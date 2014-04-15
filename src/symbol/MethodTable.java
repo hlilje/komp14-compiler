@@ -89,7 +89,6 @@ public class MethodTable extends AbstractTable {
         return orderedFormals;
     }
 
-    // TODO Are these VMAccess methods needed?
     // Save a VMAccess for a formal parameter
     public void addFormalAccess(Symbol s, VMAccess vma) {
         formalAccesses.put(s, vma);
@@ -104,7 +103,15 @@ public class MethodTable extends AbstractTable {
         return (VMAccess)formalAccesses.get(s);
     }
 
-    public VMAccess getLocalAccesses(Symbol s) {
+    public VMAccess getLocalAccess(Symbol s) {
         return (VMAccess)localAccesses.get(s);
+    }
+
+    // Helper method to avoid having to check both locals and formals
+    public VMAccess getAccess(Symbol s) {
+        if(localAccesses.get(s) != null)
+            return (VMAccess)localAccesses.get(s);
+        else
+            return (VMAccess)formalAccesses.get(s);
     }
 }

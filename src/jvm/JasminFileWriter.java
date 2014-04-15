@@ -44,16 +44,6 @@ public class JasminFileWriter {
         }
     }
 
-    // Increases the stack depth
-    public void incStackDepth() {
-        stackDepth++;
-    }
-
-    // Decreases the stack depth
-    public void decStackDepth() {
-        stackDepth--;
-    }
-
     // Helper method to write a class declaration in Jasmin syntax
     public void declareClass(String src, String clss, String spr) {
         // Declare Jasmin source file
@@ -109,7 +99,8 @@ public class JasminFileWriter {
         else if(t instanceof IdentifierType)
             return "    areturn"; // TODO Object?
         else {
-            error.complain("Invalid return type in JasminFileWriter", ErrorHandler.ErrorCode.INTERNAL_ERROR);
+            error.complain("Invalid return type in JasminFileWriter",
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
             return "";
         }
     }
@@ -126,18 +117,21 @@ public class JasminFileWriter {
     public void declareLocal(VMAccess vma) {
         sb.append(vma.declare());
         sb.append(System.getProperty("line.separator"));
+        stackDepth++; // TODO This seems to be correct
     }
 
     // Wrapper method to push an interger literal to the stack
     public void pushInt(IntegerLiteral n) {
-        sb.append("    bipush "); sb.append(n.i);
+        sb.append("    ldc "); sb.append(n.i);
         sb.append(System.getProperty("line.separator"));
+        stackDepth++;
     }
 
     // Jasmin add op
     public void add() {
         sb.append("    iadd");
         sb.append(System.getProperty("line.separator"));
+        stackDepth = stackDepth - 2;
     }
 
     // Jasmin minus op
@@ -145,18 +139,21 @@ public class JasminFileWriter {
         sb.append("    ineg");
         sb.append(System.getProperty("line.separator"));
         add(); // Add negated number
+        stackDepth = stackDepth - 2;
     }
 
     // Jasmin multiplication op
     public void mul() {
         sb.append("    imul");
         sb.append(System.getProperty("line.separator"));
+        stackDepth = stackDepth - 2;
     }
 
     // Declare new Jasmin class
     // No inheritance
     public void newObject(String className) {
-        sb.append("    new java/lang/Object/"); sb.append(className);
+        //sb.append("    new java/lang/Object/"); sb.append(className);
+        sb.append("    new "); sb.append(className);
         sb.append(System.getProperty("line.separator"));
     }
 

@@ -1,16 +1,19 @@
 package symbol;
 
 import syntaxtree.*;
+import frame.VMAccess;
 
 public class ClassTable {
     private Symbol s;
     private Table locals;
     private Table methods;
+    private Table fieldAccesses; // VMAccesses for fields
 
     public ClassTable(Symbol s) {
         this.s = s;
         locals = new Table();
         methods = new Table();
+        fieldAccesses = new Table();
     }
 
     public Symbol getId() {
@@ -45,5 +48,14 @@ public class ClassTable {
 
     public boolean hasVar(Symbol s) {
         return locals.get(s) != null;
+    }
+
+    // Save a VMAccess for a field
+    public void addLocalAccess(Symbol s, VMAccess vma) {
+        fieldAccesses.put(s, vma);
+    }
+
+    public VMAccess getFieldAccess(Symbol s) {
+        return (VMAccess)fieldAccesses.get(s);
     }
 }

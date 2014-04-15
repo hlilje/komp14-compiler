@@ -356,7 +356,6 @@ public class JasminVisitor implements Visitor {
     // int i;
     public void visit(IntegerLiteral n) {
         jfw.pushInt(n);
-        jfw.incStackDepth();
     }
 
     public void visit(True n) {
