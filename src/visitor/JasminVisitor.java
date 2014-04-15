@@ -67,11 +67,29 @@ public class JasminVisitor implements Visitor {
     }
 
     // Helper method to end a Jasmin method declaration
-    private void jDeclareMethodEnd() {
-        sb.append("    return"); // TODO Return different values
+    private void jDeclareMethodEnd(Type t) {
+        if(t == null)
+            sb.append("    return");
+        else
+            sb.append(returnWithType(t));
         sb.append(System.getProperty("line.separator"));
         sb.append(".end method");
         sb.append(System.getProperty("line.separator"));
+    }
+
+    // Helper method to format the return type for Jasmin
+    private String returnWithType(Type t) {
+        if(t instanceof IntegerType)
+            return "    ireturn";
+        else if(t instanceof BooleanType)
+            return "    ireturn"; // TODO Float?
+        else if(t instanceof IdentifierType)
+            return "    areturn"; // TODO Object?
+        else {
+            error.complain("Invalid return type " + t + " in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
+            return "";
+        }
     }
 
     // Helper method to set which directives to use for the Jasmin method decl
@@ -184,7 +202,8 @@ public class JasminVisitor implements Visitor {
         // No inheritance
         jDeclareClass(className, className, "java/lang/Object");
         jDeclareMainMethod();
-        jLimitMethod(stackDepth, n.vl.size()); // TODO Calculate local stack size
+        // TODO Calculate needed stack depth
+        jLimitMethod(stackDepth, n.vl.size() + 1); // Add one local for args
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -206,7 +225,7 @@ public class JasminVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        jDeclareMethodEnd();
+        jDeclareMethodEnd(null);
         jCreateSourceFile(className);
     }
 
@@ -299,7 +318,6 @@ public class JasminVisitor implements Visitor {
         Frame frame = new Frame("main", n.fl, currMethod.getType());
         if(DEBUG) System.out.println(frame.toString());
         jDeclareMethod("public", frame);
-        jLimitMethod(0, n.vl.size()); // TODO Calculate local stack size
 
         n.t.accept(this);
         n.i.accept(this);
@@ -328,7 +346,9 @@ public class JasminVisitor implements Visitor {
         }
 
         n.e.accept(this);
-        jDeclareMethodEnd(); // Close the declaration
+        // TODO Calculate needed stack depth
+        jLimitMethod(stackDepth, n.vl.size() + n.fl.size());
+        jDeclareMethodEnd(currMethod.getType());
     }
 
     // void t;
