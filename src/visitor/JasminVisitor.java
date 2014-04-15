@@ -80,7 +80,7 @@ public class JasminVisitor implements Visitor {
 
         Record record = new Record(className);
         if(DEBUG) System.out.println(record.toString());
-        Frame frame = new Frame("main", null, null); // Hard coded main method
+        Frame frame = new Frame("main", null, null);
         if(DEBUG) System.out.println(frame.toString());
 
         // No inheritance
@@ -90,9 +90,9 @@ public class JasminVisitor implements Visitor {
         n.i1.accept(this);
         n.i2.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            VarDecl vd = n.vl.elementAt(i);
-            String varName = vd.i.toString();
+            VarDecl vd = n.vl.elementAt(i); String varName = vd.i.toString();
             VMAccess vma = frame.allocLocal(varName, vd.t);
+            currMethod.addLocalAccess(Symbol.symbol(varName), vma);
 
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
@@ -132,9 +132,9 @@ public class JasminVisitor implements Visitor {
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            VarDecl vd = n.vl.elementAt(i);
-            String fieldName = vd.i.toString();
-            VMAccess vma = record.allocField(vd.i.toString(), vd.t);
+            VarDecl vd = n.vl.elementAt(i); String fieldName = vd.i.toString();
+            VMAccess vma = record.allocField(fieldName, vd.t);
+            currClass.addFieldAccess(Symbol.symbol(fieldName), vma);
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
             jfw.declareField(vma);
@@ -167,9 +167,9 @@ public class JasminVisitor implements Visitor {
         n.i.accept(this);
         n.j.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            VarDecl vd = n.vl.elementAt(i);
-            String fieldName = vd.i.toString();
-            VMAccess vma = record.allocField(vd.i.toString(), vd.t);
+            VarDecl vd = n.vl.elementAt(i); String fieldName = vd.i.toString();
+            VMAccess vma = record.allocField(fieldName, vd.t);
+            currClass.addFieldAccess(Symbol.symbol(fieldName), vma);
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
             jfw.declareField(vma);
@@ -271,8 +271,9 @@ public class JasminVisitor implements Visitor {
         if(DEBUG) System.out.println(frame.toString());
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            VarDecl vd = n.vl.elementAt(i);
-            VMAccess vma = frame.allocLocal(vd.i.toString(), vd.t);
+            VarDecl vd = n.vl.elementAt(i); String varName = vd.i.toString();
+            VMAccess vma = frame.allocLocal(varName, vd.t);
+            ((BlockTable)currBlock).addLocalAccess(Symbol.symbol(varName), vma);
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
                     System.out.println(((IntegerInFrame)vma).toString());

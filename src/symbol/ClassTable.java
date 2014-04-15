@@ -51,7 +51,7 @@ public class ClassTable {
     }
 
     // Save a VMAccess for a field
-    public void addLocalAccess(Symbol s, VMAccess vma) {
+    public void addFieldAccess(Symbol s, VMAccess vma) {
         fieldAccesses.put(s, vma);
     }
 
