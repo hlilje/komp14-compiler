@@ -237,7 +237,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e;
     public Type visit(Print n) {
-        n.e.accept(this);
+        if(n.e.accept(this) instanceof IdentifierType) {
+            error.complain("Invalid print of object in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.OBJECT_PRINT);
+        }
         return null;
     }
 
@@ -269,7 +272,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             error.complain("Non integer type in array assign for array " + n.i.toString(),
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
-        return null;
+        return new IntArrayType();
     }
 
     // Exp e1,e2;
@@ -350,10 +353,16 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(ArrayLookup n) {
-        if(!(n.e1.accept(this) instanceof IntArrayType)) {
-            error.complain("Outer expression of ArrayLookup must be of type IntArrayType for array ",
+        Type e1 = n.e1.accept(this);
+        // TODO This allows creation of new multidimensional arrays
+        if(!(e1 instanceof IntArrayType)) {
+            error.complain("Outer expression of ArrayLookup must be of type IntArrayType",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
+        //else if(e1 instanceof NewArray) {
+            //error.complain("Creation of new multidimensional array in method " + currMethod.getId() +
+                    //" in class " + currClass.getId(), ErrorHandler.ErrorCode.MULT_DIM_ARRAY);
+        //}
         if(!(n.e2.accept(this) instanceof IntegerType)) {
             error.complain("Non integer type in array index",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
@@ -445,10 +454,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e;
     public Type visit(NewArray n) {
-        if(!(n.e.accept(this) instanceof IntArrayType)) {
-            error.complain("Multidimensional array in method " + currMethod.getId() +
-                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.MULT_DIM_ARRAY);
-        }
         return new IntArrayType();
     }
 

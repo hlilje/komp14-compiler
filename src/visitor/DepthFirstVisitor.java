@@ -121,13 +121,8 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
-        if(n.ml.size() == 0) {
-            error.complain("Empty class " + s,
-                    ErrorHandler.ErrorCode.EMPTY_CLASS);
-        } else {
-            for ( int i = 0; i < n.ml.size(); i++ ) {
-                n.ml.elementAt(i).accept(this);
-            }
+        for ( int i = 0; i < n.ml.size(); i++ ) {
+            n.ml.elementAt(i).accept(this);
         }
         if(DEBUG) System.out.println("======= END SCOPE =======");
     }
@@ -157,13 +152,8 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
-        if(n.ml.size() == 0) {
-            error.complain("Empty class " + s,
-                    ErrorHandler.ErrorCode.EMPTY_CLASS);
-        } else {
-            for ( int i = 0; i < n.ml.size(); i++ ) {
-                n.ml.elementAt(i).accept(this);
-            }
+        for ( int i = 0; i < n.ml.size(); i++ ) {
+            n.ml.elementAt(i).accept(this);
         }
         if(DEBUG) System.out.println("======= END SCOPE =======");
     }
