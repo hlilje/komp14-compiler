@@ -445,7 +445,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e;
     public Type visit(NewArray n) {
-        n.e.accept(this);
+        if(!(n.e.accept(this) instanceof IntArrayType)) {
+            error.complain("Multidimensional array in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.MULT_DIM_ARRAY);
+        }
         return new IntArrayType();
     }
 
