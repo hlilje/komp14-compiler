@@ -20,7 +20,7 @@ public class JVMMain {
         DepthFirstVisitor depthVisitor;
         TypeDepthFirstVisitor typeVisitor;
         JasminVisitor jasminVisitor;
-        Program program;
+        Program program = null;
 
         ErrorHandler error = new ErrorHandler();
         SymbolTable symTable = new SymbolTable();
@@ -62,24 +62,25 @@ public class JVMMain {
         try {
             program = parser.Program();
         } catch (ParseException e) {
-            System.err.println(e.toString());
-            return;
+            error.complain(e.toString(), ErrorHandler.ErrorCode.PARSER_ERROR);
         }
 
-        if(DEBUG) System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>");
+        //if(DEBUG) System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>");
         //printVisitor = new ASTPrintVisitor();
         //printVisitor.visit(program);
 
-        if(DEBUG) System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>");
-        depthVisitor = new DepthFirstVisitor(error, symTable);
-        depthVisitor.visit(program);
+        if(!error.anyErrors()) {
+            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>");
+            depthVisitor = new DepthFirstVisitor(error, symTable);
+            depthVisitor.visit(program);
+        }
 
+        if(!error.anyErrors()) {
+            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>>");
+            typeVisitor = new TypeDepthFirstVisitor(error, symTable);
+            typeVisitor.visit(program);
+        }
 
-        if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>>");
-        typeVisitor = new TypeDepthFirstVisitor(error, symTable);
-        typeVisitor.visit(program);
-
-        // Avoid generating Jasmin files if erorrs are encountered beforehand
         if(ASSEM && !error.anyErrors()) {
             if(DEBUG) System.out.println("<<<<<<<<<<<<<<< JASMIN VISITOR >>>>>>>>>>>>>>");
             jasminVisitor = new JasminVisitor(error, symTable, filePath);

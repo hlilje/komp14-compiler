@@ -362,9 +362,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // ExpList el;
     public Type visit(Call n) {
-        // TODO This method generates a nullpointer exception for test FactorInteger.java
         Symbol s1 = Symbol.symbol(n.i.toString()); // Method name
-        // TODO Remove null
         Type t = null; Exp e = n.e; Symbol s2;
         java.util.ArrayList<Binding> fl = null; // To be able to check for formal type in call
 
@@ -382,24 +380,18 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
 
         } else if(e instanceof Call) {
-            if(DEBUG) System.out.println("  instance of Call");
+            if(DEBUG) System.out.println("  instanceof Call");
             s2 = Symbol.symbol(((IdentifierType)e.accept(this)).s);
             t = symTable.getClass(s2).getMethod(s1).getType();
             fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
 
-        } else { // instanceof 'this'
-            try {
-                if(DEBUG) System.out.println("  instanceof (else) i.e. 'this'");
-                if(((MethodTable)currClass.getMethod(s1)) != null) {
-                    t = ((MethodTable)currClass.getMethod(s1)).getType();
-                    fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
-                } else {
-                    error.complain("Method " + s1 + " was not found in class " + currClass.getId().toString(),
-                            ErrorHandler.ErrorCode.INTERNAL_ERROR);
-                }
-            } catch(Exception ex) {
-                System.err.println("else error: " + ex);
-            }
+        } else if(e instanceof This) {
+            if(DEBUG) System.out.println("  instanceof This");
+            t = ((MethodTable)currClass.getMethod(s1)).getType();
+            fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
+        } else {
+            error.complain("Call on invalid object with method call " + s1 + " in class " +
+                    currClass.getId().toString(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
         n.e.accept(this);
