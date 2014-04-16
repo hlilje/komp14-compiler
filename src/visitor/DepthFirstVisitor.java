@@ -17,6 +17,8 @@ public class DepthFirstVisitor implements Visitor {
     private MethodTable currMethod;
     private BlockTable currBlock;
 
+    private boolean staticClass; // If current class is static
+
     // Added constructor to inject error message and symtable
     public DepthFirstVisitor(ErrorHandler error, SymbolTable symTable) {
         this.error = error;
@@ -24,6 +26,7 @@ public class DepthFirstVisitor implements Visitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
+        staticClass = false;
     }
 
     // Added helper method to find out if a variable is declared
@@ -61,6 +64,8 @@ public class DepthFirstVisitor implements Visitor {
         if(DEBUG) System.out.println("====== BEGIN SCOPE ====== ");
         // Hard coded method name, actual name is ignored
         Symbol s = Symbol.symbol(n.i1.toString()); Symbol s2 = Symbol.symbol("main");
+        staticClass = true;
+
         if(DEBUG) System.out.println(">>> VISIT MAIN_CLASS: " + s);
         ClassTable ct = new ClassTable(s);
 
@@ -89,6 +94,7 @@ public class DepthFirstVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
+        staticClass = false;
         if(DEBUG) System.out.println("======= END SCOPE =======");
     }
 
@@ -397,6 +403,10 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     public void visit(This n) {
+        if(staticClass) {
+            error.complain("Invalid 'this' call in static class " + currClass.getId(),
+                    ErrorHandler.ErrorCode.STATIC_THIS);
+        }
     }
 
     // Exp e;
