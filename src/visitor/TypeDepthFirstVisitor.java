@@ -261,8 +261,14 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(ArrayAssign n) {
         n.i.accept(this);
-        n.e1.accept(this);
-        n.e2.accept(this);
+        if(!(n.e1.accept(this) instanceof IntegerType)) {
+            error.complain("Non integer type in array index for array " + n.i.toString(),
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+        if(!(n.e2.accept(this) instanceof IntegerType)) {
+            error.complain("Non integer type in array assign for array " + n.i.toString(),
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
         return null;
     }
 
@@ -345,10 +351,13 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(ArrayLookup n) {
         if(!(n.e1.accept(this) instanceof IntArrayType)) {
-            error.complain("Outer expression of ArrayLookup must be of type IntArrayType",
+            error.complain("Outer expression of ArrayLookup must be of type IntArrayType for array ",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
-        n.e2.accept(this);
+        if(!(n.e2.accept(this) instanceof IntegerType)) {
+            error.complain("Non integer type in array index",
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
         return new IntegerType();
     }
 
