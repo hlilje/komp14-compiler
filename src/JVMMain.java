@@ -62,7 +62,7 @@ public class JVMMain {
         try {
             program = parser.Program();
         } catch (ParseException e) {
-            error.complain(e.toString(), ErrorHandler.ErrorCode.PARSER_ERROR);
+            error.complain(e.toString(), ErrorHandler.ErrorCode.PARSE_ERROR);
         }
 
         //if(DEBUG) System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>");

@@ -74,8 +74,7 @@ public class DepthFirstVisitor implements Visitor {
                     ErrorHandler.ErrorCode.ALREADY_DEFINED);
         } else {
             currClass = ct;
-            // TODO Handle the fake method in main
-            MethodTable mt = new MethodTable(s2, null); // TODO null type?
+            MethodTable mt = new MethodTable(s2, null); // null type
             currClass.addMethod(s2, mt);
             currMethod = mt;
             currBlock = null;
@@ -116,8 +115,13 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
-        for ( int i = 0; i < n.ml.size(); i++ ) {
-            n.ml.elementAt(i).accept(this);
+        if(n.ml.size() == 0) {
+            error.complain("Empty class " + s,
+                    ErrorHandler.ErrorCode.EMPTY_CLASS);
+        } else {
+            for ( int i = 0; i < n.ml.size(); i++ ) {
+                n.ml.elementAt(i).accept(this);
+            }
         }
         if(DEBUG) System.out.println("======= END SCOPE =======");
     }
@@ -147,8 +151,13 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
         }
-        for ( int i = 0; i < n.ml.size(); i++ ) {
-            n.ml.elementAt(i).accept(this);
+        if(n.ml.size() == 0) {
+            error.complain("Empty class " + s,
+                    ErrorHandler.ErrorCode.EMPTY_CLASS);
+        } else {
+            for ( int i = 0; i < n.ml.size(); i++ ) {
+                n.ml.elementAt(i).accept(this);
+            }
         }
         if(DEBUG) System.out.println("======= END SCOPE =======");
     }
@@ -312,7 +321,7 @@ public class DepthFirstVisitor implements Visitor {
     // Exp e1,e2;
     public void visit(ArrayAssign n) {
         Symbol s = Symbol.symbol(n.i.toString());
-        if(!varInScope(s)) // TODO Not tested
+        if(!varInScope(s))
             error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
 
         n.i.accept(this);

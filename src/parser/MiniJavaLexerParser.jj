@@ -116,7 +116,6 @@ MainClass MainClass() :
     VarDeclList vdl = new VarDeclList(); VarDecl vd;
 }
 {
-    // TODO Check that identifier is main later
     "class" i1 = Identifier() "{" "public" "static" "void" i3 = Identifier() "(" "String" "[" "]"
     i2 = Identifier() ")" "{" ( LOOKAHEAD(2) vd = VarDecl() { vdl.addElement(vd); } )*
     ( s = Stmt() { sl.addElement(s); } )* "}" "}"
@@ -154,7 +153,6 @@ MethodDecl MethodDecl() :
     { return new MethodDecl(t, i, fl, vdl, sl, e); }
 }
 
-// TODO Is this the correct creation of new Formals?
 FormalList FormalList() :
 { Formal f; FormalList fl = new FormalList(); Type t; Identifier i; }
 {
@@ -166,7 +164,6 @@ FormalList FormalList() :
     { return fl; }
 }
 
-// TODO Is this the correct creation of new Formals?
 Formal FormalRest() :
 { Type t; Identifier i; }
 {

@@ -174,7 +174,6 @@ sl.addElement(s);
     throw new Error("Missing return statement in function");
   }
 
-// TODO Is this the correct creation of new Formals?
   final public FormalList FormalList() throws ParseException {Formal f; FormalList fl = new FormalList(); Type t; Identifier i;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INT:
@@ -207,7 +206,6 @@ fl.addElement(f);
     throw new Error("Missing return statement in function");
   }
 
-// TODO Is this the correct creation of new Formals?
   final public Formal FormalRest() throws ParseException {Type t; Identifier i;
     jj_consume_token(COMMA);
     t = Type();
@@ -835,7 +833,58 @@ el.addElement(e2);
     finally { jj_save(8, xla); }
   }
 
+  private boolean jj_3_7()
+ {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_scan_token(LENGTH)) return true;
+    return false;
+  }
+
+  private boolean jj_3_3()
+ {
+    if (jj_scan_token(INT)) return true;
+    if (jj_scan_token(LBRACKET)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
+ {
+    if (jj_3R_19()) return true;
+    if (jj_scan_token(ASSIGN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_3R_21()) {
+    jj_scanpos = xsp;
+    if (jj_3R_22()) {
+    jj_scanpos = xsp;
+    if (jj_3R_23()) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3_6()
+ {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
   private boolean jj_3_2()
+ {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3_4()
  {
     if (jj_3R_18()) return true;
     return false;
@@ -889,57 +938,6 @@ el.addElement(e2);
   private boolean jj_3R_21()
  {
     if (jj_scan_token(BOOLEAN)) return true;
-    return false;
-  }
-
-  private boolean jj_3_5()
- {
-    if (jj_3R_19()) return true;
-    if (jj_scan_token(ASSIGN)) return true;
-    return false;
-  }
-
-  private boolean jj_3_7()
- {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_scan_token(LENGTH)) return true;
-    return false;
-  }
-
-  private boolean jj_3_3()
- {
-    if (jj_scan_token(INT)) return true;
-    if (jj_scan_token(LBRACKET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_20()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_3()) {
-    jj_scanpos = xsp;
-    if (jj_3R_21()) {
-    jj_scanpos = xsp;
-    if (jj_3R_22()) {
-    jj_scanpos = xsp;
-    if (jj_3R_23()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3_6()
- {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3_4()
- {
-    if (jj_3R_18()) return true;
     return false;
   }
 
