@@ -350,10 +350,18 @@ Exp PrimaryExp() :
     | i = <IDENTIFIER> { e = new IdentifierExp(i.toString()); }
     | "this" { e = new This(); }
     | "(" e = Exp() ")"
-    | LOOKAHEAD(2) "new" "int" "[" ie = Exp() "]" { e = new NewArray(ie); }
+    | LOOKAHEAD(2) "new" "int" "[" ie = Exp() "]" NewArrayRest(ie) { e = new NewArray(ie); }
     | LOOKAHEAD(2) "new" id = Identifier() "(" ")" { e = new NewObject(id); }
     )
     { return e; }
+}
+
+// To avoid multidimensional array creation
+Exp NewArrayRest(Exp ie) :
+{}
+{
+    "[" { throw new ParseException("Multidimensional array creation"); }
+    | { return new NewArray(ie); }
 }
 
 ExpList ExpList() :

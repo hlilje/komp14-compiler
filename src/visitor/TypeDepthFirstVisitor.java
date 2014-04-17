@@ -68,7 +68,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Statement s;
     public Type visit(MainClass n) {
         currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
-        // TODO Handle the fake method in main
         // Hard coded method name, actual name is ignored
         currMethod = currClass.getMethod(Symbol.symbol("main"));
         currBlock = null;
@@ -354,15 +353,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(ArrayLookup n) {
         Type e1 = n.e1.accept(this);
-        // TODO This allows creation of new multidimensional arrays
         if(!(e1 instanceof IntArrayType)) {
             error.complain("Outer expression of ArrayLookup must be of type IntArrayType",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
-        //else if(e1 instanceof NewArray) {
-            //error.complain("Creation of new multidimensional array in method " + currMethod.getId() +
-                    //" in class " + currClass.getId(), ErrorHandler.ErrorCode.MULT_DIM_ARRAY);
-        //}
         if(!(n.e2.accept(this) instanceof IntegerType)) {
             error.complain("Non integer type in array index",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
