@@ -18,6 +18,7 @@ public class DepthFirstVisitor implements Visitor {
     private BlockTable currBlock;
 
     private boolean staticClass; // If current class is static
+    private int blockCounter; // To give a unique id for the outmost blocks
 
     // Added constructor to inject error message and symtable
     public DepthFirstVisitor(ErrorHandler error, SymbolTable symTable) {
@@ -27,6 +28,7 @@ public class DepthFirstVisitor implements Visitor {
         currMethod = null;
         currBlock = null;
         staticClass = false;
+        blockCounter = 0;
     }
 
     // Added helper method to find out if a variable is declared
@@ -265,11 +267,12 @@ public class DepthFirstVisitor implements Visitor {
         if(DEBUG) System.out.println("====== BEGIN SCOPE ======");
         if(DEBUG) System.out.println(">>> VISIT BLOCK");
         BlockTable bt;
-        if(currBlock == null)
-            bt = new BlockTable(currMethod);
-        else
-            bt = new BlockTable(currBlock);
-        currMethod.newBlock(bt);
+        if(currBlock == null) {
+            bt = new BlockTable(null);
+            currMethod.putBlock(Symbol.symbol(blockCounter + ""), bt);
+            blockCounter++;
+        } else
+            bt = new BlockTable(currBlock); // Nested blocks
         currBlock = bt;
 
         for ( int i = 0; i < n.vl.size(); i++ ) {

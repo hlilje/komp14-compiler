@@ -3,12 +3,12 @@ package symbol;
 import syntaxtree.*;
 import frame.VMAccess;
 
-public class BlockTable extends AbstractTable {
-    private AbstractTable bt;
+public class BlockTable {
+    private BlockTable bt;
     private Table locals;
     private Table localAccesses; // VMAccesses for locals
 
-    public BlockTable(AbstractTable bt) {
+    public BlockTable(BlockTable bt) {
         this.bt = bt;
         locals = new Table();
         localAccesses = new Table();
@@ -23,16 +23,16 @@ public class BlockTable extends AbstractTable {
         }
     }
 
-    // Will continue checking back until bt is current method
+    // Returns null if not a local or no nested blocks
     public Binding getVar(Symbol s) {
         Binding b = (Binding)locals.get(s);
-        if(b == null)
+        if(b == null && bt != null)
             return bt.getVar(s);
-        return b;
+        return null;
     }
 
-    // To be able to traverse the nested blocks
-    public AbstractTable getBlock() {
+    // To support nested blocks
+    public BlockTable getBlock() {
         return bt;
     }
 

@@ -19,8 +19,9 @@ public class JasminVisitor implements Visitor {
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
-    private AbstractTable currBlock;
+    private BlockTable currBlock;
 
+    private int blockCounter; // Unique id for outmost blocks
     private JasminFileWriter jfw;
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
@@ -29,6 +30,7 @@ public class JasminVisitor implements Visitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
+        blockCounter = 0;
         jfw = new JasminFileWriter(error, tfp);
     }
 
@@ -261,7 +263,8 @@ public class JasminVisitor implements Visitor {
     public void visit(Block n) {
         if(DEBUG) System.out.println(">>>> Block");
         if(currBlock == null) {
-            currBlock = currMethod.getBlock();
+            currBlock = currMethod.getBlock(Symbol.symbol(blockCounter + ""));
+            blockCounter++;
         } else {
             currBlock = currBlock.getBlock();
         }

@@ -3,12 +3,12 @@ package symbol;
 import syntaxtree.*;
 import frame.VMAccess;
 
-public class MethodTable extends AbstractTable {
+public class MethodTable {
     private Symbol s;
     private Type t;
     private Table formals; // Method params
     private Table locals; // Local vars
-    private BlockTable block; // Nested blocks
+    private Table blocks; // All the outmost blocks in the method
     private java.util.ArrayList<Binding> orderedFormals; // Formals in decl order
     private Table formalAccesses; // VMAccesses for formals
     private Table localAccesses; // VMAccesses for locals
@@ -18,7 +18,7 @@ public class MethodTable extends AbstractTable {
         this.t = t;
         formals = new Table();
         locals = new Table();
-        block = null;
+        blocks = new Table();
         orderedFormals = new java.util.ArrayList<Binding>();
         formalAccesses = new Table();
         localAccesses = new Table();
@@ -74,14 +74,14 @@ public class MethodTable extends AbstractTable {
             return b;
     }
 
-    // Should be set to a MethodTable for the outmost block
-    public void newBlock(AbstractTable at) {
-        block = new BlockTable(at);
+    // Insert a new outmost block
+    public void putBlock(Symbol s, BlockTable bt) {
+        blocks.put(s, bt);
     }
 
-    // To set the current block initially in type visitor
-    public AbstractTable getBlock() {
-        return block;
+    // To get the outmost block from a given id
+    public BlockTable getBlock(Symbol s) {
+        return (BlockTable)blocks.get(s);
     }
 
     // Added for type checking
