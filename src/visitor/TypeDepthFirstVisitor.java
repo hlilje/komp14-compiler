@@ -243,7 +243,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e;
     public Type visit(Print n) {
-        if(n.e.accept(this) instanceof IdentifierType) {
+        Type e = n.e.accept(this);
+        // TODO Should you be able to print IntArrayType?
+        if(e instanceof IdentifierType) {
             error.complain("Invalid print of object in method " + currMethod.getId() +
                     " in class " + currClass.getId(), ErrorHandler.ErrorCode.OBJECT_PRINT);
         }

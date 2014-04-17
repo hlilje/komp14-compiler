@@ -1,4 +1,7 @@
-/* TODO This is a valid test which contains all the extensions in our grammar */
+/* 
+ * This is a valid test which contains all the extensions in
+ * our grammar and does something useful
+ */
 // EXT:CLE
 // EXT:CGT
 // EXT:CGE
@@ -9,22 +12,18 @@
 
 class Master {
     public static void main(String[] args) {
-        boolean victory;
-        victory = new Test().begin();
-        System.out.println(victory);
+        boolean done;
+        done = new Useful().start();
+
+        System.out.println(1);
+        System.out.println(2);
+        System.out.println(3);
+        System.out.println(done);
     }
 }
 
-class Test {
-    public boolean begin() {
+class Useful {
+    public boolean start() {
         return true;
-    }
-
-    public int before() {
-        return this.after(); // Valid call before declaration
-    }
-
-    public int after() {
-        return 0;
     }
 }
