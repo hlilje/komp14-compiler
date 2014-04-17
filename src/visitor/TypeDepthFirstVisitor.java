@@ -465,6 +465,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e;
     public Type visit(NewArray n) {
+        if(!(n.e.accept(this) instanceof IntegerType)) {
+            error.complain("Array size is not of type Integer",
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
         return new IntArrayType();
     }
 
