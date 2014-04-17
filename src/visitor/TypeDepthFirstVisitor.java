@@ -9,7 +9,7 @@ import error.*;
 import symbol.*;
 
 public class TypeDepthFirstVisitor implements TypeVisitor {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private ErrorHandler error;
     private SymbolTable symTable;
@@ -201,6 +201,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(Block n) {
         // The currBlock will become a MethodTable at the outmost scope
         if(currBlock == null) {
+            // TODO This will only be the first block in the method unless nested
             currBlock = currMethod.getBlock();
         } else {
             currBlock = currBlock.getBlock();

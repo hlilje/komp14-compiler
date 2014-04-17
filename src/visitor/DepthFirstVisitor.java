@@ -9,7 +9,7 @@ import error.*;
 import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private ErrorHandler error;
     private SymbolTable symTable;
@@ -262,7 +262,7 @@ public class DepthFirstVisitor implements Visitor {
 
     // StatementList sl;
     public void visit(Block n) {
-        if(DEBUG) System.out.println("====== BEGIN SCOPE ====== ");
+        if(DEBUG) System.out.println("====== BEGIN SCOPE ======");
         if(DEBUG) System.out.println(">>> VISIT BLOCK");
         BlockTable bt;
         if(currBlock == null)
