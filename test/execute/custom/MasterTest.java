@@ -1,4 +1,4 @@
-/* 
+/*
  * This is a valid test which contains all the extensions in
  * our grammar and does something useful
  */
@@ -12,21 +12,22 @@
 
 class Master {
     public static void main(String[] args) {
-        boolean done;
-        done = new Useful().start();
+        boolean same;
+        same = new Useful().startSort();
 
-        System.out.println(1);
-        System.out.println(2);
-        System.out.println(3);
-        System.out.println(done);
+        if(same != true) { // CNE
+            System.out.println(1);
+        } else {
+            System.out.println(0);
+        }
     }
 }
 
 class Useful {
     int[] sortMe;
 
-    public boolean start() {
-        sortMe = int[10];
+    public boolean startSort() {
+        sortMe = new int[10];
         sortMe[0] = 12345;
         sortMe[1] = 0;
         sortMe[2] = (123*234) - 444;
@@ -38,33 +39,37 @@ class Useful {
         sortMe[8] = 123998;
         sortMe[9] = 8;
 
-        this.sortArray(sortMe);
+        return this.sortArray(sortMe);
     }
 
+    // Bubble sort
     public boolean sortArray(int[] sortMe) {
         int i;
-        int prev;
-        boolean cont;
+        int j;
+        boolean same;
         i = 0;
-        cont = false;
+        j = 1;
 
-        while(i < sortMe.length || cont) {
-            int temp;
-            temp = sortMe[i];
+        while(i <= sortMe.length - 1) { // CLE
+            while(sortMe.length - 2 >= j) { // CGE
+                if(sortMe[j - 1] > sortMe[j]) { // CGT
+                    int temp; // NBD
+                    temp = sortMe[j - 1];
+                    sortMe[j - 1] = sortMe[j];
+                    sortMe[j] = temp; // TODO This gives type error
+                } else {}
 
-            if(sortMe[i] < temp) {
-
-            } else {
+                j = j + 1;
             }
-            
-            i = i + i;
 
-            prev = sortMe[i];
+            i = i + 1;
         }
 
-        return true;
-    }
-
-    public boolean numberOfPrimes(int[] array) {
+        if(sortMe[sortMe.length - 1] == sortMe[0]) { // CEQ
+            same = false;
+        } else {
+            same = true;
+        }
+        return same;
     }
 }
