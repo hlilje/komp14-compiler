@@ -1,3 +1,5 @@
+/* Wrong type errors */
+
 class Main {
     public static void main(String[] args) {
         int a;
@@ -11,7 +13,7 @@ class Main {
         x = 2;
         b = true;
         c = a + b; // Wrong type
-        obj = new Objection().object(); // TODO
+        obj = new Objection().object();
 
         // Wrong type
         if(1 == true) {

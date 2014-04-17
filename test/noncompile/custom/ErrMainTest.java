@@ -1,3 +1,5 @@
+/* Invalid main method */
+
 class Main {
     // No VarDecls allowed outside main method
     int a;

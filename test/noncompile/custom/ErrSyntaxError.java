@@ -1,3 +1,5 @@
+/* Various syntax errors */
+
 /* This is a comment */
 // This is a comment as well
 // // wow /; /f/ so valid/d.s/dfj3  ;'';[äpåäöäåkl j;;l;

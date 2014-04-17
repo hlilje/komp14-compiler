@@ -1,3 +1,5 @@
+/* Multiple declarations of variables */
+
 class Main
 {
     public static void main(String[] a){

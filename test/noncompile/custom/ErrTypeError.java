@@ -1,3 +1,5 @@
+/* Different type errors */
+
 class Main {
     public static void main(String[] a) {
         System.out.println(new Test().start());
