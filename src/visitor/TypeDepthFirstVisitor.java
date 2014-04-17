@@ -186,6 +186,13 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // String s;
     public Type visit(IdentifierType n) {
         if(DEBUG) System.out.println("ID_TYPE: " + n.s);
+        // Also check for super Object type
+        if((symTable.getClass(Symbol.symbol(n.s)) == null) &&
+                (!n.s.equals("Object"))) {
+            error.complain("Undeclared type " + n.s + " in method " +
+                    currMethod.getId() + " in class " + currClass.getId(),
+                    ErrorHandler.ErrorCode.UNDECLARED_TYPE);
+        }
 
         return n;
     }
