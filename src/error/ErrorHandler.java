@@ -9,8 +9,8 @@ public class ErrorHandler {
 
     public static enum ErrorCode {
         NOT_FOUND, ALREADY_DEFINED, TYPE_MISMATCH, INTERNAL_ERROR,
-        MISSING_MAIN, PARSE_ERROR, STATIC_THIS, MULT_DIM_ARRAY,
-        OBJECT_PRINT
+        MISSING_MAIN, PARSE_ERROR, STATIC_THIS, OBJECT_PRINT,
+        NON_ARRAY_LENGTH, WRONG_NUM_ARGS
     }
     private boolean anyErrors;
     private java.util.ArrayList<ErrorMsg> errors;

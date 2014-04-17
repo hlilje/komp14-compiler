@@ -366,7 +366,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e;
     public Type visit(ArrayLength n) {
-        n.e.accept(this);
+        if(!(n.e.accept(this) instanceof IntArrayType)) {
+            error.complain("Array length of non-array type in method " + currMethod.getId() +
+                    " in class " + currClass.getId(),
+                    ErrorHandler.ErrorCode.NON_ARRAY_LENGTH);
+        }
         return new IntegerType();
     }
 
@@ -408,6 +412,12 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
         n.e.accept(this);
         n.i.accept(this);
+
+        if(n.el.size() != fl.size()) {
+                error.complain("Wrong number of arguments in method call to " + n.i +
+                        " in method " + currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.WRONG_NUM_ARGS);
+        }
 
         // Type check formals
         for ( int i = 0; i < n.el.size(); i++ ) {
