@@ -1,6 +1,5 @@
 /**
  * Depth first which traverses and prints an AST.
- * This visitor is not up-to-date and does not handle Blocks correctly.
  */
 
 package visitor;

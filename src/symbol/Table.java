@@ -10,16 +10,15 @@ public class Table {
     }
 
     public void put(Symbol key, Object value) {
-        if(DEBUG) System.out.println("    PUT: " + key.toString() + ", " + value.getClass()); // DEBUG
+        if(DEBUG) System.out.println("    PUT: " + key.toString() + ", " + value.getClass() + " in " + this);
         hashTable.insert(key.toString(), value);
     }
 
     public Object get(Symbol key) {
-        if(DEBUG) System.out.println("    GET: " + key.toString()); // DEBUG
+        if(DEBUG) System.out.println("    GET: " + key.toString() + " in " + this);
         return hashTable.lookup(key.toString());
     }
 
-    // TODO Is this what is supposed to be returned?
     public java.util.Enumeration keys() {
         return Symbol.getKeys();
     }

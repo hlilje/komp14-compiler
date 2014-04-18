@@ -56,7 +56,7 @@ class Useful {
                     int temp; // NBD
                     temp = sortMe[j - 1];
                     sortMe[j - 1] = sortMe[j];
-                    sortMe[j] = temp; // TODO This gives type error since temp type is null
+                    sortMe[j] = temp;
                 } else {}
 
                 j = j + 1;

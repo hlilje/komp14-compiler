@@ -9,7 +9,7 @@ import error.*;
 import symbol.*;
 
 public class TypeDepthFirstVisitor implements TypeVisitor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
     private SymbolTable symTable;
@@ -76,7 +76,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
         // Hard coded method name, actual name is ignored
         currMethod = currClass.getMethod(Symbol.symbol("main"));
-        currBlock = null;
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -96,7 +95,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(ClassDeclSimple n) {
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
         currMethod = null;
-        currBlock = null;
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -116,7 +114,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(ClassDeclExtends n) {
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
         currMethod = null;
-        currBlock = null;
 
         n.i.accept(this);
         n.j.accept(this);
@@ -146,7 +143,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e;
     public Type visit(MethodDecl n) {
         currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
-        currBlock = null;
+        currBlock = null; // Reset block scope
 
         n.t.accept(this);
         n.i.accept(this);
@@ -166,7 +163,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        blockCounter = 0; // Reset the counter for this method
+        blockCounter = 0; // Reset the block counter for this method
         return n.t;
     }
 
@@ -206,12 +203,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // StatementList sl;
     public Type visit(Block n) {
-        if(currBlock == null) {
-            currBlock = currMethod.getBlock(Symbol.symbol(blockCounter + ""));
-            blockCounter++;
-        } else {
-            currBlock = currBlock.getBlock(); // Nested blocks
-        }
+        currBlock = currMethod.getBlock(Symbol.symbol(blockCounter + ""));
+        blockCounter++;
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
@@ -219,6 +212,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
+
         currBlock = null; // End scope
         return null;
     }

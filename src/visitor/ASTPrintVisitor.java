@@ -4,9 +4,7 @@
  * The implementation is based on that of PrettyPrintVisitor, and the
  * author was tempted to call it UglyPrintVisitor.
  *
- * Author: Todd Neller, Gettysburg College 1/29/04
- *
- * This visitor is not up-to-date and does not handle Blocks correctly */
+ * Author: Todd Neller, Gettysburg College 1/29/04 */
 
 package visitor;
 

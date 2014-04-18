@@ -4,6 +4,8 @@ import syntaxtree.*;
 import frame.VMAccess;
 
 public class BlockTable {
+    public static final boolean DEBUG = false;
+
     private BlockTable bt;
     private Table locals;
     private Table localAccesses; // VMAccesses for locals
@@ -15,9 +17,12 @@ public class BlockTable {
     }
 
     public boolean addVar(Symbol s, Type t) {
-        if(getVar(s) != null)
+        if(DEBUG) System.out.println("  Add " + s + " to " + this);
+        if(getVar(s) != null) {
+            if(DEBUG) System.out.println("    Failed adding " + s + " to " + this);
             return false;
-        else {
+        } else {
+            if(DEBUG) System.out.println("    Successfully added " + s + " to " + this);
             locals.put(s, new Binding(s, t));
             return true;
         }
@@ -26,9 +31,14 @@ public class BlockTable {
     // Returns null if not a local or no nested blocks
     public Binding getVar(Symbol s) {
         Binding b = (Binding)locals.get(s);
+        if(DEBUG) {
+            System.out.println("  Lookup " + s + " in " + this);
+            if(b == null) System.out.println("    Result for " + s + " was null in " + this);
+            if(bt == null) System.out.println("    Nested BT for " + s + " was null in " + this);
+        }
         if(b == null && bt != null)
             return bt.getVar(s); // Up a scope level
-        return null; // Not a nested block
+        return b; // Not a nested block
     }
 
     // To support nested blocks

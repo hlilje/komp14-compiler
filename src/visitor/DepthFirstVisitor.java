@@ -9,13 +9,14 @@ import error.*;
 import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
-    private BlockTable currBlock;
+    private BlockTable outerBlock; // The outer block in a method
+    private BlockTable prevOuterBlock; // To support nested blocks
 
     private boolean staticClass; // If current class is static
     private int blockCounter; // To give a unique id for the outmost blocks
@@ -26,7 +27,8 @@ public class DepthFirstVisitor implements Visitor {
         this.symTable = symTable;
         currClass = null;
         currMethod = null;
-        currBlock = null;
+        outerBlock = null;
+        prevOuterBlock = null;
         staticClass = false;
         blockCounter = 0;
     }
@@ -35,12 +37,14 @@ public class DepthFirstVisitor implements Visitor {
     public boolean varInScope(Symbol s) {
         if(currMethod == null) {
             if(!currClass.hasVar(s)) return false;
-        } else if(currBlock == null) {
+        } else if(outerBlock == null) {
             if(!currMethod.inScope(s)) {
                 if(!currClass.hasVar(s)) return false;
             }
         } else { // Check in block
-            if(currBlock.getVar(s) == null) {
+            if(DEBUG) System.out.println("  Outer block is object " + outerBlock);
+            if(outerBlock.getVar(s) == null) {
+                if(DEBUG) System.out.println(s + " not present in this block");
                 if(!currMethod.inScope(s)) {
                     if(!currClass.hasVar(s)) return false;
                 }
@@ -84,7 +88,6 @@ public class DepthFirstVisitor implements Visitor {
             MethodTable mt = new MethodTable(s2, null); // null type
             currClass.addMethod(s2, mt);
             currMethod = mt;
-            currBlock = null;
         }
 
         n.i1.accept(this);
@@ -115,7 +118,6 @@ public class DepthFirstVisitor implements Visitor {
         } else {
             currClass = ct;
             currMethod = null;
-            currBlock = null;
         }
 
         n.i.accept(this);
@@ -145,7 +147,6 @@ public class DepthFirstVisitor implements Visitor {
         } else {
             currClass = ct;
             currMethod = null;
-            currBlock = null;
         }
 
         n.i.accept(this);
@@ -172,21 +173,23 @@ public class DepthFirstVisitor implements Visitor {
                 error.complain("VarDecl " + s + " is already defined in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.ALREADY_DEFINED);
             }
-        } else if(currBlock == null) { // A decl in a method
+        } else if(outerBlock == null) { // A decl in a method
             // Here we assume it's ok to override class decls in methods
             if(!currMethod.addVar(s, n.t)) {
                 error.complain("VarDecl " + s + " is already defined in method " + currMethod.getId() +
                         " in class " + currClass.getId(), ErrorHandler.ErrorCode.ALREADY_DEFINED);
             }
         } else { // A decl in a block
+            if(DEBUG) System.out.println("  Looking for " + s + " in a block");
             // Here we assume it's ok to override class decls in blocks
             if(currMethod.inScope(s)) { // Not allowed to override method decls in blocks
                 error.complain("VarDecl " + s + " is already defined in method " + currMethod.getId() +
                         " in class " + currClass.getId() + ", not allowed to be overridden in block",
                         ErrorHandler.ErrorCode.ALREADY_DEFINED);
             } else { // Finally try the block
-                if(!currBlock.addVar(s, n.t)) {
-                    error.complain("VarDecl " + s + " is already defined in block in method " +
+                if(DEBUG) System.out.println("  Try to add " + s + " to the block");
+                if(!outerBlock.addVar(s, n.t)) {
+                    error.complain("  VarDecl " + s + " is already defined in block in method " +
                             currMethod.getId() + " in class " + currClass.getId(),
                             ErrorHandler.ErrorCode.ALREADY_DEFINED);
                 }
@@ -208,13 +211,15 @@ public class DepthFirstVisitor implements Visitor {
         Symbol s = Symbol.symbol(n.i.toString());
         if(DEBUG) System.out.println(">>> VISIT METHOD_DECL: " + s);
         MethodTable mt = new MethodTable(s, n.t);
+        // Reset block scopes
+        outerBlock = null;
+        prevOuterBlock = null;
 
         if(!currClass.addMethod(s, mt)) {
             error.complain("Method " + s + " is already defined in class " + currClass.getId(),
                     ErrorHandler.ErrorCode.ALREADY_DEFINED);
         } else
             currMethod = mt;
-        currBlock = null;
 
         n.i.accept(this);
 
@@ -230,7 +235,7 @@ public class DepthFirstVisitor implements Visitor {
 
         n.t.accept(this);
         n.e.accept(this);
-        blockCounter = 0; // Reset the counter for this method
+        blockCounter = 0; // Reset the block counter for this method
         if(DEBUG) System.out.println("======= END METHOD SCOPE ======");
     }
 
@@ -268,16 +273,21 @@ public class DepthFirstVisitor implements Visitor {
         if(DEBUG) System.out.println("====== BEGIN BLOCK SCOPE ======");
         if(DEBUG) System.out.println(">>> VISIT BLOCK");
         BlockTable bt;
-        if(currBlock == null) {
-            if(DEBUG) System.out.println("  Add new outer block with id " + blockCounter);
-            bt = new BlockTable(null);
-            currMethod.putBlock(Symbol.symbol(blockCounter + ""), bt);
-            blockCounter++;
+        boolean wasOutmostBlock = false;
+
+        if(outerBlock == null) { // Non-nested block in method
+            if(DEBUG) System.out.println("  Set new outer block with id " + blockCounter);
+            wasOutmostBlock = true;
+            bt = new BlockTable(null); // Not a nested block
         } else {
-            if(DEBUG) System.out.println("  Set new nested block");
-            bt = new BlockTable(currBlock); // Nested blocks
+            if(DEBUG) System.out.println("  Set new nested block with id " + blockCounter);
+            bt = new BlockTable(outerBlock);
+            prevOuterBlock = outerBlock; // Save the old outer block
         }
-        currBlock = bt;
+
+        outerBlock = bt; // Make this the outer block
+        currMethod.putBlock(Symbol.symbol(blockCounter + ""), bt);
+        blockCounter++; // Keep track of blocks in method
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
@@ -285,7 +295,11 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-        currBlock = null; // End scope
+
+        if(wasOutmostBlock)
+            outerBlock = null;
+        else
+            outerBlock = prevOuterBlock;
         if(DEBUG) System.out.println("======= END BLOCK SCOPE =======");
     }
 
