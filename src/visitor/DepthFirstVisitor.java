@@ -9,7 +9,7 @@ import error.*;
 import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private ErrorHandler error;
     private SymbolTable symTable;
@@ -42,9 +42,9 @@ public class DepthFirstVisitor implements Visitor {
                 if(!currClass.hasVar(s)) return false;
             }
         } else { // Check in block
-            if(DEBUG) System.out.println("  Outer block is object " + outerBlock);
+            if(DEBUG) System.out.println("  Outer block is " + outerBlock);
             if(outerBlock.getVar(s) == null) {
-                if(DEBUG) System.out.println(s + " not present in this block");
+                if(DEBUG) System.out.println("  " + s + " is not present in this block");
                 if(!currMethod.inScope(s)) {
                     if(!currClass.hasVar(s)) return false;
                 }
@@ -67,12 +67,12 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i1,i2;
     // Statement s;
     public void visit(MainClass n) {
-        if(DEBUG) System.out.println("=== BEGIN MAIN CLASS SCOPE ====");
         // Hard coded method name, actual name is ignored
         Symbol s = Symbol.symbol(n.i1.toString()); Symbol s2 = Symbol.symbol("main");
         staticClass = true;
 
         if(DEBUG) System.out.println(">>> VISIT MAIN_CLASS: " + s);
+        if(DEBUG) System.out.println("=== BEGIN MAIN CLASS SCOPE ====");
         ClassTable ct = new ClassTable(s);
 
         if(!(n.i3.s.equals("main"))) {
@@ -107,9 +107,9 @@ public class DepthFirstVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
-        if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ====== ");
         Symbol s = Symbol.symbol(n.i.toString());
         if(DEBUG) System.out.println(">>> VISIT CLASS_DECL_SIMP: " + s);
+        if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ====== ");
         ClassTable ct = new ClassTable(s);
 
         if(!symTable.addClass(s, ct)) {
@@ -136,9 +136,9 @@ public class DepthFirstVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
-        if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ======");
         Symbol s = Symbol.symbol(n.i.toString());
         if(DEBUG) System.out.println(">>> VISIT CLASS_DECLEXT: " + s);
+        if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ======");
         ClassTable ct = new ClassTable(s);
 
         if(!symTable.addClass(s, ct)) {
@@ -207,9 +207,9 @@ public class DepthFirstVisitor implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
-        if(DEBUG) System.out.println("====== BEGIN METHOD SCOPE =====");
         Symbol s = Symbol.symbol(n.i.toString());
         if(DEBUG) System.out.println(">>> VISIT METHOD_DECL: " + s);
+        if(DEBUG) System.out.println("====== BEGIN METHOD SCOPE =====");
         MethodTable mt = new MethodTable(s, n.t);
         // Reset block scopes
         outerBlock = null;
@@ -270,18 +270,26 @@ public class DepthFirstVisitor implements Visitor {
 
     // StatementList sl;
     public void visit(Block n) {
-        if(DEBUG) System.out.println("====== BEGIN BLOCK SCOPE ======");
         if(DEBUG) System.out.println(">>> VISIT BLOCK");
+        if(DEBUG) System.out.println("====== BEGIN BLOCK SCOPE ======");
         BlockTable bt;
         boolean wasOutmostBlock = false;
 
         if(outerBlock == null) { // Non-nested block in method
-            if(DEBUG) System.out.println("  Set new outer block with id " + blockCounter);
             wasOutmostBlock = true;
             bt = new BlockTable(null); // Not a nested block
+            if(DEBUG) {
+                System.out.println("  Set new outer block with id " + blockCounter);
+                System.out.println("    This is " + bt);
+            }
+            prevOuterBlock = null; // Can not have a prev block if this is outmost
         } else {
-            if(DEBUG) System.out.println("  Set new nested block with id " + blockCounter);
             bt = new BlockTable(outerBlock);
+            if(DEBUG) {
+                System.out.println("  Set new nested block with id " + blockCounter);
+                System.out.println("    Parent is " + outerBlock);
+                System.out.println("    This is " + bt);
+            }
             prevOuterBlock = outerBlock; // Save the old outer block
         }
 
@@ -306,14 +314,18 @@ public class DepthFirstVisitor implements Visitor {
     // Exp e;
     // Statement s1,s2;
     public void visit(If n) {
+        if(DEBUG) System.out.println(">>> VISIT IF");
         n.e.accept(this);
+        if(DEBUG) System.out.println("  Entering 'if' block");
         n.s1.accept(this);
+        if(DEBUG) System.out.println("  Entering 'else' block");
         n.s2.accept(this);
     }
 
     // Exp e;
     // Statement s;
     public void visit(While n) {
+        if(DEBUG) System.out.println(">>> VISIT WHILE");
         n.e.accept(this);
         n.s.accept(this);
     }
