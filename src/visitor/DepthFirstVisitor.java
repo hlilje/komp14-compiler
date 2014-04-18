@@ -63,7 +63,7 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i1,i2;
     // Statement s;
     public void visit(MainClass n) {
-        if(DEBUG) System.out.println("====== BEGIN SCOPE ====== ");
+        if(DEBUG) System.out.println("=== BEGIN MAIN CLASS SCOPE ====");
         // Hard coded method name, actual name is ignored
         Symbol s = Symbol.symbol(n.i1.toString()); Symbol s2 = Symbol.symbol("main");
         staticClass = true;
@@ -97,14 +97,14 @@ public class DepthFirstVisitor implements Visitor {
         }
 
         staticClass = false;
-        if(DEBUG) System.out.println("======= END SCOPE =======");
+        if(DEBUG) System.out.println("==== END MAIN CLASS SCOPE =====");
     }
 
     // Identifier i;
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
-        if(DEBUG) System.out.println("====== BEGIN SCOPE ====== ");
+        if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ====== ");
         Symbol s = Symbol.symbol(n.i.toString());
         if(DEBUG) System.out.println(">>> VISIT CLASS_DECL_SIMP: " + s);
         ClassTable ct = new ClassTable(s);
@@ -126,7 +126,7 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
-        if(DEBUG) System.out.println("======= END SCOPE =======");
+        if(DEBUG) System.out.println("======= END CLASS SCOPE =======");
     }
 
     // Identifier i;
@@ -134,7 +134,7 @@ public class DepthFirstVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
-        if(DEBUG) System.out.println("====== BEGIN SCOPE ====== ");
+        if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ======");
         Symbol s = Symbol.symbol(n.i.toString());
         if(DEBUG) System.out.println(">>> VISIT CLASS_DECLEXT: " + s);
         ClassTable ct = new ClassTable(s);
@@ -157,7 +157,7 @@ public class DepthFirstVisitor implements Visitor {
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
-        if(DEBUG) System.out.println("======= END SCOPE =======");
+        if(DEBUG) System.out.println("======= END CLASS SCOPE =======");
     }
 
     // Type t;
@@ -204,7 +204,7 @@ public class DepthFirstVisitor implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
-        if(DEBUG) System.out.println("====== BEGIN SCOPE ====== ");
+        if(DEBUG) System.out.println("====== BEGIN METHOD SCOPE =====");
         Symbol s = Symbol.symbol(n.i.toString());
         if(DEBUG) System.out.println(">>> VISIT METHOD_DECL: " + s);
         MethodTable mt = new MethodTable(s, n.t);
@@ -230,7 +230,8 @@ public class DepthFirstVisitor implements Visitor {
 
         n.t.accept(this);
         n.e.accept(this);
-        if(DEBUG) System.out.println("======= END SCOPE =======");
+        blockCounter = 0; // Reset the counter for this method
+        if(DEBUG) System.out.println("======= END METHOD SCOPE ======");
     }
 
     // Type t;
@@ -264,15 +265,18 @@ public class DepthFirstVisitor implements Visitor {
 
     // StatementList sl;
     public void visit(Block n) {
-        if(DEBUG) System.out.println("====== BEGIN SCOPE ======");
+        if(DEBUG) System.out.println("====== BEGIN BLOCK SCOPE ======");
         if(DEBUG) System.out.println(">>> VISIT BLOCK");
         BlockTable bt;
         if(currBlock == null) {
+            if(DEBUG) System.out.println("  Add new outer block with id " + blockCounter);
             bt = new BlockTable(null);
             currMethod.putBlock(Symbol.symbol(blockCounter + ""), bt);
             blockCounter++;
-        } else
+        } else {
+            if(DEBUG) System.out.println("  Set new nested block");
             bt = new BlockTable(currBlock); // Nested blocks
+        }
         currBlock = bt;
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -282,7 +286,7 @@ public class DepthFirstVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
         currBlock = null; // End scope
-        if(DEBUG) System.out.println("======= END SCOPE =======");
+        if(DEBUG) System.out.println("======= END BLOCK SCOPE =======");
     }
 
     // Exp e;

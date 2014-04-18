@@ -56,6 +56,7 @@ public class MethodTable {
         }
     }
 
+    // Helper method to check if the given variable is in scope
     public boolean inScope(Symbol s) {
         if(locals.get(s) == null) {
             if(formals.get(s) == null)
@@ -64,8 +65,7 @@ public class MethodTable {
         return true;
     }
 
-    // Will be called in the outmost block if several are nested, provided
-    // the 'block before' was set to a method table
+    // Get a variable from either the locals or formals
     public Binding getVar(Symbol s) {
         Binding b = (Binding)locals.get(s);
         if(b == null)

@@ -27,8 +27,8 @@ public class BlockTable {
     public Binding getVar(Symbol s) {
         Binding b = (Binding)locals.get(s);
         if(b == null && bt != null)
-            return bt.getVar(s);
-        return null;
+            return bt.getVar(s); // Up a scope level
+        return null; // Not a nested block
     }
 
     // To support nested blocks

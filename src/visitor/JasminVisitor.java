@@ -236,7 +236,7 @@ public class JasminVisitor implements Visitor {
         jfw.setReturn(currMethod.getType());
         jfw.limitMethod(n.vl.size() + n.fl.size());
         jfw.declareMethodEnd();
-        // TODO Calculate needed stack depth
+        blockCounter = 0; // Reset the counter for this method
     }
 
     // void t;
