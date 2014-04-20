@@ -64,7 +64,6 @@ class Useful {
             }
 
             i = i + 1;
-            test = 2; // TODO Should not be found
         }
 
         if(sortMe[sortMe.length - 1] == sortMe[0]) { // CEQ

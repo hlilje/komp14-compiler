@@ -9,7 +9,7 @@ import error.*;
 import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
     private SymbolTable symTable;
@@ -42,9 +42,7 @@ public class DepthFirstVisitor implements Visitor {
                 if(!currClass.hasVar(s)) return false;
             }
         } else { // Check in block
-            if(DEBUG) System.out.println("  Outer block is " + outerBlock);
             if(outerBlock.getVar(s) == null) {
-                if(DEBUG) System.out.println("  " + s + " is not present in this block");
                 if(!currMethod.inScope(s)) {
                     if(!currClass.hasVar(s)) return false;
                 }
@@ -270,7 +268,7 @@ public class DepthFirstVisitor implements Visitor {
 
     // StatementList sl;
     public void visit(Block n) {
-        if(DEBUG) System.out.println(">>> VISIT BLOCK");
+        if(DEBUG) System.out.println(">>> VISIT BLOCK ");
         if(DEBUG) System.out.println("====== BEGIN BLOCK SCOPE ======");
         BlockTable bt;
         boolean wasOutmostBlock = false;
@@ -282,7 +280,6 @@ public class DepthFirstVisitor implements Visitor {
                 System.out.println("  Set new outer block with id " + blockCounter);
                 System.out.println("    This is " + bt);
             }
-            prevOuterBlock = null; // Can not have a prev block if this is outmost
         } else {
             bt = new BlockTable(outerBlock);
             if(DEBUG) {
@@ -304,10 +301,13 @@ public class DepthFirstVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        if(wasOutmostBlock)
+        if(wasOutmostBlock) {
             outerBlock = null;
-        else
+        }
+        else {
             outerBlock = prevOuterBlock;
+        }
+        prevOuterBlock = null; // Must reset
         if(DEBUG) System.out.println("======= END BLOCK SCOPE =======");
     }
 
@@ -341,6 +341,7 @@ public class DepthFirstVisitor implements Visitor {
         Symbol s = Symbol.symbol(n.i.toString());
         if(!varInScope(s))
             error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
+        if(DEBUG) System.out.println("    Assigning to " + s);
 
         n.i.accept(this);
         n.e.accept(this);
