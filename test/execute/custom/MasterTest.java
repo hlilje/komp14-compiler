@@ -13,18 +13,23 @@
 class Master {
     public static void main(String[] args) {
         boolean same;
+        int index;
         same = new Useful().startSort();
+        index = new Useful().startSearch();
 
         if(same != true) { // CNE
             System.out.println(1);
         } else {
             System.out.println(0);
         }
+
+        System.out.println(index);
     }
 }
 
 class Useful {
     int[] sortMe;
+    int[] searchMe;
 
     public boolean startSort() {
         sortMe = new int[10];
@@ -40,6 +45,22 @@ class Useful {
         sortMe[9] = 8;
 
         return this.sortArray(sortMe);
+    }
+
+    public int startSearch() {
+        searchMe = new int[10];
+        searchMe[0] = 1123 - (123*2);
+        searchMe[1] = 2;
+        searchMe[2] = 124;
+        searchMe[3] = 9;
+        searchMe[4] = 1111;
+        searchMe[5] = 42;
+        searchMe[6] = 0;
+        searchMe[7] = 1;
+        searchMe[8] = 5006996;
+        searchMe[9] = 120943; 
+
+        return this.searchArray(searchMe, 42);
     }
 
     // Bubble sort
@@ -72,5 +93,13 @@ class Useful {
             same = true;
         }
         return same;
+    }
+
+    // Search for the index of the given number
+    public int searchArray(int[] searchMe, int num) {
+        int numIndex;
+
+        while(i < searchMe.length) {
+        }
     }
 }
