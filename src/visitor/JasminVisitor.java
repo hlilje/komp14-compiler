@@ -19,8 +19,9 @@ public class JasminVisitor implements Visitor {
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
-    private AbstractTable currBlock;
+    private BlockTable currBlock;
 
+    private int blockCounter; // Unique id for outmost blocks
     private JasminFileWriter jfw;
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
@@ -29,6 +30,7 @@ public class JasminVisitor implements Visitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
+        blockCounter = 0;
         jfw = new JasminFileWriter(error, tfp);
     }
 
@@ -76,7 +78,6 @@ public class JasminVisitor implements Visitor {
         String className = n.i1.toString();
         currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = currClass.getMethod(Symbol.symbol("main"));
-        currBlock = null;
 
         Record record = new Record(className);
         if(DEBUG) System.out.println(record.toString());
@@ -122,7 +123,6 @@ public class JasminVisitor implements Visitor {
         if(DEBUG) System.out.println(">>>> ClassDeclSimple");
         currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = null;
-        currBlock = null;
 
         Record record = new Record(className);
         if(DEBUG) System.out.println(record.toString());
@@ -156,7 +156,6 @@ public class JasminVisitor implements Visitor {
         String className = n.i.toString();
         currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = null;
-        currBlock = null;
 
         Record record = new Record(className);
         if(DEBUG) System.out.println(record.toString());
@@ -198,7 +197,7 @@ public class JasminVisitor implements Visitor {
     public void visit(MethodDecl n) {
         if(DEBUG) System.out.println(">>>> MethodDecl");
         currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
-        currBlock = null;
+        currBlock = null; // Reset block scope
 
         Frame frame = new Frame("main", n.fl, currMethod.getType());
         if(DEBUG) System.out.println(frame.toString());
@@ -234,7 +233,7 @@ public class JasminVisitor implements Visitor {
         jfw.setReturn(currMethod.getType());
         jfw.limitMethod(n.vl.size() + n.fl.size());
         jfw.declareMethodEnd();
-        // TODO Calculate needed stack depth
+        blockCounter = 0; // Reset the block counter for this method
     }
 
     // void t;
@@ -260,11 +259,8 @@ public class JasminVisitor implements Visitor {
     // StatementList sl;
     public void visit(Block n) {
         if(DEBUG) System.out.println(">>>> Block");
-        if(currBlock == null) {
-            currBlock = currMethod.getBlock();
-        } else {
-            currBlock = currBlock.getBlock();
-        }
+        currBlock = currMethod.getBlock(Symbol.symbol(blockCounter + ""));
+        blockCounter++; // Keep track of block in method
 
         // TODO Handle VarDecl in Blocks
         Frame frame = new Frame(currMethod.getId().toString(), null, null);
@@ -274,6 +270,7 @@ public class JasminVisitor implements Visitor {
             VarDecl vd = n.vl.elementAt(i); String varName = vd.i.toString();
             VMAccess vma = frame.allocLocal(varName, vd.t);
             currBlock.addLocalAccess(Symbol.symbol(varName), vma);
+
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
                     System.out.println(((IntegerInFrame)vma).toString());
@@ -286,7 +283,8 @@ public class JasminVisitor implements Visitor {
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-        currBlock = null;
+
+        currBlock = null; // End scope
     }
 
     // Exp e;

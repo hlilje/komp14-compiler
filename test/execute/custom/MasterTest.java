@@ -52,11 +52,12 @@ class Useful {
 
         while(i <= sortMe.length - 1) { // CLE
             while(sortMe.length - 2 >= j) { // CGE
+                int test;
                 if(sortMe[j - 1] > sortMe[j]) { // CGT
                     int temp; // NBD
                     temp = sortMe[j - 1];
                     sortMe[j - 1] = sortMe[j];
-                    sortMe[j] = temp; // TODO This gives type error since temp type is null
+                    sortMe[j] = temp;
                 } else {}
 
                 j = j + 1;

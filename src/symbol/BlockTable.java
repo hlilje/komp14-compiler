@@ -3,36 +3,46 @@ package symbol;
 import syntaxtree.*;
 import frame.VMAccess;
 
-public class BlockTable extends AbstractTable {
-    private AbstractTable bt;
+public class BlockTable {
+    public static final boolean DEBUG = false;
+
+    private BlockTable bt;
     private Table locals;
     private Table localAccesses; // VMAccesses for locals
 
-    public BlockTable(AbstractTable bt) {
+    public BlockTable(BlockTable bt) {
         this.bt = bt;
         locals = new Table();
         localAccesses = new Table();
     }
 
     public boolean addVar(Symbol s, Type t) {
-        if(getVar(s) != null)
+        if(DEBUG) System.out.println("  Add " + s + " to " + this);
+        if(getVar(s) != null) {
+            if(DEBUG) System.out.println("    Failed adding " + s + " to " + this);
             return false;
-        else {
+        } else {
+            if(DEBUG) System.out.println("    Successfully added " + s + " to " + this);
             locals.put(s, new Binding(s, t));
             return true;
         }
     }
 
-    // Will continue checking back until bt is current method
+    // Returns null if not a local or no nested blocks
     public Binding getVar(Symbol s) {
         Binding b = (Binding)locals.get(s);
-        if(b == null)
-            return bt.getVar(s);
-        return b;
+        if(DEBUG) {
+            System.out.println("  Lookup " + s + " in " + this);
+            if(b == null) System.out.println("    Result for " + s + " was null in " + this);
+            if(bt == null) System.out.println("    Nested BT for " + s + " was null in " + this);
+        }
+        if(b == null && bt != null)
+            return bt.getVar(s); // Up a scope level
+        return b; // Not a nested block
     }
 
-    // To be able to traverse the nested blocks
-    public AbstractTable getBlock() {
+    // To support nested blocks
+    public BlockTable getBlock() {
         return bt;
     }
 

@@ -1,4 +1,4 @@
-/* Invalid blocks according to spec */
+/* Invalid blocks according to spec, 11 errors */
 // EXT:NBD
 
 class InvalidBlock {

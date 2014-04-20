@@ -4,7 +4,7 @@
  * The implementation is based on that of PrettyPrintVisitor, and the
  * author was tempted to call it UglyPrintVisitor.
  *
- * Author: Todd Neller, Gettysburg College 1/29/04 */ 
+ * Author: Todd Neller, Gettysburg College 1/29/04 */
 
 package visitor;
 

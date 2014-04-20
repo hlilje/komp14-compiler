@@ -9,13 +9,15 @@ import error.*;
 import symbol.*;
 
 public class TypeDepthFirstVisitor implements TypeVisitor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
-    private AbstractTable currBlock;
+    private BlockTable currBlock;
+
+    private int blockCounter; // Unique id for outmost blocks
 
     // Added constructor to inject error message and symtable
     public TypeDepthFirstVisitor(ErrorHandler error, SymbolTable symTable) {
@@ -24,6 +26,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
+        blockCounter = 0;
     }
 
     // Helper method to extract type of given var symbol, returns null
@@ -37,11 +40,14 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                 b = (Binding)currClass.getVar(s);
             else
                 b = (Binding)currMethod.getVar(s);
-        } else {
-            if(currBlock.getVar(s) == null) { // Also checks method
-                b = (Binding)currClass.getVar(s);
+        } else { // Check block
+            if(currBlock.getVar(s) == null) {
+                if(currMethod.getVar(s) == null)
+                    b = currClass.getVar(s);
+                else
+                    b = currMethod.getVar(s);
             } else
-                b = (Binding)currBlock.getVar(s);
+                b = currBlock.getVar(s);
         }
 
         return b != null ? b.getType() : null;
@@ -70,7 +76,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         currClass = symTable.getClass(Symbol.symbol(n.i1.toString()));
         // Hard coded method name, actual name is ignored
         currMethod = currClass.getMethod(Symbol.symbol("main"));
-        currBlock = null;
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -90,7 +95,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(ClassDeclSimple n) {
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
         currMethod = null;
-        currBlock = null;
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -110,7 +114,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(ClassDeclExtends n) {
         currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
         currMethod = null;
-        currBlock = null;
 
         n.i.accept(this);
         n.j.accept(this);
@@ -140,7 +143,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e;
     public Type visit(MethodDecl n) {
         currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
-        currBlock = null;
+        currBlock = null; // Reset block scope
 
         n.t.accept(this);
         n.i.accept(this);
@@ -160,6 +163,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
+        blockCounter = 0; // Reset the block counter for this method
         return n.t;
     }
 
@@ -199,13 +203,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // StatementList sl;
     public Type visit(Block n) {
-        // The currBlock will become a MethodTable at the outmost scope
-        if(currBlock == null) {
-            // TODO This will only be the first block in the method unless nested
-            currBlock = currMethod.getBlock();
-        } else {
-            currBlock = currBlock.getBlock();
-        }
+        currBlock = currMethod.getBlock(Symbol.symbol(blockCounter + ""));
+        blockCounter++;
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
@@ -213,6 +212,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
+
         currBlock = null; // End scope
         return null;
     }
