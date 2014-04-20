@@ -5,6 +5,7 @@
 
 options {
     JAVA_UNICODE_ESCAPE = true;
+    COMMON_TOKEN_ACTION = true; // Call a special method after each token
 }
 
 PARSER_BEGIN(MiniJavaParser)
@@ -99,6 +100,24 @@ TOKEN :
     < IDENTIFIER: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","0"-"9","_"])* >
     | < INTEGER_LITERAL: "0"
         | ["1"-"9"] (["0"-"9"])* >
+}
+
+// Will be called after every token
+TOKEN_MGR_DECLS :
+{
+    int tokenCount = 0;
+    void CommonTokenAction(Token t)
+    {
+        tokenCount++;
+    }
+}
+
+// To be able to print the number of tokens
+<*>
+TOKEN :
+{
+    <EOF>
+    { System.out.println("Token count: " + tokenCount); }
 }
 
 /* GRAMMAR */

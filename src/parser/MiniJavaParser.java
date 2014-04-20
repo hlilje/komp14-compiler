@@ -849,6 +849,24 @@ el.addElement(e2);
     finally { jj_save(8, xla); }
   }
 
+  private boolean jj_3R_22()
+ {
+    if (jj_scan_token(INT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_21()
+ {
+    if (jj_scan_token(BOOLEAN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
   private boolean jj_3_7()
  {
     if (jj_scan_token(DOT)) return true;
@@ -934,24 +952,6 @@ el.addElement(e2);
   }
 
   private boolean jj_3R_23()
- {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_22()
- {
-    if (jj_scan_token(INT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_21()
- {
-    if (jj_scan_token(BOOLEAN)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_19()
  {
     if (jj_scan_token(IDENTIFIER)) return true;
     return false;

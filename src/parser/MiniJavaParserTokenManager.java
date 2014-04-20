@@ -6,6 +6,11 @@ import visitor.*;
 
 /** Token Manager. */
 @SuppressWarnings("unused")public class MiniJavaParserTokenManager implements MiniJavaParserConstants {
+    int tokenCount = 0;
+    void CommonTokenAction(Token t)
+    {
+        tokenCount++;
+    }
 
   /** Debug output. */
   public  java.io.PrintStream debugStream = System.out;
@@ -957,6 +962,8 @@ public Token getNextToken()
       jjmatchedPos = -1;
       matchedToken = jjFillToken();
       matchedToken.specialToken = specialToken;
+      TokenLexicalActions(matchedToken);
+      CommonTokenAction(matchedToken);
       return matchedToken;
    }
    image = jjimage;
@@ -995,8 +1002,10 @@ public Token getNextToken()
         {
            matchedToken = jjFillToken();
            matchedToken.specialToken = specialToken;
+           TokenLexicalActions(matchedToken);
        if (jjnewLexState[jjmatchedKind] != -1)
          curLexState = jjnewLexState[jjmatchedKind];
+           CommonTokenAction(matchedToken);
            return matchedToken;
         }
         else if ((jjtoSkip[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 077))) != 0L)
@@ -1058,6 +1067,18 @@ void SkipLexicalActions(Token matchedToken)
 {
    switch(jjmatchedKind)
    {
+      default :
+         break;
+   }
+}
+void TokenLexicalActions(Token matchedToken)
+{
+   switch(jjmatchedKind)
+   {
+      case 0 :
+      image.setLength(0);
+      System.out.println("Token count: " + tokenCount);
+         break;
       default :
          break;
    }
