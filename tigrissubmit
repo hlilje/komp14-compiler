@@ -31,7 +31,20 @@ if uuencode x </dev/null >/dev/null
     exit 1
   fi
 
-cd ..
+#cd ..
+#tar cf - `basename $compdir` | gzip | uuencode x | mailx -s '' submit@tigris.csc.kth.se
 
-tar cf - `basename $compdir` | gzip | uuencode x | mailx -s '' submit@tigris.csc.kth.se
+# Modification to only send the necessary files
+TEMPDIR="tigris-submit-temp"
+mkdir "$HOME/$TEMPDIR"
+cp -r "$compdir/lib" "$HOME/$TEMPDIR/lib"
+cp -r "$compdir/src" "$HOME/$TEMPDIR/src"
+cp  "$compdir/build.xml" "$HOME/$TEMPDIR"
+cp  "$compdir/DESC" "$HOME/$TEMPDIR"
+cp  "$compdir/report.pdf" "$HOME/$TEMPDIR"
+
+cd $HOME
+tar cf - `basename $TEMPDIR` | gzip | uuencode x | mailx -s '' submit@tigris.csc.kth.se
+rm -f -r "$TEMPDIR" # Remove the temporary directory
+
 exit 0
