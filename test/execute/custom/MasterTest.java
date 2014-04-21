@@ -14,8 +14,10 @@ class Master {
     public static void main(String[] args) {
         boolean same;
         int index;
+        int res;
         same = new Useful().startSort();
         index = new Useful().startSearch();
+        res = new Classy().method();
 
         if(same != true) { // CNE
             System.out.println(1);
@@ -24,6 +26,7 @@ class Master {
         }
 
         System.out.println(index);
+        System.out.println(classy);
     }
 }
 
@@ -97,9 +100,53 @@ class Useful {
 
     // Search for the index of the given number
     public int searchArray(int[] searchMe, int num) {
+        int i;
         int numIndex;
+        i = 1;
+        numIndex = 2147483647;
 
         while(i < searchMe.length) {
+            if(searchMe[i] == num) {
+                numIndex = i;
+                i = i + 1;
+            } else {}
         }
+        return numIndex;
+    }
+}
+
+class Classy {
+    int f1;
+    boolean f2;
+
+    public int method() {
+        return this.iter(900);
+    }
+
+    public int getInt() {
+        return f1;
+    }
+
+    public boolean setBool(boolean p) {
+        f2 = p;
+        return f2;
+    }
+
+    public int iter(int a) {
+        int temp;
+        int i;
+        boolean cont;
+        cont = true;
+        temp = a;
+        i = 0;
+
+        while(cont) {
+            if(i > a) {
+                cont = false;
+            } else {
+            cont = true;
+            }
+        }
+        return temp;
     }
 }
