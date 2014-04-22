@@ -15,9 +15,13 @@ class Master {
         boolean same;
         int index;
         int res;
+        int fib;
+        Or or;
         same = new Useful().startSort();
         index = new Useful().startSearch();
         res = new Classy().method();
+        fib = new Fibonacci().start(10);
+        or = new Or();
 
         if(same != true) { // CNE
             System.out.println(1);
@@ -26,7 +30,9 @@ class Master {
         }
 
         System.out.println(index);
-        System.out.println(classy);
+        System.out.println(res);
+        System.out.println(fib);
+        System.out.println(or.Or(20));
     }
 }
 
@@ -61,7 +67,7 @@ class Useful {
         searchMe[6] = 0;
         searchMe[7] = 1;
         searchMe[8] = 5006996;
-        searchMe[9] = 120943; 
+        searchMe[9] = 120943;
 
         return this.searchArray(searchMe, 42);
     }
@@ -115,6 +121,7 @@ class Useful {
     }
 }
 
+/* Less usesful class */
 class Classy {
     int f1;
     boolean f2;
@@ -148,5 +155,76 @@ class Classy {
             }
         }
         return temp;
+    }
+}
+
+// Class which has a method that prints the Fibonacci series
+// based on given n
+class Fibonacci {
+    public int start(int n) {
+        int ret;
+        int i;
+        int grandparent;
+        int parent;
+        boolean skip;
+
+        grandparent = 1;
+        parent = 3;
+        i = 2;
+        skip = false;
+
+        if(n == 0) {
+            ret = 1;
+            skip = true;
+        } else if(n == 1) {
+            ret = 3;
+            skip = true;
+        } else {}
+
+        if(!skip) {
+            while(i <= n) {
+                ret = 3 * (parent - grandparent);
+                grandparent = parent;
+                parent = ret;
+            }
+        } else {}
+
+        System.out.println(ret);
+        return ret;
+    }
+}
+
+// This is not such a useful // class /// ******/
+class Or {
+    boolean or;
+    boolean not;
+
+    public boolean Or(int n) {
+        int counter;
+        or = false;
+        not = false;
+        counter = 0;
+
+        while(or || !not) { // BDJ
+            int temp;
+            temp = 1;
+
+            if(true && false) {
+                // Nothing
+            } else {
+                while(counter < n) {
+                    counter = counter + counter;
+                    System.out.println(counter);
+                    if(counter > 0) { // Will always happen!
+                        not = true; // Break the outer loop
+                        temp = counter;
+                    } else {
+                        not = false;
+                        counter = temp;
+                    }
+                }
+            }
+        }
+        return true || false;
     }
 }

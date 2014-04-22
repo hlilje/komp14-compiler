@@ -424,6 +424,11 @@ public class DepthFirstVisitor implements Visitor {
 
     // String s;
     public void visit(IdentifierExp n) {
+        Symbol s = Symbol.symbol(n.s);
+        if(!varInScope(s)) {
+            error.complain(s + " is not defined in method " + currMethod.getId() + " in class " +
+                    currClass.getId(), ErrorHandler.ErrorCode.NOT_FOUND);
+        }
     }
 
     public void visit(This n) {
