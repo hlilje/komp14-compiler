@@ -963,7 +963,6 @@ public Token getNextToken()
       matchedToken = jjFillToken();
       matchedToken.specialToken = specialToken;
       TokenLexicalActions(matchedToken);
-      CommonTokenAction(matchedToken);
       return matchedToken;
    }
    image = jjimage;
@@ -1005,7 +1004,6 @@ public Token getNextToken()
            TokenLexicalActions(matchedToken);
        if (jjnewLexState[jjmatchedKind] != -1)
          curLexState = jjnewLexState[jjmatchedKind];
-           CommonTokenAction(matchedToken);
            return matchedToken;
         }
         else if ((jjtoSkip[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 077))) != 0L)
@@ -1075,10 +1073,6 @@ void TokenLexicalActions(Token matchedToken)
 {
    switch(jjmatchedKind)
    {
-      case 0 :
-      image.setLength(0);
-      System.out.println("Token count: " + tokenCount);
-         break;
       default :
          break;
    }

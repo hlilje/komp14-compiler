@@ -5,7 +5,7 @@
 
 options {
     JAVA_UNICODE_ESCAPE = true;
-    COMMON_TOKEN_ACTION = true; // Call a special method after each token
+    COMMON_TOKEN_ACTION = false; // Call a special method after each token
 }
 
 PARSER_BEGIN(MiniJavaParser)
@@ -117,7 +117,7 @@ TOKEN_MGR_DECLS :
 TOKEN :
 {
     <EOF>
-    { System.out.println("Token count: " + tokenCount); }
+    //{ System.out.println("Token count: " + tokenCount); }
 }
 
 /* GRAMMAR */

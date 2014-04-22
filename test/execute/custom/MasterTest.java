@@ -1,6 +1,8 @@
 /*
  * This is a valid test which contains all the extensions in
- * our grammar and does something useful
+ * our grammar and does something useful.
+ *
+ * This test is 1059 tokens large.
  */
 // EXT:CLE
 // EXT:CGT
@@ -13,15 +15,19 @@
 class Master {
     public static void main(String[] args) {
         boolean same;
-        int index;
-        int res;
-        int fib;
         Or or;
+        int[] toBeSorted;
+
         same = new Useful().startSort();
-        index = new Useful().startSearch();
-        res = new Classy().method();
-        fib = new Fibonacci().start(10);
-        or = new Or();
+        or = new Or().init();
+
+        // Init
+        toBeSorted = new int[5];
+        toBeSorted[0] = 123;
+        toBeSorted[1] = 2;
+        toBeSorted[2] = 20934;
+        toBeSorted[3] = 293;
+        toBeSorted[4] = 0;
 
         if(same != true) { // CNE
             System.out.println(1);
@@ -29,9 +35,9 @@ class Master {
             System.out.println(0);
         }
 
-        System.out.println(index);
-        System.out.println(res);
-        System.out.println(fib);
+        System.out.println(new Useful().startSearch());
+        System.out.println(new Classy().method());
+        System.out.println(new Fibonacci().start(10));
         System.out.println(or.Or(20));
     }
 }
@@ -114,10 +120,35 @@ class Useful {
         while(i < searchMe.length) {
             if(searchMe[i] == num) {
                 numIndex = i;
-                i = i + 1;
             } else {}
+
+            i = i + 1;
         }
         return numIndex;
+    }
+
+    // Insertion sort of given array for descending order
+    public int[] insertionSort(int[] a) {
+        int i;
+        int j; // Number of items sorted so far
+        int key; // Item to be sorted
+        j = 1; // Start with 1
+
+        while(j < a.length) {
+            key = a[j];
+
+            i = j - 1;
+            while((i >= 0) && (a[i] < key)) {
+                a[i + 1] = a[i]; // Move up smaller values
+
+                i = i - 1;
+            }
+            a[i + 1] = key; // Put the key where it belongs
+
+            j = j + 1;
+        }
+
+        return a;
     }
 }
 
@@ -127,7 +158,7 @@ class Classy {
     boolean f2;
 
     public int method() {
-        return this.iter(900);
+        return this.iter(100);
     }
 
     public int getInt() {
@@ -151,8 +182,10 @@ class Classy {
             if(i > a) {
                 cont = false;
             } else {
-            cont = true;
+                cont = true;
             }
+            
+            i = i + 1;
         }
         return temp;
     }
@@ -186,6 +219,8 @@ class Fibonacci {
                 ret = 3 * (parent - grandparent);
                 grandparent = parent;
                 parent = ret;
+
+                i = i + 1;
             }
         } else {}
 
@@ -203,7 +238,7 @@ class Or {
         int counter;
         or = false;
         not = false;
-        counter = 0;
+        counter = 1;
 
         while(or || !not) { // BDJ
             int temp;
@@ -218,7 +253,7 @@ class Or {
                     if(counter > 0) { // Will always happen!
                         not = true; // Break the outer loop
                         temp = counter;
-                    } else {
+                    } else { // Won't happen
                         not = false;
                         counter = temp;
                     }
@@ -226,5 +261,9 @@ class Or {
             }
         }
         return true || false;
+    }
+
+    public Or init() {
+        return this;
     }
 }
