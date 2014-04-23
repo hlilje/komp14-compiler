@@ -1,4 +1,10 @@
-/* This is a valid test which executes with the standard grammar and extensions */
+/* This is a valid test which executes with the standard grammar and extensions
+ * Implements a graph data structure and BFS for shortest path between two nodes
+ * Correct output should be:
+ *     4
+ *     1
+ *     0
+ */
 
 class Test {
     public static void main(String[] args) {
@@ -24,35 +30,40 @@ class Test {
         // Initialize visited
         i = 0;
         while(i < size) {
-            visited[i] = 0;
+            visited[i] = size;
             i = i + 1;
         }
 
         if( !(u<0) && !(v<0) && u<size && v<size && queue.enqueue(u) ) {
             // Find shortest path between node u and v using BFS
-            // Print 1 if a path is found, 0 if not
-            visited[u] = 1;
 
-            while( !(queue.size() < 1) && !found ) {
+            // visited[v]<size means end node has been found
+            while( !(queue.size() < 1) && !(visited[v]<size) ) {
                 t = queue.dequeue();
                 if ( !(t<v) && t<v+1 ) {
-                    found = true;
-                    System.out.println(1);
+                    // Done
                 } else {
                         i = 0;
                         while(i<size) {
                             if( !(graph.getVertex(t).getEdges()[i]<1)
-                                && visited[i]<1 && queue.enqueue(i) ) {
-                                visited[i] = 1;
+                                && !(visited[i]<size) && queue.enqueue(i) ) {
+                                visited[i] = t;
                             } else {}
                             i = i + 1;
                         }
                 }
             }
 
-        } else {
-            System.out.println(0);
+        } else {}
+
+        // Print found path
+        visited[u] = size;
+        while( visited[v] < size ) {
+            System.out.println(v);
+            v = visited[v];
         }
+        System.out.println(u);
+
     }
 }
 
