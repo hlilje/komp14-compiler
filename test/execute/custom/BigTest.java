@@ -11,7 +11,6 @@ class Test {
         int v; // end vertex
         int t; // tmp vertex
         boolean found;
-        int[] e;
 
         graph = new Graph();
         size = graph.init();
@@ -40,10 +39,10 @@ class Test {
                     found = true;
                     System.out.println(1);
                 } else {
-                        e = graph.getVertex(t).getEdges();
                         i = 0;
                         while(i<size) {
-                            if( !(e[i]<1) && visited[i]<1 && queue.enqueue(i) ) {
+                            if( !(graph.getVertex(t).getEdges()[i]<1)
+                                && visited[i]<1 && queue.enqueue(i) ) {
                                 visited[i] = 1;
                             } else {}
                             i = i + 1;
