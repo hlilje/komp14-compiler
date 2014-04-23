@@ -459,7 +459,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         for ( int i = 0; i < n.el.size(); i++ ) {
             Type formalType = n.el.elementAt(i).accept(this);
             Type callType = null;
-            if(fl != null) fl.get(i).getType(); // To handle null errors from before
+            if(fl != null) callType = fl.get(i).getType(); // To handle null errors from before
             if(!formalType.equals(callType)) {
                 error.complain("Parameter type " + formalType + " in call not of type " + callType + " for method " +
                         currMethod.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
