@@ -1,8 +1,6 @@
 /*
  * This is a valid test which contains all the extensions in
  * our grammar and does useful things.
- *
- * This test is 1022 tokens large.
  */
 // EXT:CLE
 // EXT:CGT
@@ -16,6 +14,7 @@ class Master {
     public static void main(String[] args) {
         boolean same;
         int[] toBeSorted;
+        ExpandableArray expArray;
 
         same = new SearchSort().startSort();
 
@@ -27,15 +26,29 @@ class Master {
         toBeSorted[3] = 293;
         toBeSorted[4] = 0;
 
+        // Print true if all the values of the array were identical
         if(same != true) { // CNE
-            System.out.println(1);
-        } else {
             System.out.println(0);
+        } else {
+            System.out.println(1);
         }
+        System.out.println(999999); // Delimiter
 
+        // Will print the index of the number searched for
         System.out.println(new SearchSort().startSearch());
+        System.out.println(999999); // Delimiter
+        // Will print the sorted array
+        System.out.println(new SearchSort().insertionSort(toBeSorted));
+        System.out.println(999999); // Delimiter
+        // Will print the given Fibonacci number
         System.out.println(new Fibonacci().start(10));
-        System.out.println(new ExpandableArray().insertAt(5, 10));
+        System.out.println(999999); // Delimiter
+
+        expArray = new ExpandableArray();
+        // Will print 'true' if it was the first insertion, which it was
+        System.out.println(expArray.insertAt(5, 10));
+        // Will print the value at that location
+        System.out.println(expArray.get(5));
     }
 }
 
@@ -57,6 +70,7 @@ class SearchSort {
         sortMe[8] = 123998;
         sortMe[9] = 8;
 
+        System.out.println(this.printArray(sortMe)); // Print before sort
         return this.sortArray(sortMe);
     }
 
@@ -70,13 +84,14 @@ class SearchSort {
         searchMe[5] = 42;
         searchMe[6] = 0;
         searchMe[7] = 1;
-        searchMe[8] = 5006996;
+        searchMe[8] = 500696;
         searchMe[9] = 120943;
 
+        System.out.println(this.printArray(searchMe)); // Print before search
         return this.searchArray(searchMe, 42);
     }
 
-    // Bubble sort
+    // Bubble sort, returns true if all elements were identical
     public boolean sortArray(int[] sortMe) {
         int i;
         int j;
@@ -100,6 +115,8 @@ class SearchSort {
             i = i + 1;
         }
 
+        System.out.println(this.printArray(sortMe)); // Print after sort
+
         if(sortMe[sortMe.length - 1] == sortMe[0]) { // CEQ
             same = false;
         } else {
@@ -122,6 +139,10 @@ class SearchSort {
 
             i = i + 1;
         }
+
+        System.out.println(numIndex); // Print after search
+        System.out.println(999999); // Delimiter
+
         return numIndex;
     }
 
@@ -131,6 +152,8 @@ class SearchSort {
         int j; // Number of items sorted so far
         int key; // Item to be sorted
         j = 1; // Start with 1
+
+        System.out.println(this.printArray(a)); // Print before sort
 
         while(j < a.length) {
             key = a[j];
@@ -146,7 +169,20 @@ class SearchSort {
             j = j + 1;
         }
 
+        System.out.println(this.printArray(a)); // Print after sort
         return a;
+    }
+
+    // Helper method to print the contents of an array
+    public int printArray(int[] array) {
+        int i;
+        i = 0;
+        while(i < array.length) {
+            System.out.println(array[i]);
+            i = i + 1;
+        }
+        System.out.println(999999); // Delimiter
+        return 0;
     }
 }
 
@@ -168,9 +204,11 @@ class Fibonacci {
         if(n == 0) {
             ret = 1;
             skip = true;
+            System.out.println(ret); // Print generated number
         } else if(n == 1) {
             ret = 3;
             skip = true;
+            System.out.println(ret); // Print generated number
         } else {}
 
         if(!skip) {
@@ -178,12 +216,12 @@ class Fibonacci {
                 ret = 3 * (parent - grandparent);
                 grandparent = parent;
                 parent = ret;
+                System.out.println(ret); // Print generated number
 
                 i = i + 1;
             }
         } else {}
 
-        System.out.println(ret);
         return ret;
     }
 }
@@ -196,23 +234,30 @@ class ExpandableArray {
     public boolean init(int n) {
         array = new int[n];
         init = true;
+        System.out.println(n); // Print the array length
+        System.out.println(999999); // Delimiter
         return true || false; // BDJ
     }
 
     // Insert x at the given index i
     public boolean insertAt(int i, int x) {
         boolean dummy;
+        boolean wasInit;
         // Make sure it has been created first
         if(!init) {
             dummy = this.init(i + 1);
-        } else {}
+            wasInit = true;
+        } else {
+            wasInit = false;
+        }
 
         if(i > array.length - 1) {
             dummy = this.expandArray(i);
         } else {}
         array[i] = x; // Store the new value
 
-        return true;
+        System.out.println(this.printArray(array)); // Print the array in its given state
+        return wasInit;
     }
 
     // At is the index we would want to insert at
@@ -229,6 +274,7 @@ class ExpandableArray {
         }
         array = tempArray; // Use the new instead
 
+        System.out.println(this.printArray(array)); // Print the array in its given state
         return true;
     }
 
@@ -242,5 +288,17 @@ class ExpandableArray {
         } else {}
 
         return ret;
+    }
+
+    // Helper method to print the contents of an array
+    public int printArray(int[] array) {
+        int i;
+        i = 0;
+        while(i < array.length) {
+            System.out.println(array[i]);
+            i = i + 1;
+        }
+        System.out.println(999999); // Delimiter
+        return 0;
     }
 }
