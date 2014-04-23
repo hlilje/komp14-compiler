@@ -17,7 +17,7 @@ class Test2 {
     public boolean start() {
         t2 = this;
         t3 = new Test3();
-        b = (this.te2().te3().test3().getInt() < this.te2().te3().test2().bar()); //.getInt());
+        b = (this.te2().te3().test3().getInt() < this.te2().te3().test2().bar());
         b = this.run().finish();
         return true;
     }
