@@ -391,12 +391,20 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Symbol s1 = Symbol.symbol(n.i.toString()); // Method name
         Type t = null; Exp e = n.e; Symbol s2;
         java.util.ArrayList<Binding> fl = null; // To be able to check for formal type in call
+        ClassTable ct; MethodTable mt; // For null checks
 
         if(e instanceof NewObject) {
             if(DEBUG) System.out.println("  instanceof NewObject");
             s2 = Symbol.symbol(((NewObject)e).i.toString());
-            t = symTable.getClass(s2).getMethod(s1).getType();
-            fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
+            ct = symTable.getClass(s2); mt = ct.getMethod(s1);
+            if(s1 == null) {
+                error.complain("Call to nonexistent method " + s1 + " in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.NOT_FOUND);
+            } else {
+                t = mt.getType();
+                fl = mt.getOrderedFormals();
+            }
 
         } else if(e instanceof IdentifierExp) {
             if(DEBUG) System.out.println("  instanceof IdentifierExp");
@@ -431,10 +439,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
         // Type check formals
         for ( int i = 0; i < n.el.size(); i++ ) {
-            Type ft = n.el.elementAt(i).accept(this);
-            Type ct = fl.get(i).getType();
-            if(!ft.equals(ct)) {
-                error.complain("Parameter type " + ft + " in call not of type " + ct + " for method " +
+            Type formalType = n.el.elementAt(i).accept(this);
+            Type callType = fl.get(i).getType();
+            if(!formalType.equals(callType)) {
+                error.complain("Parameter type " + formalType + " in call not of type " + callType + " for method " +
                         currMethod.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         }
@@ -477,6 +485,12 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Identifier i;
     public Type visit(NewObject n) {
+        Symbol s = Symbol.symbol(n.i.s);
+        if(symTable.getClass(s) == null) {
+            error.complain("Creation of non exist object " + s + " in class " +
+                    currClass.getId() + " in method " + currMethod.getId(),
+                    ErrorHandler.ErrorCode.NOT_FOUND);
+        }
         return new IdentifierType(n.i.s);
     }
 

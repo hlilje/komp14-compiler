@@ -405,6 +405,8 @@ public class DepthFirstVisitor implements Visitor {
     // ExpList el;
     public void visit(Call n) {
         if(DEBUG) System.out.println(">>> VISIT CALL: " + n.i.toString());
+        // Cannot check if method exists here since class/method may not have
+        // been visited
         n.e.accept(this);
         n.i.accept(this);
         for ( int i = 0; i < n.el.size(); i++ ) {
@@ -445,6 +447,8 @@ public class DepthFirstVisitor implements Visitor {
 
     // Identifier i;
     public void visit(NewObject n) {
+        // Cannot check if class exists here since class may not have
+        // been visited
     }
 
     // Exp e;
@@ -454,6 +458,7 @@ public class DepthFirstVisitor implements Visitor {
 
     // String s;
     public void visit(Identifier n) {
+        // TODO Does this need to be checked?
     }
 
     // Exp e1,e2;
