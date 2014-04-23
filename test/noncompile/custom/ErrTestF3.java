@@ -1,6 +1,5 @@
 /** 
  * This test is supposed to figure out why F3 passes the compiler check.
- * 4 errors
  */
 
 class Main {
@@ -13,8 +12,8 @@ class Main {
         o = new What(); // Error
         System.out.println(0);
         System.out.println(new Tester().test());
-        System.out.println(new Tester().nonExistent());
-        System.out.println(new Tester().nonExistent().anotherCall());
+        System.out.println(new Tester().nonExistent()); // Error
+        System.out.println(new Tester().nonExistent().anotherCall()); // Error
     }
 }
 

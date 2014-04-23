@@ -1,15 +1,20 @@
-/* TODO This is a valid test which executes with the standard grammar and extensions */
+/**
+ * TODO This is a valid test which executes with the standard grammar
+ * and extensions.
+ */
 
-class Test {
+class Main {
     public static void main(String[] args) {
-        boolean dummy;
-        dummy = new Test2().start();
-        System.out.println(dummy);
+        System.out.println(new Standard().start());
     }
 }
 
-class Test2 {
+class Standard {
     public boolean start() {
         return true;
+    }
+
+    public boolean findPrimes() {
+        return false;
     }
 }
