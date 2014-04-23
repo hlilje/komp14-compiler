@@ -1,8 +1,8 @@
 /*
  * This is a valid test which contains all the extensions in
- * our grammar and does something useful.
+ * our grammar and does useful things.
  *
- * This test is 1059 tokens large.
+ * This test is 1022 tokens large.
  */
 // EXT:CLE
 // EXT:CGT
@@ -15,11 +15,9 @@
 class Master {
     public static void main(String[] args) {
         boolean same;
-        Or or;
         int[] toBeSorted;
 
-        same = new Useful().startSort();
-        or = new Or().init();
+        same = new SearchSort().startSort();
 
         // Init
         toBeSorted = new int[5];
@@ -35,14 +33,14 @@ class Master {
             System.out.println(0);
         }
 
-        System.out.println(new Useful().startSearch());
-        System.out.println(new Classy().method());
+        System.out.println(new SearchSort().startSearch());
         System.out.println(new Fibonacci().start(10));
-        System.out.println(or.Or(20));
+        System.out.println(new ExpandableArray().insertAt(5, 10));
     }
 }
 
-class Useful {
+/* Various search and sort algorithms for arrays */
+class SearchSort {
     int[] sortMe;
     int[] searchMe;
 
@@ -152,47 +150,8 @@ class Useful {
     }
 }
 
-/* Less usesful class */
-class Classy {
-    int f1;
-    boolean f2;
-
-    public int method() {
-        return this.iter(100);
-    }
-
-    public int getInt() {
-        return f1;
-    }
-
-    public boolean setBool(boolean p) {
-        f2 = p;
-        return f2;
-    }
-
-    public int iter(int a) {
-        int temp;
-        int i;
-        boolean cont;
-        cont = true;
-        temp = a;
-        i = 0;
-
-        while(cont) {
-            if(i > a) {
-                cont = false;
-            } else {
-                cont = true;
-            }
-            
-            i = i + 1;
-        }
-        return temp;
-    }
-}
-
-// Class which has a method that prints the Fibonacci series
-// based on given n
+/* Class which has a method that prints the Fibonacci series
+ * based on given n */
 class Fibonacci {
     public int start(int n) {
         int ret;
@@ -229,41 +188,59 @@ class Fibonacci {
     }
 }
 
-// This is not such a useful // class /// ******/
-class Or {
-    boolean or;
-    boolean not;
+/* An array that will expand if necessary */
+class ExpandableArray {
+    int[] array;
+    boolean init; // Should be default false in Java
 
-    public boolean Or(int n) {
-        int counter;
-        or = false;
-        not = false;
-        counter = 1;
-
-        while(or || !not) { // BDJ
-            int temp;
-            temp = 1;
-
-            if(true && false) {
-                // Nothing
-            } else {
-                while(counter < n) {
-                    counter = counter + counter;
-                    System.out.println(counter);
-                    if(counter > 0) { // Will always happen!
-                        not = true; // Break the outer loop
-                        temp = counter;
-                    } else { // Won't happen
-                        not = false;
-                        counter = temp;
-                    }
-                }
-            }
-        }
-        return true || false;
+    public boolean init(int n) {
+        array = new int[n];
+        init = true;
+        return true || false; // BDJ
     }
 
-    public Or init() {
-        return this;
+    // Insert x at the given index i
+    public boolean insertAt(int i, int x) {
+        boolean dummy;
+        // Make sure it has been created first
+        if(!init) {
+            dummy = this.init(i + 1);
+        } else {}
+
+        if(i > array.length - 1) {
+            dummy = this.expandArray(i);
+        } else {}
+        array[i] = x; // Store the new value
+
+        return true;
+    }
+
+    // At is the index we would want to insert at
+    public boolean expandArray(int at) {
+        int[] tempArray;
+        int i;
+        // Calculate how big the new array needs to be
+        tempArray = new int[array.length + (at - array.length) + 1];
+        i = 0;
+        while(i < array.length) {
+            // Copy over old values
+            tempArray[i] = array[i];
+            i = i + i;
+        }
+        array = tempArray; // Use the new instead
+
+        return true;
+    }
+
+    // Get the value at the given index, returns 0 if out-of-bounds
+    public int get(int i) {
+        int ret;
+        ret = 0;
+
+        if(i < array.length) {
+            ret = array[i];
+        } else {}
+
+        return ret;
     }
 }
