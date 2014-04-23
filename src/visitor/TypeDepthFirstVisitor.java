@@ -256,12 +256,13 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e;
     public Type visit(Assign n) {
-        Type it = n.i.accept(this); // To avoid nullpointer exception
+        // To avoid nullpointer exception
+        Type it = n.i.accept(this);
         Type et = n.e.accept(this);
 
         if(DEBUG) System.out.println("ASSIGN: " + et + " TO: " + it);
 
-        if((it != null) && (!it.equals(et))) {
+        if((it != null) && (et != null) && (!it.equals(et))) {
             error.complain("Assigned type " + et + " should be of type " + it,
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
@@ -397,7 +398,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             if(DEBUG) System.out.println("  instanceof NewObject");
             s2 = Symbol.symbol(((NewObject)e).i.toString());
             ct = symTable.getClass(s2); mt = ct.getMethod(s1);
-            if(s1 == null) {
+
+            if(mt == null) {
                 error.complain("Call to nonexistent method " + s1 + " in method " +
                         currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.NOT_FOUND);
@@ -410,8 +412,16 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             if(DEBUG) System.out.println("  instanceof IdentifierExp");
             IdentifierExp ie = (IdentifierExp)e;
             s2 = getClassNameFromVar(Symbol.symbol(ie.s)); // Use class name to find class
-            t = symTable.getClass(s2).getMethod(s1).getType();
-            fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
+            ct = symTable.getClass(s2); mt = ct.getMethod(s1);
+
+            if(mt == null) {
+                error.complain("Call to nonexistent method " + s1 + " in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.NOT_FOUND);
+            } else {
+                t = mt.getType();
+                fl = mt.getOrderedFormals();
+            }
 
         } else if(e instanceof Call) {
             if(DEBUG) System.out.println("  instanceof Call");
@@ -421,8 +431,16 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
         } else if(e instanceof This) {
             if(DEBUG) System.out.println("  instanceof This");
-            t = ((MethodTable)currClass.getMethod(s1)).getType();
-            fl = ((MethodTable)currClass.getMethod(s1)).getOrderedFormals();
+            mt = currClass.getMethod(s1);
+
+            if(mt == null) {
+                error.complain("Call to nonexistent local method " + s1 + " in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.NOT_FOUND);
+            } else {
+                t = mt.getType();
+                fl = mt.getOrderedFormals();
+            }
         } else {
             error.complain("Call on invalid object with method call " + s1 + " in class " +
                     currClass.getId().toString(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
@@ -431,7 +449,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         n.e.accept(this);
         n.i.accept(this);
 
-        if(n.el.size() != fl.size()) {
+        if(fl != null && n.el.size() != fl.size()) {
                 error.complain("Wrong number of arguments in method call to " + n.i +
                         " in method " + currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.WRONG_NUM_ARGS);
@@ -440,7 +458,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         // Type check formals
         for ( int i = 0; i < n.el.size(); i++ ) {
             Type formalType = n.el.elementAt(i).accept(this);
-            Type callType = fl.get(i).getType();
+            Type callType = null;
+            if(fl != null) fl.get(i).getType(); // To handle null errors from before
             if(!formalType.equals(callType)) {
                 error.complain("Parameter type " + formalType + " in call not of type " + callType + " for method " +
                         currMethod.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
