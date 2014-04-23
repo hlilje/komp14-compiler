@@ -389,10 +389,12 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // ExpList el;
     public Type visit(Call n) {
+        /* This method has to be massive since it's impossible to check for
+         * method/class existance in the first visit (it may not have been visited yet). */
         Symbol s1 = Symbol.symbol(n.i.toString()); // Method name
         Type t = null; Exp e = n.e; Symbol s2;
         java.util.ArrayList<Binding> fl = null; // To be able to check for formal type in call
-        ClassTable ct; MethodTable mt; // For null checks
+        ClassTable ct = null; MethodTable mt = null; // For null checks
 
         if(e instanceof NewObject) {
             if(DEBUG) System.out.println("  instanceof NewObject");
@@ -425,9 +427,27 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
         } else if(e instanceof Call) {
             if(DEBUG) System.out.println("  instanceof Call");
-            s2 = Symbol.symbol(((IdentifierType)e.accept(this)).s);
-            t = symTable.getClass(s2).getMethod(s1).getType();
-            fl = symTable.getClass(s2).getMethod(s1).getOrderedFormals();
+            Type t2 = n.e.accept(this); // For nullchecks
+            if(t2 != null) {
+                s2 = Symbol.symbol(((IdentifierType)t2).s);
+                ct = symTable.getClass(s2);
+            }
+
+            if(ct == null) {
+                error.complain("Misformed call on call for method " + s1 + " in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.NOT_FOUND);
+            } else {
+                mt = ct.getMethod(s1);
+                if(mt == null) {
+                    error.complain("Call to nonexistent method on call " + s1 + " in method " +
+                            currMethod.getId() + " in class " + currClass.getId(),
+                            ErrorHandler.ErrorCode.NOT_FOUND);
+                } else {
+                    t = mt.getType();
+                    fl = mt.getOrderedFormals();
+                }
+            }
 
         } else if(e instanceof This) {
             if(DEBUG) System.out.println("  instanceof This");
@@ -506,7 +526,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(NewObject n) {
         Symbol s = Symbol.symbol(n.i.s);
         if(symTable.getClass(s) == null) {
-            error.complain("Creation of non exist object " + s + " in class " +
+            error.complain("Creation of object of nonexistent class " + s + " in class " +
                     currClass.getId() + " in method " + currMethod.getId(),
                     ErrorHandler.ErrorCode.NOT_FOUND);
         }

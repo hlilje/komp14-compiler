@@ -14,6 +14,7 @@ class Main {
         System.out.println(0);
         System.out.println(new Tester().test());
         System.out.println(new Tester().nonExistent());
+        System.out.println(new Tester().nonExistent().anotherCall());
     }
 }
 
