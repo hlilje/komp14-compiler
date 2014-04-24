@@ -37,18 +37,21 @@ class Master {
         // Will print the index of the number searched for
         System.out.println(new SearchSort().startSearch());
         System.out.println(999999); // Delimiter
-        // Will print the sorted array
-        System.out.println(new SearchSort().insertionSort(toBeSorted));
+        // Returns the sorted array
+        toBeSorted = new SearchSort().insertionSort(toBeSorted);
         System.out.println(999999); // Delimiter
         // Will print the given Fibonacci number
         System.out.println(new Fibonacci().start(10));
         System.out.println(999999); // Delimiter
 
         expArray = new ExpandableArray();
-        // Will print 'true' if it was the first insertion, which it was
+        // Will print 1 if it was the first insertion, which it was
         System.out.println(expArray.insertAt(5, 10));
+        System.out.println(expArray.insertAt(8, 20));
         // Will print the value at that location
         System.out.println(expArray.get(5));
+        System.out.println(999999); // Delimiter
+        System.out.println(expArray.get(8));
     }
 }
 
@@ -59,24 +62,23 @@ class SearchSort {
 
     public boolean startSort() {
         sortMe = new int[10];
-        sortMe[0] = 12345;
+        sortMe[0] = 145;
         sortMe[1] = 0;
-        sortMe[2] = (123*234) - 444;
+        sortMe[2] = 7;
         sortMe[3] = 44;
-        sortMe[4] = 23948;
-        sortMe[5] = 9245;
-        sortMe[6] = 1147;
+        sortMe[4] = 28;
+        sortMe[5] = 945;
+        sortMe[6] = 117;
         sortMe[7] = 9348;
-        sortMe[8] = 123998;
+        sortMe[8] = 198;
         sortMe[9] = 8;
 
-        System.out.println(this.printArray(sortMe)); // Print before sort
-        return this.sortArray(sortMe);
+        return this.bubbleSort(sortMe);
     }
 
     public int startSearch() {
         searchMe = new int[10];
-        searchMe[0] = 1123 - (123*2);
+        searchMe[0] = 112;
         searchMe[1] = 2;
         searchMe[2] = 124;
         searchMe[3] = 9;
@@ -84,35 +86,35 @@ class SearchSort {
         searchMe[5] = 42;
         searchMe[6] = 0;
         searchMe[7] = 1;
-        searchMe[8] = 500696;
-        searchMe[9] = 120943;
+        searchMe[8] = 5696;
+        searchMe[9] = 123;
 
-        System.out.println(this.printArray(searchMe)); // Print before search
-        return this.searchArray(searchMe, 42);
+        return this.linearSearch(searchMe, 42);
     }
 
     // Bubble sort, returns true if all elements were identical
-    public boolean sortArray(int[] sortMe) {
+    // Ascending order
+    public boolean bubbleSort(int[] sortMe) {
         int i;
-        int j;
+        boolean cont;
         boolean same;
-        i = 0;
-        j = 1;
+        cont = true;
+        System.out.println(this.printArray(sortMe)); // Print before sort
 
-        while(i <= sortMe.length - 1) { // CLE
-            while(sortMe.length - 2 >= j) { // CGE
-                int test;
-                if(sortMe[j - 1] > sortMe[j]) { // CGT
+        while(cont) {
+            cont = false;
+            i =  0;
+            while(i <= sortMe.length - 2) { // CLE
+                if(sortMe[i] >= sortMe[i + 1] + 1) { // CGE
                     int temp; // NBD
-                    temp = sortMe[j - 1];
-                    sortMe[j - 1] = sortMe[j];
-                    sortMe[j] = temp;
+                    temp = sortMe[i];
+                    sortMe[i] = sortMe[i + 1];
+                    sortMe[i + 1] = temp;
+                    cont = true; // Swap occured
                 } else {}
 
-                j = j + 1;
+                i = i + 1;
             }
-
-            i = i + 1;
         }
 
         System.out.println(this.printArray(sortMe)); // Print after sort
@@ -125,13 +127,17 @@ class SearchSort {
         return same;
     }
 
-    // Search for the index of the given number
-    public int searchArray(int[] searchMe, int num) {
+    // Search for the index of the given number with linear search
+    public int linearSearch(int[] searchMe, int num) {
         int i;
         int numIndex;
-        i = 1;
-        numIndex = 2147483647;
+        numIndex = 123456;
 
+        System.out.println(num); // Print the wanted number
+        System.out.println(999999); // Delimiter
+        System.out.println(this.printArray(searchMe)); // Print searched array
+
+        i = 1;
         while(i < searchMe.length) {
             if(searchMe[i] == num) {
                 numIndex = i;
@@ -139,9 +145,6 @@ class SearchSort {
 
             i = i + 1;
         }
-
-        System.out.println(numIndex); // Print after search
-        System.out.println(999999); // Delimiter
 
         return numIndex;
     }
@@ -152,7 +155,6 @@ class SearchSort {
         int j; // Number of items sorted so far
         int key; // Item to be sorted
         j = 1; // Start with 1
-
         System.out.println(this.printArray(a)); // Print before sort
 
         while(j < a.length) {
@@ -190,39 +192,25 @@ class SearchSort {
  * based on given n */
 class Fibonacci {
     public int start(int n) {
-        int ret;
+        int f1;
+        int f2;
+        int fn;
         int i;
-        int grandparent;
-        int parent;
-        boolean skip;
+        f1 = 0;
+        f2 = 1;
+        fn = 0; // Init
 
-        grandparent = 1;
-        parent = 3;
         i = 2;
-        skip = false;
+        while(i < n) {
+            fn = f1 + f2;
+            f1 = f2;
+            f2 = fn;
+            System.out.println(fn); // Print generated number
 
-        if(n == 0) {
-            ret = 1;
-            skip = true;
-            System.out.println(ret); // Print generated number
-        } else if(n == 1) {
-            ret = 3;
-            skip = true;
-            System.out.println(ret); // Print generated number
-        } else {}
+            i = i + 1;
+        }
 
-        if(!skip) {
-            while(i <= n) {
-                ret = 3 * (parent - grandparent);
-                grandparent = parent;
-                parent = ret;
-                System.out.println(ret); // Print generated number
-
-                i = i + 1;
-            }
-        } else {}
-
-        return ret;
+        return fn;
     }
 }
 
@@ -240,18 +228,18 @@ class ExpandableArray {
     }
 
     // Insert x at the given index i
-    public boolean insertAt(int i, int x) {
+    public int insertAt(int i, int x) {
         boolean dummy;
-        boolean wasInit;
+        int wasInit;
         // Make sure it has been created first
         if(!init) {
             dummy = this.init(i + 1);
-            wasInit = true;
+            wasInit = 1;
         } else {
-            wasInit = false;
+            wasInit = 0;
         }
 
-        if(i > array.length - 1) {
+        if(i > array.length - 1) { // CGT
             dummy = this.expandArray(i);
         } else {}
         array[i] = x; // Store the new value
@@ -270,7 +258,7 @@ class ExpandableArray {
         while(i < array.length) {
             // Copy over old values
             tempArray[i] = array[i];
-            i = i + i;
+            i = i + 1;
         }
         array = tempArray; // Use the new instead
 
