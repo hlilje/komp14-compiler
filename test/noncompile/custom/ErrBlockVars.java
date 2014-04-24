@@ -3,6 +3,7 @@
  * Should return 4 different errors.
  * Assumes variable declarations is allowed in blocks (extension).
  **/
+// EXT:NBD
 
 class Test {
     public static void main(String[] args) {

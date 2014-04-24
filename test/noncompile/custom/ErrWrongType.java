@@ -1,4 +1,5 @@
 /* Wrong type errors */
+// EXT:CEQ
 
 class Main {
     public static void main(String[] args) {

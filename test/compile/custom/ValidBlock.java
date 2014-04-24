@@ -23,7 +23,7 @@ class A {
             z = z + 2;
             x = x + z;
         }
-        return b;
+        return x;
     }
 }
 
