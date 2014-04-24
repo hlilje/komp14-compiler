@@ -1,7 +1,4 @@
-/* A test with tricky uses of 'this' that should succeed */
-// EXT:NBD
-// EXT:CEQ
-// EXT:BDJ
+/* A test with tricky uses of 'this' that should succeed. */
 
 class ThisTest {
     public static void main(String[] args) {
@@ -32,7 +29,7 @@ class A {
     }
 
     public C d(A asf) {
-        return this.c();
+        return this.c(0, this);
     }
 
     public A rec(A recs) {
@@ -83,7 +80,7 @@ class B {
     public boolean e() {
        l = 3 < this.b(1, 2) + 0 * this.d();
 
-        return this.e() && false || true == this.v(this.a());
+        return this.e() && false && true && this.v(this.a());
     }
 
     public boolean v(boolean param) {
@@ -133,7 +130,7 @@ class D {
     public int method(int a, int b, int c) {
         w = 88;
 
-        return this.method(this.method2(), this.method2(),
+        return this.method(this.method2(2), this.method2(2),
                 this.method(1, 2, this.method2(1)));
     }
 

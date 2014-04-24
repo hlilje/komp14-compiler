@@ -1,3 +1,4 @@
+/* This is a valid test which tests different usages of 'this'. */
 
 class Test {
     public static void main(String[] args) {
