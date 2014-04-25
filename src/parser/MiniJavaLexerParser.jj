@@ -122,10 +122,17 @@ TOKEN :
 
 /* GRAMMAR */
 Program Program() :
-{ MainClass mc; ClassDeclList cdl = new ClassDeclList(); ClassDecl cd; }
+{ MainClass mc = null; ClassDeclList cdl = new ClassDeclList(); ClassDecl cd = null; }
 {
-    mc = MainClass() ( cd = ClassDecl() { cdl.addElement(cd); } )*
-    <EOF>
+    // Catch lexer errors here since they occur before the parser which
+    // contains the ErrorHandler
+    try {
+        mc = MainClass() ( cd = ClassDecl() { cdl.addElement(cd); } )*
+            <EOF>
+    } catch (TokenMgrError e) {
+        System.err.println(e);
+        System.exit(1); // According to Tigris spec
+    }
     { return new Program(mc, cdl); }
 }
 

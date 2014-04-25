@@ -9,23 +9,29 @@ public class MiniJavaParser implements MiniJavaParserConstants {
     public MiniJavaParser() {}
 
 /* GRAMMAR */
-  final public Program Program() throws ParseException {MainClass mc; ClassDeclList cdl = new ClassDeclList(); ClassDecl cd;
-    mc = MainClass();
-    label_1:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case CLASS:{
-        ;
-        break;
+  final public Program Program() throws ParseException {MainClass mc = null; ClassDeclList cdl = new ClassDeclList(); ClassDecl cd = null;
+    try {
+      mc = MainClass();
+      label_1:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+        case CLASS:{
+          ;
+          break;
+          }
+        default:
+          jj_la1[0] = jj_gen;
+          break label_1;
         }
-      default:
-        jj_la1[0] = jj_gen;
-        break label_1;
-      }
-      cd = ClassDecl();
+        cd = ClassDecl();
 cdl.addElement(cd);
+      }
+      jj_consume_token(0);
+    } catch (TokenMgrError e) {
+System.err.println(e);
+        System.exit(1); // According to Tigris spec
+
     }
-    jj_consume_token(0);
 {if ("" != null) return new Program(mc, cdl);}
     throw new Error("Missing return statement in function");
   }
@@ -877,6 +883,59 @@ el.addElement(e2);
     finally { jj_save(8, xla); }
   }
 
+  private boolean jj_3R_19()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_7()
+ {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_scan_token(LENGTH)) return true;
+    return false;
+  }
+
+  private boolean jj_3_1()
+ {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6()
+ {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
+  private boolean jj_3_9()
+ {
+    if (jj_scan_token(NEW)) return true;
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
+  private boolean jj_3_8()
+ {
+    if (jj_scan_token(NEW)) return true;
+    if (jj_scan_token(INT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18()
+ {
+    if (jj_3R_20()) return true;
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
   private boolean jj_3R_22()
  {
     if (jj_scan_token(INT)) return true;
@@ -929,59 +988,6 @@ el.addElement(e2);
   private boolean jj_3_4()
  {
     if (jj_3R_18()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_19()
- {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3_7()
- {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_scan_token(LENGTH)) return true;
-    return false;
-  }
-
-  private boolean jj_3_1()
- {
-    if (jj_3R_18()) return true;
-    return false;
-  }
-
-  private boolean jj_3_6()
- {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3_9()
- {
-    if (jj_scan_token(NEW)) return true;
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3_8()
- {
-    if (jj_scan_token(NEW)) return true;
-    if (jj_scan_token(INT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_18()
- {
-    if (jj_3R_20()) return true;
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_23()
- {
-    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
