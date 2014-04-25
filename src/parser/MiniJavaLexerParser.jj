@@ -54,9 +54,7 @@ TOKEN :
     | < IF: "if" >
     | < ELSE: "else" >
     | < WHILE: "while" >
-    | < SYSTEM: "System" >
-    | < OUT: "out" >
-    | < PRINTLN: "println" >
+    | < PRINT: "System.out.println" >
     | < LENGTH: "length" >
     | < TRUE: "true" >
     | < FALSE: "false" >
@@ -74,8 +72,8 @@ TOKEN :
     | < STAR: "*" >
     | < BANG: "!" >
     | < ASSIGN: "=" >
-    | < LEQ: "<=" > // Extensions follows
-    | < GT: ">" >
+    | < GT: ">" > // Extensions follows
+    | < LEQ: "<=" >
     | < GEQ: ">=" >
     | < EQ: "==" >
     | < NEQ: "!=" >
@@ -216,7 +214,7 @@ Statement Stmt() :
         ( s1 = Stmt() { sl.addElement(s1); } )* "}" { s = new Block(sl, vdl); }
     | "if" "(" e1 = Exp() ")" s1 = Stmt() "else" s2 = Stmt() { s = new If(e1, s1, s2); }
     | "while" "(" e1 = Exp() ")" s1 = Stmt() { s = new While(e1, s1); }
-    | "System" "." "out" "." "println" "(" e1 = Exp() ")" ";" { s = new Print(e1); }
+    | "System.out.println" "(" e1 = Exp() ")" ";" { s = new Print(e1); }
     | LOOKAHEAD(2) i = Identifier() "=" e1 = Exp() ";" { s = new Assign(i, e1); }
     | i = Identifier() "[" e1 = Exp() "]" "=" e2 = Exp() ";" { s = new ArrayAssign(i, e1, e2); }
     )
@@ -242,31 +240,47 @@ Exp Or() :
 Exp And() :
 { Exp e1, e2; }
 {
-    e1 = Compare() ( "&&" e2 = Compare() { e1 = new And(e1, e2); } )*
+    e1 = Equality() ( "&&" e2 = Equality() { e1 = new And(e1, e2); } )*
     { return e1; }
 }
 
-Exp Compare() :
+Exp Equality() :
 { Exp e1, e2; String op; }
 {
-    e1 = Additive() [ op = CompareOpHelper() e2 = Additive() { e1 = CompareOp(op, e1, e2); } ]
+    e1 = Relational() [ op = EqualityOpHelper() e2 = Relational() { e1 = CompareOp(op, e1, e2); } ]
     { return e1; }
 }
 
-String CompareOpHelper() :
+String EqualityOpHelper() :
 { String op; }
 {
     (
-    "<" { op = "<"; }
-    | "<=" { op = "<="; }
-    | ">" { op = ">"; }
-    | ">=" { op = ">="; }
-    | "==" { op = "=="; }
+    "==" { op = "=="; }
     | "!=" { op = "!="; }
     )
     { return op; }
 }
 
+Exp Relational() :
+{ Exp e1, e2; String op; }
+{
+    e1 = Additive() [ op = RelationalOpHelper() e2 = Additive() { e1 = CompareOp(op, e1, e2); } ]
+    { return e1; }
+}
+
+String RelationalOpHelper() :
+{ String op; }
+{
+    (
+    "<" { op = "<"; }
+    | ">" { op = ">"; }
+    | "<=" { op = "<="; }
+    | ">=" { op = ">="; }
+    )
+    { return op; }
+}
+
+// Helper method to get the right operator object
 Exp CompareOp(String op, Exp e1, Exp e2) :
 { Exp e; }
 {
@@ -274,9 +288,9 @@ Exp CompareOp(String op, Exp e1, Exp e2) :
         switch(op) {
             case "<": e = new LessThan(e1, e2);
                 break;
-            case "<=": e = new LessThanEquals(e1, e2);
-                break;
             case ">": e = new GreaterThan(e1, e2);
+                break;
+            case "<=": e = new LessThanEquals(e1, e2);
                 break;
             case ">=": e = new GreaterThanEquals(e1, e2);
                 break;

@@ -37,69 +37,65 @@ public interface MiniJavaParserConstants {
   /** RegularExpression Id. */
   int WHILE = 20;
   /** RegularExpression Id. */
-  int SYSTEM = 21;
+  int PRINT = 21;
   /** RegularExpression Id. */
-  int OUT = 22;
+  int LENGTH = 22;
   /** RegularExpression Id. */
-  int PRINTLN = 23;
+  int TRUE = 23;
   /** RegularExpression Id. */
-  int LENGTH = 24;
+  int FALSE = 24;
   /** RegularExpression Id. */
-  int TRUE = 25;
+  int THIS = 25;
   /** RegularExpression Id. */
-  int FALSE = 26;
+  int NEW = 26;
   /** RegularExpression Id. */
-  int THIS = 27;
+  int AND = 27;
   /** RegularExpression Id. */
-  int NEW = 28;
+  int LT = 28;
   /** RegularExpression Id. */
-  int AND = 29;
+  int PLUS = 29;
   /** RegularExpression Id. */
-  int LT = 30;
+  int MINUS = 30;
   /** RegularExpression Id. */
-  int PLUS = 31;
+  int STAR = 31;
   /** RegularExpression Id. */
-  int MINUS = 32;
+  int BANG = 32;
   /** RegularExpression Id. */
-  int STAR = 33;
+  int ASSIGN = 33;
   /** RegularExpression Id. */
-  int BANG = 34;
+  int GT = 34;
   /** RegularExpression Id. */
-  int ASSIGN = 35;
+  int LEQ = 35;
   /** RegularExpression Id. */
-  int LEQ = 36;
+  int GEQ = 36;
   /** RegularExpression Id. */
-  int GT = 37;
+  int EQ = 37;
   /** RegularExpression Id. */
-  int GEQ = 38;
+  int NEQ = 38;
   /** RegularExpression Id. */
-  int EQ = 39;
+  int OR = 39;
   /** RegularExpression Id. */
-  int NEQ = 40;
+  int LBRACE = 40;
   /** RegularExpression Id. */
-  int OR = 41;
+  int RBRACE = 41;
   /** RegularExpression Id. */
-  int LBRACE = 42;
+  int LPAREN = 42;
   /** RegularExpression Id. */
-  int RBRACE = 43;
+  int RPAREN = 43;
   /** RegularExpression Id. */
-  int LPAREN = 44;
+  int LBRACKET = 44;
   /** RegularExpression Id. */
-  int RPAREN = 45;
+  int RBRACKET = 45;
   /** RegularExpression Id. */
-  int LBRACKET = 46;
+  int SEMICOLON = 46;
   /** RegularExpression Id. */
-  int RBRACKET = 47;
+  int COMMA = 47;
   /** RegularExpression Id. */
-  int SEMICOLON = 48;
+  int DOT = 48;
   /** RegularExpression Id. */
-  int COMMA = 49;
+  int IDENTIFIER = 49;
   /** RegularExpression Id. */
-  int DOT = 50;
-  /** RegularExpression Id. */
-  int IDENTIFIER = 51;
-  /** RegularExpression Id. */
-  int INTEGER_LITERAL = 52;
+  int INTEGER_LITERAL = 50;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -129,9 +125,7 @@ public interface MiniJavaParserConstants {
     "\"if\"",
     "\"else\"",
     "\"while\"",
-    "\"System\"",
-    "\"out\"",
-    "\"println\"",
+    "\"System.out.println\"",
     "\"length\"",
     "\"true\"",
     "\"false\"",
@@ -144,8 +138,8 @@ public interface MiniJavaParserConstants {
     "\"*\"",
     "\"!\"",
     "\"=\"",
-    "\"<=\"",
     "\">\"",
+    "\"<=\"",
     "\">=\"",
     "\"==\"",
     "\"!=\"",
