@@ -203,22 +203,22 @@ public class JasminFileWriter {
     }
 
     // Jasmin method for <
-    public void lessThan() {
-        sb.append("    if_icmplt"); // TODO Add arguments
+    public void lessThan(int blockId) {
+        sb.append("    if_icmplt block"); sb.append(blockId);
     }
 
     // Jasmin method for >
-    public void greaterThan() {
-        sb.append("    if_icmpgt"); // TODO Add arguments
+    public void greaterThan(int blockId) {
+        sb.append("    if_icmpgt"); sb.append(blockId);
     }
 
     // Jasmin method for <=
-    public void greaterThanEquals() {
-        sb.append("    if_icmple"); // TODO Add arguments
+    public void greaterThanEquals(int blockId) {
+        sb.append("    if_icmple"); sb.append(blockId);
     }
 
     // Jasmin method for >=
-    public void lessThanEquals() {
-        sb.append("    if_icmpge"); // TODO Add arguments
+    public void lessThanEquals(int blockId) {
+        sb.append("    if_icmpge"); sb.append(blockId);
     }
 }

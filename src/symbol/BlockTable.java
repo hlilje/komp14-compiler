@@ -6,14 +6,20 @@ import frame.VMAccess;
 public class BlockTable {
     public static final boolean DEBUG = false;
 
+    private int id;
     private BlockTable bt;
     private Table locals;
     private Table localAccesses; // VMAccesses for locals
 
-    public BlockTable(BlockTable bt) {
+    public BlockTable(int id, BlockTable bt) {
+        this.id = id;
         this.bt = bt;
         locals = new Table();
         localAccesses = new Table();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public boolean addVar(Symbol s, Type t) {

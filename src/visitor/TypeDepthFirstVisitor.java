@@ -17,7 +17,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     private MethodTable currMethod;
     private BlockTable currBlock;
 
-    private int blockCounter; // Unique id for outmost blocks
+    private int blockId; // Unique id for outmost blocks
 
     // Added constructor to inject error message and symtable
     public TypeDepthFirstVisitor(ErrorHandler error, SymbolTable symTable) {
@@ -26,7 +26,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
-        blockCounter = 0;
+        blockId = 0;
     }
 
     // Helper method to extract type of given var symbol, returns null
@@ -163,7 +163,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        blockCounter = 0; // Reset the block counter for this method
+        blockId = 0; // Reset the block counter for this method
         return n.t;
     }
 
@@ -203,8 +203,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // StatementList sl;
     public Type visit(Block n) {
-        currBlock = currMethod.getBlock(Symbol.symbol(blockCounter + ""));
-        blockCounter++;
+        currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
@@ -213,6 +212,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.sl.elementAt(i).accept(this);
         }
 
+        blockId++;
         currBlock = null; // End scope
         return null;
     }

@@ -19,7 +19,7 @@ public class DepthFirstVisitor implements Visitor {
     private BlockTable prevOuterBlock; // To support nested blocks
 
     private boolean staticClass; // If current class is static
-    private int blockCounter; // To give a unique id for the outmost blocks
+    private int blockId; // To give a unique id for the outmost blocks
 
     // Added constructor to inject error message and symtable
     public DepthFirstVisitor(ErrorHandler error, SymbolTable symTable) {
@@ -30,7 +30,7 @@ public class DepthFirstVisitor implements Visitor {
         outerBlock = null;
         prevOuterBlock = null;
         staticClass = false;
-        blockCounter = 0;
+        blockId = 0;
     }
 
     // Added helper method to find out if a variable is declared
@@ -233,7 +233,7 @@ public class DepthFirstVisitor implements Visitor {
 
         n.t.accept(this);
         n.e.accept(this);
-        blockCounter = 0; // Reset the block counter for this method
+        blockId = 0; // Reset the block counter for this method
         if(DEBUG) System.out.println("======= END METHOD SCOPE ======");
     }
 
@@ -275,15 +275,15 @@ public class DepthFirstVisitor implements Visitor {
 
         if(outerBlock == null) { // Non-nested block in method
             wasOutmostBlock = true;
-            bt = new BlockTable(null); // Not a nested block
+            bt = new BlockTable(blockId, null); // Not a nested block
             if(DEBUG) {
-                System.out.println("  Set new outer block with id " + blockCounter);
+                System.out.println("  Set new outer block with id " + blockId);
                 System.out.println("    This is " + bt);
             }
         } else {
-            bt = new BlockTable(outerBlock);
+            bt = new BlockTable(blockId, outerBlock);
             if(DEBUG) {
-                System.out.println("  Set new nested block with id " + blockCounter);
+                System.out.println("  Set new nested block with id " + blockId);
                 System.out.println("    Parent is " + outerBlock);
                 System.out.println("    This is " + bt);
             }
@@ -291,8 +291,7 @@ public class DepthFirstVisitor implements Visitor {
         }
 
         outerBlock = bt; // Make this the outer block
-        currMethod.putBlock(Symbol.symbol(blockCounter + ""), bt);
-        blockCounter++; // Keep track of blocks in method
+        currMethod.putBlock(Symbol.symbol(blockId + ""), bt);
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
@@ -308,6 +307,7 @@ public class DepthFirstVisitor implements Visitor {
             outerBlock = prevOuterBlock;
         }
         prevOuterBlock = null; // Must reset
+        blockId++; // Keep track of blocks in method
         if(DEBUG) System.out.println("======= END BLOCK SCOPE =======");
     }
 

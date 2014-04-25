@@ -21,7 +21,7 @@ public class JasminVisitor implements Visitor {
     private MethodTable currMethod;
     private BlockTable currBlock;
 
-    private int blockCounter; // Unique id for outmost blocks
+    private int blockId; // Unique id for outmost blocks
     private JasminFileWriter jfw;
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
@@ -30,7 +30,7 @@ public class JasminVisitor implements Visitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
-        blockCounter = 0;
+        blockId = 0;
         jfw = new JasminFileWriter(error, tfp);
     }
 
@@ -233,7 +233,7 @@ public class JasminVisitor implements Visitor {
         jfw.setReturn(currMethod.getType());
         jfw.limitMethod(n.vl.size() + n.fl.size());
         jfw.declareMethodEnd();
-        blockCounter = 0; // Reset the block counter for this method
+        blockId = 0; // Reset the block counter for this method
     }
 
     // void t;
@@ -259,8 +259,7 @@ public class JasminVisitor implements Visitor {
     // StatementList sl;
     public void visit(Block n) {
         if(DEBUG) System.out.println(">>>> Block");
-        currBlock = currMethod.getBlock(Symbol.symbol(blockCounter + ""));
-        blockCounter++; // Keep track of block in method
+        currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
         // TODO Handle VarDecl in Blocks
         Frame frame = new Frame(currMethod.getId().toString(), null, null);
@@ -284,6 +283,7 @@ public class JasminVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
+        blockId++; // Keep track of blocks in method
         currBlock = null; // End scope
     }
 
