@@ -489,6 +489,10 @@ op = ">=";
 // Helper method to get the right operator object
   final public Exp CompareOp(String op, Exp e1, Exp e2) throws ParseException {Exp e;
 switch(op) {
+            case "==": e = new Equals(e1, e2);
+                break;
+            case "!=": e = new EqualsNot(e1, e2);
+                break;
             case "<": e = new LessThan(e1, e2);
                 break;
             case ">": e = new GreaterThan(e1, e2);
@@ -496,10 +500,6 @@ switch(op) {
             case "<=": e = new LessThanEquals(e1, e2);
                 break;
             case ">=": e = new GreaterThanEquals(e1, e2);
-                break;
-            case "==": e = new Equals(e1, e2);
-                break;
-            case "!=": e = new EqualsNot(e1, e2);
                 break;
             default: e = null;
                 break;

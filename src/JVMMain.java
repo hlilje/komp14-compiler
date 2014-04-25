@@ -65,26 +65,30 @@ public class JVMMain {
             error.complain(e.toString(), ErrorHandler.ErrorCode.PARSE_ERROR);
         }
 
-        //if(DEBUG) System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>");
-        //printVisitor = new ASTPrintVisitor();
-        //printVisitor.visit(program);
+        try { // Catch any unhandled exceptions
+            //if(DEBUG) System.out.println("<<<<<<<<<<<<<<< PRINT VISITOR >>>>>>>>>>>>>>>");
+            //printVisitor = new ASTPrintVisitor();
+            //printVisitor.visit(program);
 
-        if(!error.anyErrors()) {
-            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>");
-            depthVisitor = new DepthFirstVisitor(error, symTable);
-            depthVisitor.visit(program);
-        }
+            if(!error.anyErrors()) {
+                if(DEBUG) System.out.println("<<<<<<<<<<<<<<< DEPTH VISITOR >>>>>>>>>>>>>>>");
+                depthVisitor = new DepthFirstVisitor(error, symTable);
+                depthVisitor.visit(program);
+            }
 
-        if(!error.anyErrors()) {
-            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>>");
-            typeVisitor = new TypeDepthFirstVisitor(error, symTable);
-            typeVisitor.visit(program);
-        }
+            if(!error.anyErrors()) {
+                if(DEBUG) System.out.println("<<<<<<<<<<<<<<< TYPE VISITOR >>>>>>>>>>>>>>>>");
+                typeVisitor = new TypeDepthFirstVisitor(error, symTable);
+                typeVisitor.visit(program);
+            }
 
-        if(ASSEM && !error.anyErrors()) {
-            if(DEBUG) System.out.println("<<<<<<<<<<<<<<< JASMIN VISITOR >>>>>>>>>>>>>>");
-            jasminVisitor = new JasminVisitor(error, symTable, filePath);
-            jasminVisitor.visit(program);
+            if(ASSEM && !error.anyErrors()) {
+                if(DEBUG) System.out.println("<<<<<<<<<<<<<<< JASMIN VISITOR >>>>>>>>>>>>>>");
+                jasminVisitor = new JasminVisitor(error, symTable, filePath);
+                jasminVisitor.visit(program);
+            }
+        } catch (Exception e) {
+            error.complain(e.toString(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
         if(error.anyErrors()) {
