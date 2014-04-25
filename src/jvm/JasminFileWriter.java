@@ -187,4 +187,38 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
         stackDepth++; // TODO
     }
+
+    // Jasmin method to begin a while loop
+    public void whileBegin() {
+        sb.append("while:");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to begin end a while loop
+    public void whileEnd() {
+        sb.append("    goto while");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("done:");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for <
+    public void lessThan() {
+        sb.append("    if_icmplt"); // TODO Add arguments
+    }
+
+    // Jasmin method for >
+    public void greaterThan() {
+        sb.append("    if_icmpgt"); // TODO Add arguments
+    }
+
+    // Jasmin method for <=
+    public void greaterThanEquals() {
+        sb.append("    if_icmple"); // TODO Add arguments
+    }
+
+    // Jasmin method for >=
+    public void lessThanEquals() {
+        sb.append("    if_icmpge"); // TODO Add arguments
+    }
 }

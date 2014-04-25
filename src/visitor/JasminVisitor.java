@@ -298,8 +298,11 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     // Statement s;
     public void visit(While n) {
+        // TODO Add check for loop condition
+        jfw.whileBegin();
         n.e.accept(this);
         n.s.accept(this);
+        // TODO End while in block
     }
 
     // Exp e;
