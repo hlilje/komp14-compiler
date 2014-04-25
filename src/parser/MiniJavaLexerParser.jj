@@ -54,7 +54,9 @@ TOKEN :
     | < IF: "if" >
     | < ELSE: "else" >
     | < WHILE: "while" >
-    | < PRINT: "System.out.println" >
+    | < SYSTEM: "System" >
+    | < OUT: "out" >
+    | < PRINTLN: "println" >
     | < LENGTH: "length" >
     | < TRUE: "true" >
     | < FALSE: "false" >
@@ -214,7 +216,7 @@ Statement Stmt() :
         ( s1 = Stmt() { sl.addElement(s1); } )* "}" { s = new Block(sl, vdl); }
     | "if" "(" e1 = Exp() ")" s1 = Stmt() "else" s2 = Stmt() { s = new If(e1, s1, s2); }
     | "while" "(" e1 = Exp() ")" s1 = Stmt() { s = new While(e1, s1); }
-    | "System.out.println" "(" e1 = Exp() ")" ";" { s = new Print(e1); }
+    | "System" "." "out" "." "println" "(" e1 = Exp() ")" ";" { s = new Print(e1); }
     | LOOKAHEAD(2) i = Identifier() "=" e1 = Exp() ";" { s = new Assign(i, e1); }
     | i = Identifier() "[" e1 = Exp() "]" "=" e2 = Exp() ";" { s = new ArrayAssign(i, e1, e2); }
     )
