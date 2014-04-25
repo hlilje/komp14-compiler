@@ -202,23 +202,30 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
+    // TODO These are all WiP
     // Jasmin method for <
     public void lessThan(int blockId) {
-        sb.append("    if_icmplt block"); sb.append(blockId);
+        sb.append("    if_icmpge else"); sb.append(blockId);
     }
 
     // Jasmin method for >
     public void greaterThan(int blockId) {
-        sb.append("    if_icmpgt"); sb.append(blockId);
+        sb.append("    if_icmple else"); sb.append(blockId);
     }
 
     // Jasmin method for <=
     public void greaterThanEquals(int blockId) {
-        sb.append("    if_icmple"); sb.append(blockId);
+        sb.append("    if_icmplt else"); sb.append(blockId);
     }
 
     // Jasmin method for >=
     public void lessThanEquals(int blockId) {
-        sb.append("    if_icmpge"); sb.append(blockId);
+        sb.append("    if_icmpgt else"); sb.append(blockId);
+    }
+
+    // Jasmin method to set the jump label for 'else'
+    public void setElse() {
+        sb.append("else:");
+        sb.append(System.getProperty("line.separator"));
     }
 }
