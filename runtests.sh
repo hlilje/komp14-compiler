@@ -16,7 +16,8 @@ then
     exit 1
 fi
 
-for f in $DIR*.java
+# Find all files recursively
+for f in $(find $DIR -type f -name *.java)
 do
     echo "<<<< Now running test: `basename $f` >>>>"
     java -jar mjc.jar $f
