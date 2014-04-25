@@ -273,13 +273,20 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e1,e2;
     public Type visit(ArrayAssign n) {
+        Symbol s = Symbol.symbol(n.i.toString());
+        if(!(getVarType(s) instanceof IntArrayType)) {
+            error.complain("Array lookup on non int array type in array assign in method " +
+                    currMethod.getId() + " in class " + currClass.getId(),
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+
         n.i.accept(this);
         if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Non integer type in array index for array " + n.i.toString(),
+            error.complain("Non integer type in array index for array " + s,
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
         if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Non integer type in array assign for array " + n.i.toString(),
+            error.complain("Non integer type in array assign for array " + s,
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
         return new IntArrayType();
