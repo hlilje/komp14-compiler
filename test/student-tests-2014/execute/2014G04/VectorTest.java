@@ -11,7 +11,7 @@ class VectorTest{
 		boolean temp;
 		Vector v;
 		v = new Vector();
-
+		
 		// Add elements
 		temp = v.init(5);
 		temp = v.add(4);
@@ -19,10 +19,10 @@ class VectorTest{
 		temp = v.add(2);
 		temp = v.add(1);
 		temp = v.add(0);
-
+		
 		// Check size
 		System.out.println(v.size()); // 6
-
+		
 		// Output vector (last -> first)
 		System.out.println(v.get(5)); // 0
 		System.out.println(v.get(4)); // 1
@@ -53,7 +53,7 @@ class Vector{
 		size = 1;
 		return true;
 	}
-
+	
 	/**
 	 * Adds the element to the Vector.
 	 * param i: Integer to add
@@ -71,7 +71,7 @@ class Vector{
 		size = size + 1;
 		return true;
 	}
-
+	
 	/**
 	 * Returns the element at index (or a bogus element if index is out of bounds).
 	 */
@@ -95,18 +95,18 @@ class Vector{
 		else{}
 		return i;
 	}
-
+	
 	/**
 	 * Returns the size of the vector (nr of elements).
 	 */
 	public int size(){
 		return size;
-	}
+	}	
 }
 
 class IntElement{
 	int x;
-
+	
 	/**
 	 * Sets x to input.
 	 * param i: Value to set x to.
@@ -115,7 +115,7 @@ class IntElement{
 		x = i;
 		return true;
 	}
-
+	
 	/**
 	 * Returns the value of x.
 	 */

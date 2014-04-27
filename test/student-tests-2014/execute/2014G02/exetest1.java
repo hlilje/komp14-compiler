@@ -52,7 +52,7 @@ class Main {
 			System.out.println(1 == 1);
 			System.out.println(ref.favoriteNumber());
 		}
-
+		
 	}
 }
 

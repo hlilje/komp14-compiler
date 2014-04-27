@@ -16,11 +16,11 @@ class Spin extends My {
 
 class My extends Head {
 
-}
+} 
 
 class Head extends Right {
 
-}
+} 
 
 class Right extends Round {
 

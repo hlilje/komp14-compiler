@@ -1,6 +1,8 @@
+﻿// EXT:CEQ
+
 /// Testing method calls
 ///
-/// @version 25-02-2014
+/// @version 24-04-2014
 class MethodCalls{
 
 	public static void main(String[] args){
@@ -12,7 +14,7 @@ class MethodCalls{
 }
 
 class Torbjoern{
-
+	
 	public int torbjoern(){
 		int x;
 		int y;
@@ -21,16 +23,16 @@ class Torbjoern{
 		x = 2;
 		array = new int[this.calculate(x)];
 		x = array.length + x*22;
-
+		
 		y = this.calcSeveral(x, x == y, y);
-
+		
 		return x;
 	}
-
+	
 	public int calculate(int x){
 		return x;
 	}
-
+	
 	public int calcSeveral(int y, boolean c, int j){
 		return j;
 	}

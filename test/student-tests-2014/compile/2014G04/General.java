@@ -12,7 +12,7 @@ class General{
 }
 
 class Torbjoern{
-
+	
 	int nr_of_torbjoerns;
 
 	public int torbjoern(){

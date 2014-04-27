@@ -18,13 +18,13 @@ class Torbjoern{
 		int[] arr;
 		int counter;
 		arr = new int[len];
-
+		
 		counter = 0 - 1;
 		while(counter < len){
 			arr[counter] = len + counter;
 			counter = counter + 1;
 		}
-
+		
 		return counter;
 	}
 }

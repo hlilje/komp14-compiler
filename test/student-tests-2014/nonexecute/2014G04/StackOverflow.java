@@ -14,7 +14,7 @@ class StackOverflow{
 }
 
 class Torbjoern{
-
+	
 	public int torbjoern(Cookie c){
 		boolean temp;
 		temp = c.putDown(true);
@@ -29,7 +29,7 @@ class Cookie {
 	// PUT THAT COOKIE DOWN!!!!
 	public boolean putDown(boolean flip){
 		boolean temp;
-		if(flip){
+		if(flip){	
 			down = true;
 		}
 		else{

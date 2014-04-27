@@ -1,6 +1,6 @@
 class InvalidMethodParameter {
 	public static void main(String[] args){
-
+		
 	}
 }
 

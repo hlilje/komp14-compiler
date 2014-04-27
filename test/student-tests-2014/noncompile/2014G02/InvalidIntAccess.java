@@ -22,7 +22,7 @@ class IAmNotABogusClass {
 class NeitherAmI {
 	public int printInteger(int param) {
 		int ret;
-
+		
 		if (0 < param && param < 1000) {
 			System.out.println(param);
 			ret = param + 1;
@@ -50,7 +50,7 @@ class NeitherAmI {
  * Hint: This class contains the bogus stuff
  */
 class IAmTheBogusClass {
-
+	
 	public boolean NotMe(boolean b1, boolean b2) {
 		if (b1 && b2) {
 			System.out.println(1);

@@ -14,14 +14,14 @@ class ParameterCheck{
 }
 
 class Torbjoern{
-
+	
 	public int torbjoern(int hej, boolean b){
 		hej = 5 + 20 * 44;
 		// Too many parameters
 		b = this.isTrue(b, b && false);
 		return hej;
 	}
-
+	
 	public boolean isHackingTime(){
 		int t;
 		// Incorrect type for second parameter
@@ -29,7 +29,7 @@ class Torbjoern{
 		// No parameters to a method that needs parameters
 		return this.isTrue();
 	}
-
+	
 	/* MAGICAL FUNCTION!!! */
 	public boolean isTrue(boolean check){
 		boolean result;

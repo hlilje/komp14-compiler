@@ -16,9 +16,9 @@ class Declaration{
 }
 
 class Torbjoern{
-
+	
 	int y;
-
+	
 	public int torbjoern(int hej, boolean b){
 		// Duplicate declaration of var hej
 		int hej;
@@ -27,23 +27,23 @@ class Torbjoern{
 		B b;
 		// Non-existing class C
 		C c;
-
+		
 		// Undeclared variables
 		fika = saft + bullar;
-
+		
 		hej = saft + bullar;
-
+		
 		// Non-matching types in assignment
 		a = b;
-
+		
 		// Non-matching types in comparison
 		if(a == b){
-
+		
 		}
 		else{
-
+		
 		}
-
+		
 		return hej;
 	}
 

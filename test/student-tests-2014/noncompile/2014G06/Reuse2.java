@@ -4,7 +4,7 @@ class Main {
 }
 
 class Reuse2 {
-	public int reuser(boolean osquar, boolean osquar) {
+	public int reuser(boolean osquar, boolean osquar) { 
 		return 0;
 	}
 }

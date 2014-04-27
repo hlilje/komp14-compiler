@@ -12,9 +12,9 @@ class Int_length_method{
 }
 
 class Torbjoern{
-
+	
 	int hej;
-
+	
 	public int torbjoern(){
 		hej = hej - hej * hej.length;
 		hej = hej.hej();

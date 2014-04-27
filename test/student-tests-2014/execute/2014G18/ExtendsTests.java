@@ -3,7 +3,7 @@
 // EXT:IWE
 
 class Main {
-
+	
 	public static void main(String[] args){
 		Test test;
 		Base base;
@@ -23,14 +23,14 @@ class Main {
 		// Test method accesses
 		// Expected: 1, 1, 1, 3, 3
 		System.out.println(base.getLevel());
-
+		
 		System.out.println(base2.getLevel());
 		System.out.println(extension.getLevel());
 
 		System.out.println(base3.getLevel());
 		System.out.println(top.getLevel());
 
-		// Test function calls
+		// Test function calls 
 		// Expected: 10, 10, 10, 30, 30
 		System.out.println(test.doTest(base));
 
@@ -83,7 +83,7 @@ class Test {
 		if(true){
 			if(false){
 				System.out.println(200);
-			}
+			} 
 			if(true){
 				System.out.println(3);
 				if(true){
@@ -107,7 +107,7 @@ class Test {
 
 class Base {
 
-	int x;
+	int x; 
 
 	public int getLevel(){
 		return 1;
@@ -159,7 +159,7 @@ class Top extends Extension {
 	}
 
 	public int getWeight(){
-		return x + y + z;
+		return x + y + z; 
 	}
 
 

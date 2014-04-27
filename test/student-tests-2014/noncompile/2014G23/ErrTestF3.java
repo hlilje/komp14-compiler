@@ -1,4 +1,4 @@
-/**
+/** 
  * This test is supposed to figure out why F3 passes the compiler check.
  */
 

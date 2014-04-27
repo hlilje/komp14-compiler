@@ -7,7 +7,7 @@ class Factorial{
 }
 
 class Fac {
-
+    
     int num;
     public int ComputeFac(int num){
 

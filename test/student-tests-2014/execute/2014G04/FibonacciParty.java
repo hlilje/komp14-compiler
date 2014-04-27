@@ -12,7 +12,7 @@ class FibonacciParty{
 		Fibonacci fib;
 		fib = new Fibonacci();
 		temp = fib.init(41);
-
+		
 		// Output (fast version)
 		System.out.println(true);
 		System.out.println(fib.fibonacci(0,true));  // 0
@@ -20,7 +20,7 @@ class FibonacciParty{
 		System.out.println(fib.fibonacci(2,true));  // 1
 		System.out.println(fib.fibonacci(20,true)); // 6765
 		//System.out.println(fib.fibonacci(40,true)); // 102334155
-
+		
 		// Output (slow version)
 		System.out.println(false);
 		System.out.println(fib.fibonacci(0,false));  // 0
@@ -33,7 +33,7 @@ class FibonacciParty{
 
 class Fibonacci{
 	int[] arr;
-
+	
 	/**
 	 * Initializes the array used for storing part-results when calculating Fibonacci sequence.
 	 * This will yield a much better performance.
@@ -50,7 +50,7 @@ class Fibonacci{
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Returns the Fibonacci value for a given number.
 	 * @param num		Number to compute Fibonacci value for
@@ -66,14 +66,14 @@ class Fibonacci{
 		}
 		return res;
 	}
-
+	
 	/**
 	 * Returns the Fibonacci integer for a given index.
 	 * Fast version.
 	 */
 	public int fast_fibonacci(int n){
 		int res;
-
+		
 		// Check if part-result has already been calculated
 		if(arr[n] != (0-1)){
 			res = arr[n];
@@ -93,14 +93,14 @@ class Fibonacci{
 
 		return res;
 	}
-
+	
 	/**
 	 * Returns the Fibonacci integer for a given index.
 	 * Slow version.
 	 */
 	public int slow_as_fibonacci(int n){
 		int res;
-
+		
 		if(n == 0){
 			res = 0;
 		}

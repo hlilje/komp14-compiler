@@ -15,8 +15,8 @@ class TheAdderClass {
 	public int addTwoIntegers(int theFirstParameter, int notTheFirstParameter){
 		anInt = theFirstParameter * notTheFirstParameter;
 		anIntArray = new int[2];
-
-		if(anInt < anIntArray[anInt] && !thisTestIsBogus) {
+		
+		if(anInt < anIntArray[anInt] && !thisTestIsBogus) { 
 			thisTestIsBogus = true;
 			anInt = 2;
 		} else {
@@ -29,7 +29,7 @@ class TheAdderClass {
 class TheCounterClass {
 	int count;
 	boolean alwaysTrue;
-
+	
 	public boolean increment(){
 		count = count - 1;
 		return false;

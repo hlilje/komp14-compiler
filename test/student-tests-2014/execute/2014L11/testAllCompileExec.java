@@ -24,7 +24,7 @@ class Main {
 }
 
 class BASE {
-
+	
 }
 
 class SUPER extends BASE {
@@ -40,7 +40,7 @@ class COND {
 		BASE b2;
 		int err;
 		err = 0;
-
+		
 		MAXL = 9223372036854775807l;
 		MAX = 2147483647;
 		MINL = 0-MAXL-1;
@@ -56,7 +56,7 @@ class COND {
 			err = err + 1;
 		if (MIN < MAX) {} else
 			err = err + 1;
-		if (MIN > MAX)
+		if (MIN > MAX)  
 			err = err + 1;
 		if (MAX != MIN-1)
 			err = err + 1;
@@ -73,7 +73,7 @@ class COND {
 			err = err + 1;
 		if (MINL < MAXL) {} else
 			err = err + 1;
-		if (MINL > MAXL)
+		if (MINL > MAXL)  
 			err = err + 1;
 		if (MAXL != MINL-1)
 			err = err + 1;
@@ -144,10 +144,10 @@ class IWE {
 					if (false)
 						if (true)
 							if (false) {
-
+								
 							}
 							else
-								err = 1 + err;
+								err = 1 + err; 
 						else
 							err = 1 + err;
 					else {}
@@ -161,7 +161,7 @@ class IWE {
 		}
 		return err == 0;
 	}
-
+	
 }
 
 class LONG {
@@ -170,10 +170,10 @@ class LONG {
 		long l2;
 		long l3;
 		long l4;
-
+		
 		int err;
 		err = 0;
-
+		
 		l1 = 1l;
 		l2 = 9223372036854775807l;
 		l3 = 0-l2-l1;
@@ -190,7 +190,7 @@ class LONG {
 			err = 1 + err;
 		if (2147483647+2*l1+2147483647 == 0)
 			err = 1 + err;
-		return err == 0;
+		return err == 0;	
 	}
 }
 
@@ -215,10 +215,10 @@ class ICG {
 		D d2;
 		D d3;
 		D d4;
-
+		
 		int err;
 		err = 0;
-
+		
 		a1 = (new A()).init(1);
 		a2 = (new B()).init(2);
 		a3 = (new C()).init(3);
@@ -244,14 +244,14 @@ class ICG {
 			err = err + 1;
 		if (a3.Aa() != 0)
 			err = err + 1;
-
+		
 		if (a4.a() != 0)
 			err = err + 1;
 		if (a4.b() != 4)
 			err = err + 1;
 		if (a4.Aa() != 0)
 			err = err + 1;
-
+		
 
 		b1 = a1.B();
 		b2 = a2.B();
@@ -266,7 +266,7 @@ class ICG {
 			err = err + 1;
 		if (b1.Bb() != 0)
 			err = err + 1;
-
+		
 		if (b2.a() != 0)
 			err = err + 1;
 		if (b2.b() != 2)
@@ -275,7 +275,7 @@ class ICG {
 			err = err + 1;
 		if (b2.Bb() != 2)
 			err = err + 1;
-
+		
 		if (b3.a() != 0)
 			err = err + 1;
 		if (b3.b() != 0)
@@ -284,7 +284,7 @@ class ICG {
 			err = err + 1;
 		if (b3.Bb() != 0)
 			err = err + 1;
-
+		
 		if (b4.a() != 0)
 			err = err + 1;
 		if (b4.b() != 4)
@@ -294,7 +294,7 @@ class ICG {
 		if (b4.Bb() != 0)
 			err = err + 1;
 
-
+		
 		c1 = a1.C();
 		c2 = a2.C();
 		c3 = a3.C();
@@ -308,7 +308,7 @@ class ICG {
 			err = err + 1;
 		if (c1.Ca() != 0)
 			err = err + 1;
-
+		
 		if (c2.a() != 0)
 			err = err + 1;
 		if (c2.b() != 0-1)
@@ -317,7 +317,7 @@ class ICG {
 			err = err + 1;
 		if (c2.Ca() != 0)
 			err = err + 1;
-
+		
 		if (c3.a() != 3)
 			err = err + 1;
 		if (c3.b() != 0-1)
@@ -326,7 +326,7 @@ class ICG {
 			err = err + 1;
 		if (c3.Ca() != 3)
 			err = err + 1;
-
+		
 		if (c4.a() != 0)
 			err = err + 1;
 		if (c4.b() != 0-1)
@@ -336,7 +336,7 @@ class ICG {
 		if (c4.Ca() != 0)
 			err = err + 1;
 
-
+		
 		d1 = a1.D();
 		d2 = a2.D();
 		d3 = a3.D();
@@ -352,7 +352,7 @@ class ICG {
 			err = err + 1;
 		if (d1.Db() != 0)
 			err = err + 1;
-
+		
 		if (d2.a() != 0)
 			err = err + 1;
 		if (d2.b() != 0)
@@ -363,7 +363,7 @@ class ICG {
 			err = err + 1;
 		if (d2.Db() != 0)
 			err = err + 1;
-
+		
 		if (d3.a() != 0)
 			err = err + 1;
 		if (d3.b() != 0)
@@ -374,7 +374,7 @@ class ICG {
 			err = err + 1;
 		if (d3.Db() != 0)
 			err = err + 1;
-
+		
 		if (d4.a() != 0)
 			err = err + 1;
 		if (d4.b() != 4)
@@ -385,8 +385,8 @@ class ICG {
 			err = err + 1;
 		if (d4.Db() != 4)
 			err = err + 1;
-
-
+		
+		
 		return err == 0;
 	}
 }

@@ -28,7 +28,7 @@ class Main {
 		System.out.println(q.remove()); //Will print 2
 		scrapBool = q.print(); // Will print 3 4 5 6
 		System.out.println(q.size()); //Will print 4
-		scrapBool = q.clear();
+		scrapBool = q.clear(); 
 		System.out.println(q.size()); //Will print 0
 		scrapInt = q.remove(); //Empty so will print false
 		scrapBool = q.addSet(set.length, set);
@@ -56,7 +56,7 @@ class Main {
 		scrapBool = pq.print(); //Will print 2 7 8 9 10
 		System.out.println(pq.size()); //Will print 5
 
-
+		
 
 
 		//int b;
@@ -84,7 +84,7 @@ class PriorityQueue {
 		scrap = s.sortQueue(q);
 		return retBool;
 	}
-
+	
 	public boolean addSet(int size, int[] values){
 		boolean retBool;
 		boolean scrap;
@@ -92,33 +92,33 @@ class PriorityQueue {
 		scrap = s.sortQueue(q);
 		return retBool;
 	}
-
-	public int remove(){
+	
+	public int remove(){ 
 		return q.remove();
 	}
-
+	
 	public boolean isEmpty(){
 		return q.isEmpty();
 	}
-
+	
 	public int size(){
 		return q.size();
 	}
-
+	
 	public int[] asArray(){
 		return q.asArray();
 	}
-
-	public boolean clear(){
+	
+	public boolean clear(){ 
 		return q.clear();
 	}
-
+	
 	public boolean init(int v){
 		q = new Queue();
 		s = new Sorter();
 		return q.init(v);
 	}
-
+	
 	public boolean print(){
 		return q.print();
 	}
@@ -169,7 +169,7 @@ class Queue {
 		return ret;
 	}
 
-	public int remove(){
+	public int remove(){ 
 		int ret;
 		int index;
 		if(!this.isEmpty()){
@@ -201,7 +201,7 @@ class Queue {
 		return list;
 	}
 
-	public boolean clear(){
+	public boolean clear(){ 
 		sum = 0;
 		rightPointer = 0;
 		return true; //Should not be used
@@ -245,12 +245,12 @@ class Sorter {
 					array[j+1] = temp;
 					exchange = true;
 				} else {
-
+					
 				}
 				j = j + 1;
 			}
 
-			if(exchange==false)
+			if(exchange==false) 
 				i = len+1;
 			else
 				i = i + 1;

@@ -42,9 +42,9 @@ class Sorter {
 	 * efficient sort algorithm for large list of numbers but still efficient
 	 * enough for somewhat medium sized lists (note that it all depends on the
 	 * choice of the gap)
-	 *
+	 * 
 	 * See {@link http://en.wikipedia.org/wiki/Shellsort}.
-	 *
+	 * 
 	 * @param list
 	 * @return
 	 */
@@ -55,7 +55,7 @@ class Sorter {
 		int j;
 		int tmp;
 		int k;
-
+		
 		step = 3;
 		gap = 1;
 		while (gap < list.length) {
@@ -70,12 +70,12 @@ class Sorter {
 				while(j < list.length) {
 					tmp = list[j];
 					k = j - gap;
-
+					
 					while (0 < (k + 1) && tmp < list[k]) {
 						list[k + gap] = list[k];
 						k = k - gap;
 					}
-
+					
 					list[k + gap] = tmp;
 					j = j + gap;
 				}
@@ -92,11 +92,11 @@ class Div {
 	public int divide(int a, int b) {
 		int div;
 		div = 0;
-
+		
 		while (b < a+1) {
 			a = a - b;
 			div = div + 1;
-
+		
 		}
 		return div;
 	}

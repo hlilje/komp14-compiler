@@ -25,7 +25,7 @@ class _test {
     /******/
 
     public void Voider() { // Void doesn't exist
-
+        
     }
 
     public int Inter() {

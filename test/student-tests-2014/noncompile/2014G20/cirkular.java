@@ -1,7 +1,7 @@
 // EXT:ISC
 class cirkular
 {
-    public static void main(String[] s)
+    public static void main(String[] s) 
     {
 	System.out.println(1);
     }

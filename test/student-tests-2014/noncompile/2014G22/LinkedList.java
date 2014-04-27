@@ -41,7 +41,7 @@ class Node {
   public Node getPrev() {
       return this.prev;
   }
-
+  
 
 }
 class LinkedList {
@@ -67,4 +67,4 @@ class LinkedList {
   }
 }
 
-
+  

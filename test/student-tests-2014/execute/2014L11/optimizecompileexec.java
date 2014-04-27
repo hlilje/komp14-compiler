@@ -29,13 +29,13 @@ class Pass0 {
 		int i4;
 		int err;
 		err = 0;
-
+		
 		o = new Other();
 		i1 = 0;
 		i2 = 1;
 		i3 = 1*2*3*4*5*6*7*8*9*10*11*12*13*14*15*16*17*18*19*20;
 		i4 = 1+2+3+4+5+6+7+8+9+10+11+12+13+14+15+16+17+18+19+20;
-
+		
 		if (true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true || false  && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true && true) {} else
 			err = err + 1;
 		if (i1 < i2) {
@@ -57,7 +57,7 @@ class Pass0 {
 		else {}
 		if (true || o.NonPure()) {} else
 			err = err + 1;
-		if (o.Pure() || true) {} else
+		if (o.Pure() || true) {} else 
 			err = err + 1;
 		if (!o.Pure() || o.NonPure())
 			err = err + 1;
@@ -65,8 +65,8 @@ class Pass0 {
 		if (o.b() != 2)
 			err = err + 1;
 		else {}
-
-
+			
+		
 		return err == 0;
 	}
 }
@@ -80,13 +80,13 @@ class Pass1 {
 		int i4;
 		int err;
 		err = 0;
-
+		
 		o = new Other();
 		i1 = 0;
 		i2 = 1;
 		i3 = 0-2102132736;
 		i4 = 210;
-
+		
 		if (true) {} else
 			err = err + 1;
 		if (i1 < i2) {
@@ -116,8 +116,8 @@ class Pass1 {
 		if (o.b() != 2)
 			err = err + 1;
 		else {}
-
-
+			
+		
 		return err == 0;
 	}
 }
@@ -130,10 +130,10 @@ class Pass2 {
 		boolean DUMMY;
 		int err;
 		err = 0;
-
+		
 		o = new Other();
 		i3 = 0-2102132736;
-
+		
 		{}
 		i3 = 0-2102132740;
 		{}
@@ -150,7 +150,7 @@ class Pass2 {
 		if (o.b() != 2)
 			err = err + 1;
 		else {}
-
+			
 		return err == 0;
 	}
 }

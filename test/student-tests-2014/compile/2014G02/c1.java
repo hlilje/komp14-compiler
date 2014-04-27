@@ -11,7 +11,7 @@ class c1 {
 		trash = waga.setLevel(10);
 		trash = waga.setHealth(100);
 		trash = waga.setDamage(15);
-
+		
 		mama = new Monster();
 		trash = mama.setId(9001);
 		trash = mama.setLevel(8);

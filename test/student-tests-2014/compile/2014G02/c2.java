@@ -8,7 +8,7 @@
 // EXT:ISC
 // EXT:ICG
 
-class c2 {
+class c2 { 
 	public static void main(String[] args) {
 		int a;
 		int b;
@@ -59,7 +59,7 @@ class cmp {
 	public boolean gt(int a, int b) {
 		return a > b;
 	}
-
+	
 	public boolean lte(int a, int b) {
 		return a <= b;
 	}

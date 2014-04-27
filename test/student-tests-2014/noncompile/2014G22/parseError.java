@@ -9,7 +9,7 @@ class Factorial{
 }
 
 class T {
-
+    
     int num;
     public int ComputeFac(int num){
 		return num + getNum();

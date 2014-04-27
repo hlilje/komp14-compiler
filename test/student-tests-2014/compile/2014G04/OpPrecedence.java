@@ -15,16 +15,16 @@ class OpPrecedence{
 }
 
 class Torbjoern{
-
+	
 	public int torbjoern(){
 		int x;
 		int y;
 		boolean rutger;
-
+		
 		x = 0;
 		y = x;
 		rutger = x == y;
-
+		
 		// Nasty operator precedence test
 		if(y == x == true && false || rutger == false && 1 == 2+3*8){
 			x = y + 2;

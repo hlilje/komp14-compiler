@@ -12,24 +12,24 @@ class Scope{
 }
 
 class Torbjoern{
-
+	
 	int x;
 	int y;
-
+	
 	public int Torbjoern(){
 		int x;
 		x = 33;
 		x = this.calculate(x, y+1);
 		return x;
 	}
-
+	
 	public int calculate(int x, int y){
 		boolean m;
 		m = false;
 		y = this.calcSeveral(x, m,y);
 		return x;
 	}
-
+	
 	public int calcSeveral(int y, boolean c, int j){
 		return j;
 	}

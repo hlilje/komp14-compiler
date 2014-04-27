@@ -2,7 +2,7 @@
 //
 class Main {
 	public static void main(String[] s) {
-
+		
 	}
 }
 
@@ -25,12 +25,12 @@ class B extends A {
 }
 
 class C extends E {
-
+	
 }
 
 class D extends C {
-
+	
 }
 class E extends D {
-
+	
 }

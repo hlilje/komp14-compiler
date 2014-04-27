@@ -23,7 +23,7 @@ class Test {
         visited = new int[size];
         queue = new Queue().init(size);
         found = false;
-
+        
         u = 0;
         v = 4;
 

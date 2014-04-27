@@ -1,4 +1,4 @@
-class UndefinedTypeInFormal {
+class UndefinedTypeInFormal {	
     public static void main(String[] args) {
     }
 }

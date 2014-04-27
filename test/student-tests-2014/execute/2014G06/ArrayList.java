@@ -1,3 +1,5 @@
+// EXT:CEQ
+
 class Main {
 	public static void main(String[] args) {
 		ArrayList l;
@@ -24,12 +26,10 @@ class Main {
 }
 
 class ArrayList {
-	Comp c;
 	int[] arr;
 	int s;
 
 	public ArrayList init() {
-		c = new Comp();
 		s = 0;
 		arr = new int[10];
 		return this;
@@ -68,7 +68,7 @@ class ArrayList {
 	}
 
 	public boolean isEmpty() {
-		return c.eq(s, 0);
+		return s == 0;
 	}
 
 	public int get(int i) {
@@ -82,11 +82,5 @@ class ArrayList {
 		arr[i] = val;
 
 		return old;
-	}
-}
-
-class Comp {
-	public boolean eq(int x, int y) {
-		return !(x < y) && !(y < x);
 	}
 }

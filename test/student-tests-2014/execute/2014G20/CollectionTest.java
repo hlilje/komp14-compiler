@@ -32,7 +32,7 @@ class CollectionTest {
 class TestSuite {
 	int testshadow1;
 	int testshadow2;
-
+	
 	public boolean start() {
 		List arrayList;
         List linkedList;
@@ -43,15 +43,15 @@ class TestSuite {
         boolean trash;
 		testshadow1 = 100;
         testshadow2 = 200;
-
+		
         arrayList = new ArrayList();
         linkedList = new LinkedList();
         arrayListInit = arrayList.init();
         linkedListInit = linkedList.init();
-
+        
         System.out.println(arrayList.isEmpty());
         System.out.println(linkedList.isEmpty());
-
+        
         //Simple adding and getting items to and from arraylist.
         i = 0;
         while(i < 1000) {
@@ -73,10 +73,10 @@ class TestSuite {
             System.out.println(arrayList.get(i));
             i = i + 1;
         }
-
+        
         System.out.println(arrayList.size());
         System.out.println(linkedList.size());
-
+        
         //Fibonacci numbers.
         i = 2;
         trash = linkedList.add(0);
@@ -92,7 +92,7 @@ class TestSuite {
             j = j - 1;
         }
         System.out.println(linkedList.size());
-
+		
 		arrayList = new ArrayList();
 		arrayListInit = arrayList.init();
 		{
@@ -127,27 +127,27 @@ class List {
     public long get(int i) {
         return 0;
     }
-
+    
     public boolean add(long value) {
         return false;
     }
-
+    
     public boolean isEmpty() {
         return true;
     }
-
+    
     public boolean remove(int i) {
         return false;
     }
-
+    
     public int size() {
         return 0;
     }
-
+    
     public boolean init() {
         return false;
     }
-
+    
     public boolean contains(long value) {
         return false;
     }
@@ -159,23 +159,23 @@ class List {
 class ArrayList extends List {
     long[] backing_array;
     int actual_size;
-
+    
     public boolean init() {
         backing_array = new long[8];
         actual_size = 0;
         return true;
     }
-
+    
     public int size() {
         return actual_size;
     }
-
+    
     public boolean add(long value) {
         if(actual_size == backing_array.length) {
             long[] new_backing_array;
             int i;
             new_backing_array = new long[backing_array.length * 2];
-
+            
             i = 0;
             while(i < backing_array.length) {
                 new_backing_array[i] = backing_array[i];
@@ -187,7 +187,7 @@ class ArrayList extends List {
         actual_size = actual_size + 1;
         return true;
     }
-
+    
     public boolean isEmpty() {
         boolean empty;
         empty = false;
@@ -195,15 +195,15 @@ class ArrayList extends List {
             empty = true;
         return empty;
     }
-
+    
     public long get(int i) {
         return backing_array[i];
     }
-
+    
     public boolean remove(int i) {
         int it;
         it = i;
-
+        
         while(it + 1 < actual_size) {
             backing_array[it] = backing_array[it + 1];
             it = it + 1;
@@ -211,12 +211,12 @@ class ArrayList extends List {
         actual_size = actual_size - 1;
 		return true;
     }
-
+    
     public boolean contains(int value) {
         int i;
         boolean contains;
         contains = false;
-
+        
         i = 0;
         while(i < actual_size) {
             if(backing_array[i] == value) {
@@ -239,7 +239,7 @@ class LinkedList extends List {
     public long get(int i) {
         int it;
         LinkedNode tmp;
-
+        
         it = 0;
         tmp = start;
         while(it < i) {
@@ -248,12 +248,12 @@ class LinkedList extends List {
         }
         return tmp.getValue();
     }
-
+    
     public boolean add(long value) {
         LinkedNode tmp;
         boolean init;
 		boolean trash;
-
+        
 		tmp = new LinkedNode();
         init = tmp.setValue(value);
         if(size > 0) {
@@ -261,22 +261,22 @@ class LinkedList extends List {
             current = tmp;
         } else {
            current = tmp;
-           start = current;
+           start = current; 
         }
         size = size + 1;
         return true;
     }
-
+    
     public boolean isEmpty() {
         return !(size != 0);
     }
-
+    
     public boolean remove(int i) {
         int it;
         LinkedNode tmp;
         LinkedNode prev_tmp;
         boolean done;
-
+        
         if(i > 0) {
             it = 0;
             tmp = start;
@@ -294,22 +294,22 @@ class LinkedList extends List {
         size = size - 1;
         return done;
     }
-
+    
     public int size() {
         return size;
     }
-
+    
     public boolean init() {
         size = 0;
         return true;
     }
-
+    
     public boolean contains(long value) {
         int i;
         LinkedNode tmp;
         boolean contains;
         contains = false;
-
+        
         i = 0;
         tmp = start;
         while(i < size) {
@@ -332,25 +332,25 @@ class LinkedList extends List {
 class LinkedNode {
     long value;
     LinkedNode next;
-
+    
     public boolean init(long value, LinkedNode next) {
         return this.setValue(value) && this.setNext(next);
     }
-
+    
     public boolean setValue(long tempValue) {
         value = tempValue;
         return true;
     }
-
+    
     public boolean setNext(LinkedNode tempNext) {
         next = tempNext;
         return true;
     }
-
+    
     public long getValue() {
         return value;
     }
-
+    
     public LinkedNode getNext() {
         return next;
     }

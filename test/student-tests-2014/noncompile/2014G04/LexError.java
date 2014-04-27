@@ -1,6 +1,8 @@
+﻿// EXT:CEQ
+
 /// Tests that lexer is working fine
 ///
-/// @version 25-02-2014
+/// @version 24-04-2014
 class LexError{
 
 	public static void main(String[] args){
@@ -13,7 +15,7 @@ class LexError{
 }
 
 class Torbjoern{
-
+	
 	public int torbjoern(int hej, boolean b){
 		// Missing right paren
 		if((((((b == true)))){

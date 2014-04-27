@@ -12,7 +12,7 @@ class multidim {
 class x {
     int [] a;
 
-    public int [] z(int [] inp) {
+    public int [] z(int [] inp) { 
         a = new int[10];
         //a[0] = inp;
         return a;

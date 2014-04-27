@@ -47,7 +47,7 @@ class ArrayList{
 		return true;
 	}
 
-	public boolean clear(){
+	public boolean clear(){ 
 		size = 0;
 		return true;
 	}
@@ -63,7 +63,7 @@ class ArrayList{
 	public int[] toArray(){
 		return list;
 	}
-
+	
 	public boolean add(int element){
 		int[] tmp;
 		int index;
@@ -86,7 +86,7 @@ class ArrayList{
 
 		return true;
 	}
-
+	
 
 	public boolean addAll(int size, int[] values){
 		int index;
@@ -101,7 +101,7 @@ class ArrayList{
 		return ret;
 	}
 
-	public int remove(int idx){
+	public int remove(int idx){ 
 		int ret;
 		int index;
 		ret = list[idx];
@@ -114,7 +114,7 @@ class ArrayList{
 		return ret;
 
 	}
-
+	
 	public int get(int idx) {
 		int ret;
 		ret = 1337;
@@ -123,7 +123,7 @@ class ArrayList{
 		}
 		return ret;
 	}
-
+	
 	public ArrayList subList(int fromIndex, int toIndex) {
 		ArrayList temp;
 		boolean scrapBool;

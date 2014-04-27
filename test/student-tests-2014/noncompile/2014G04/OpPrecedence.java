@@ -17,7 +17,7 @@ class OpPrecedence{
 }
 
 class Torbjoern{
-
+	
 	public int torbjoern(int hej, boolean b){
 		// This expression should not evaluate
 		if(true == 5 == 9){
@@ -26,12 +26,12 @@ class Torbjoern{
 		else{
 			hej = 5 * 3 + 1;
 		}
-
+		
 		// Not operator used on int
 		while(!hej == b){
 			hej = hej + 1;
 		}
-
+		
 		return hej;
 	}
 }

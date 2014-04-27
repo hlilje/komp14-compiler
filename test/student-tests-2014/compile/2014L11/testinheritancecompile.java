@@ -24,7 +24,7 @@ class Main {
 		System.out.println(b2.A());
 		System.out.println(b2.B());
 		System.out.println(b2.C());
-
+		
 		System.out.println(b3.A());
 		System.out.println(b3.B());
 		System.out.println(b3.C());
@@ -43,7 +43,7 @@ class Main {
 		System.out.println(f1.B());
 		System.out.println(f1.C());
 		System.out.println(f1.D());
-
+		
 		{
 			long l1;
 			long l2;
@@ -64,7 +64,7 @@ class B {
 	} // Virtual
 	public long B() {
 		return 1l*2;
-	} //
+	} // 
 	public int C() {
 		return 0;
 	} // Virtual

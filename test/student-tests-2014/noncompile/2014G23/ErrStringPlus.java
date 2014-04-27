@@ -2,7 +2,7 @@
 
 class Main
 {
-    public static void main(String[] s)
+    public static void main(String[] s) 
     {
         int a;
         boolean b;

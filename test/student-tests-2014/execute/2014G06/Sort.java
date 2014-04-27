@@ -3,7 +3,7 @@ class Main {
 		int[] arr;
 		int i;
 		Sorter s;
-
+		
 		arr = new int[10];
 		arr[0] = 5;
 		arr[1] = 3;
@@ -15,10 +15,10 @@ class Main {
 		arr[7] = 42;
 		arr[8] = 17;
 		arr[9] = 7;
-
+		
 		s = new Sorter();
 		arr = s.sort(arr);
-
+		
 		i = 0;
 		while (i < arr.length) {
 			System.out.println(arr[i]);
@@ -32,7 +32,7 @@ class Sorter {
 		int i;
 		int j;
 		int temp;
-
+		
 		i = 0;
 		j = 1;
 		while (i < arr.length) {
@@ -43,7 +43,7 @@ class Sorter {
 					arr[j] = arr[i];
 					arr[i] = temp;
 				} else {
-
+				
 				}
 				j = j+1;
 			}

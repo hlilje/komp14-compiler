@@ -1,10 +1,15 @@
+// EXT:CEQ
+// EXT:NEQ
+// EXT:CLE
+// EXT:CGT
+// EXT:CGE
+// EXT:BDJ
+
 class Main {
 	public static void main(String[] args) {
 		Arith a;
 
 		a = new Arith().init();
-
-		System.out.println(a.gcd(13, 26));
 	}
 }
 
@@ -12,7 +17,10 @@ class Arith {
 	Comp c;
 
 	public Arith init() {
-		c = new Comp();
+		c = new Comp().test();
+
+		// this.test();
+
 		return this;
 	}
 
@@ -107,5 +115,59 @@ class Comp {
 
 	public boolean xor(boolean x, boolean y) {
 		return this.or(x && !y, !x && y);
+	}
+
+	public Comp test() {
+		Assert _;
+
+		_ = new Assert().init();
+
+		// ||
+		_ = _.ass_ert(1 == 1 || false && true, this.or(true, false));
+
+		_ = _.ass_ert(true || true, this.or(true, true));
+
+		_ = _.ass_ert(false || false, this.or(false, false));
+
+		_ = _.ass_ert(false || false, this.or(false, false));
+
+		// < <= > >=
+		_ = _.ass_ert(1 < 2, this.lt(1, 2));
+
+		_ = _.ass_ert(2 > 1, this.gt(2, 1));
+
+		_ = _.ass_ert(2 <= 2, this.leq(1, 2));
+
+		_ = _.ass_ert(2 >= 2, this.geq(2, 1));
+
+		// &&
+		_ = _.ass_ert(this.and(true, true), true && true);
+
+		// == !=
+		_ = _.ass_ert(1 == 2, this.eq(1, 2));
+
+		_ = _.ass_ert(1 != 2, this.neq(1, 2));
+
+		return this;
+	}
+}
+
+class Assert {
+	int i;
+
+	public Assert init() {
+		i = 0;
+
+		return this;
+	}
+
+	public Assert ass_ert(boolean a, boolean b) {
+		if (a != b) {
+			// Print error id;
+			System.out.println(i);
+		} else {}
+		i = i + 1;
+
+		return this;
 	}
 }

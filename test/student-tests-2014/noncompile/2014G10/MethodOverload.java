@@ -8,7 +8,7 @@ class M {
     public int add(int a) {
         return this.add(a, 0);
     }
-
+    
     public int add(int a, int b) {
         return a + b;
     }

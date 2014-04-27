@@ -12,7 +12,7 @@ class ClockTest{
 		clock = new Clock();
 		temp = clock.init(1000, 45000);
 		temp = clock.tick();
-
+		
 		System.out.println(clock.getTime()); // 45000
 	}
 }
@@ -29,7 +29,7 @@ class Clock{
 		finishTime = endTime;
 		return true;
 	}
-
+	
 	/**
 	 * Increments clock by 1 until finishTime has been reached.
 	 */
@@ -41,14 +41,14 @@ class Clock{
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Returns currTime.
 	 */
 	public int getTime(){
 		return currTime;
 	}
-
+	
 	/**
 	 * Bogus method designed to do some work (so that tick is not executed too quickly).
 	 */
@@ -57,7 +57,7 @@ class Clock{
 		temp = this.work(100);
 		return true;
 	}
-
+	
 	/**
 	 * Do some work.
 	 */

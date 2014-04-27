@@ -1,4 +1,4 @@
-class TestComments {
+class TestComments { 
 	public static void main ( String [] args ) {
 		int a;
 		CommentClass b;
@@ -31,7 +31,7 @@ class CommentClass {
 			*/
 			a = a + b;
 		} else {
-
+			
 		}
 		return a;
 		//return a+b;

@@ -16,7 +16,7 @@ class TheAdderClass {
 		anInt = theFirstParameter * notTheFirstParameter;
 		anIntArray = new int[2];
 		//InvalidAdd.java:19: Incompatible types: boolean and int
-		if(anInt < (anIntArray[anInt] + notAnInt) && !thisTestIsBogus) {
+		if(anInt < (anIntArray[anInt] + notAnInt) && !thisTestIsBogus) { 
 			thisTestIsBogus = true;
 			anInt = 2;
 		} else {
@@ -29,7 +29,7 @@ class TheAdderClass {
 class TheCounterClass {
 	int count;
 	boolean alwaysTrue;
-
+	
 	public boolean increment(){
 		count = count - 1;
 		return false;

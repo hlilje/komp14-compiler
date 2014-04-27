@@ -24,19 +24,19 @@ class Util {
         if (!this.equals(res*d, n)) {
             res = res - 1;
         } else {
-
+            
         }
         return res;
     }
-
+    
     public int mod(int x, int m) {
         return x - m*this.div(x, m);
     }
-
+    
     public boolean equals(int a, int b) {
         return !(a < b) && !(b < a);
     }
-
+    
     public int numDivisors(int n) {
         int x;
         int res;
@@ -52,7 +52,7 @@ class Util {
         if (!(this.equals(n, 1))) {
             res = res + 1;
         } else {
-
+            
         }
         return res;
     }
