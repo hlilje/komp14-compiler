@@ -15,13 +15,11 @@ public class JasminFileWriter {
 
     private String filePath; // Where to generate Jasmin files
     private java.lang.StringBuilder sb; // The Jasmin string to write to file
-    private int stackDepth; // Keep track of needed stack depth
 
     public JasminFileWriter(ErrorHandler error, String filePath) {
         this.error = error;
         this.filePath = filePath;
         sb = new java.lang.StringBuilder();
-        stackDepth = 0;
     }
 
     // Helper method which creates a Jasmin source file
@@ -63,18 +61,16 @@ public class JasminFileWriter {
 
     // Helper method to declare a method for a Jasmin source file
     // Doesn't close the method tag since it must happen after visit
-    public void declareMethod(String acs, VMFrame vmf, int numFormals) {
+    public void declareMethod(String acs, VMFrame vmf) {
         sb.append(".method "); sb.append(acs); sb.append(" ");
         sb.append(vmf.procEntry()); // Name decl according to Jasmin spec
         sb.append(System.getProperty("line.separator"));
-        stackDepth = stackDepth + numFormals;
     }
 
     // Special method to handle the main method with Jasmin
     public void declareMainMethod() {
         sb.append(".method public static main([Ljava/lang/String;)V");
         sb.append(System.getProperty("line.separator"));
-        stackDepth++;
     }
 
     // Helper method to end a Jasmin method declaration
@@ -110,7 +106,7 @@ public class JasminFileWriter {
     }
 
     // Helper method to set which directives to use for the Jasmin method decl
-    public void limitMethod(int locals) {
+    public void limitMethod(int locals, int stackDepth) {
         sb.append("    .limit stack "); sb.append(stackDepth);
         sb.append(System.getProperty("line.separator"));
         sb.append("    .limit locals "); sb.append(locals);
@@ -121,21 +117,18 @@ public class JasminFileWriter {
     public void declareLocal(VMAccess vma) {
         sb.append(vma.declare());
         sb.append(System.getProperty("line.separator"));
-        stackDepth++; // TODO This seems to be correct
     }
 
     // Wrapper method to push an interger literal to the stack
     public void pushInt(IntegerLiteral n) {
         sb.append("    ldc "); sb.append(n.i);
         sb.append(System.getProperty("line.separator"));
-        stackDepth++;
     }
 
     // Jasmin add op
     public void add() {
         sb.append("    iadd");
         sb.append(System.getProperty("line.separator"));
-        stackDepth = stackDepth - 2;
     }
 
     // Jasmin minus op
@@ -143,14 +136,12 @@ public class JasminFileWriter {
         sb.append("    ineg");
         sb.append(System.getProperty("line.separator"));
         add(); // Add negated number
-        stackDepth = stackDepth - 2;
     }
 
     // Jasmin multiplication op
     public void mul() {
         sb.append("    imul");
         sb.append(System.getProperty("line.separator"));
-        stackDepth = stackDepth - 2;
     }
 
     // Declare new Jasmin class
@@ -159,14 +150,12 @@ public class JasminFileWriter {
         //sb.append("    new java/lang/Object/"); sb.append(className);
         sb.append("    new "); sb.append(className);
         sb.append(System.getProperty("line.separator"));
-        stackDepth++; // TODO
     }
 
     // Declare new Jasmin int array
     public void newArray() {
         sb.append("    newarray int");
         sb.append(System.getProperty("line.separator"));
-        stackDepth++; // TODO
     }
 
     // Call Java's print method with Jasmin
@@ -185,7 +174,6 @@ public class JasminFileWriter {
     public void loadAccess(VMAccess vma) {
         sb.append("    "); sb.append(vma.load());
         sb.append(System.getProperty("line.separator"));
-        stackDepth++; // TODO
     }
 
     // Jasmin method to begin a while loop
@@ -206,21 +194,25 @@ public class JasminFileWriter {
     // Jasmin method for <
     public void lessThan(int blockId) {
         sb.append("    if_icmpge else"); sb.append(blockId);
+        sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method for >
     public void greaterThan(int blockId) {
         sb.append("    if_icmple else"); sb.append(blockId);
+        sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method for <=
     public void greaterThanEquals(int blockId) {
         sb.append("    if_icmplt else"); sb.append(blockId);
+        sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method for >=
     public void lessThanEquals(int blockId) {
         sb.append("    if_icmpgt else"); sb.append(blockId);
+        sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method to set the jump label for 'else'

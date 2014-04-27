@@ -23,6 +23,7 @@ public class JasminVisitor implements Visitor {
 
     private int blockId; // Unique id for outmost blocks
     private JasminFileWriter jfw;
+    private int stackDepth; // Keep track of needed stack depth
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
@@ -32,6 +33,7 @@ public class JasminVisitor implements Visitor {
         currBlock = null;
         blockId = 0;
         jfw = new JasminFileWriter(error, tfp);
+        stackDepth = 0;
     }
 
     // Helper method to search the scopes for the given string
@@ -87,6 +89,7 @@ public class JasminVisitor implements Visitor {
         // No inheritance
         jfw.declareClass(className, className, "java/lang/Object");
         jfw.declareMainMethod();
+        stackDepth++;
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -110,7 +113,7 @@ public class JasminVisitor implements Visitor {
 
         // TODO Calculate needed stack depth
         jfw.setReturn(null);
-        jfw.limitMethod(n.vl.size() + 1); // Add one local for args
+        jfw.limitMethod(n.vl.size() + 1, stackDepth); // Add one local for args
         jfw.declareMethodEnd();
         jfw.createSourceFile(className);
     }
@@ -201,7 +204,8 @@ public class JasminVisitor implements Visitor {
 
         Frame frame = new Frame("main", n.fl, currMethod.getType());
         if(DEBUG) System.out.println(frame.toString());
-        jfw.declareMethod("public", frame, n.fl.size());
+        jfw.declareMethod("public", frame);
+        stackDepth = stackDepth + n.fl.size();
 
         n.t.accept(this);
         n.i.accept(this);
@@ -223,6 +227,7 @@ public class JasminVisitor implements Visitor {
                     System.out.println(((ObjectInFrame)vma).toString());
             }
             jfw.declareLocal(vma);
+            stackDepth++; // TODO This seems to be correct
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
@@ -231,7 +236,7 @@ public class JasminVisitor implements Visitor {
 
         n.e.accept(this);
         jfw.setReturn(currMethod.getType());
-        jfw.limitMethod(n.vl.size() + n.fl.size());
+        jfw.limitMethod(n.vl.size() + n.fl.size(), stackDepth);
         jfw.declareMethodEnd();
         blockId = 0; // Reset the block counter for this method
     }
@@ -344,6 +349,7 @@ public class JasminVisitor implements Visitor {
         jfw.add();
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth--; // Pop values and push result
     }
 
     // Exp e1,e2;
@@ -351,6 +357,7 @@ public class JasminVisitor implements Visitor {
         jfw.minus();
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth--; // Pop values and push result
     }
 
     // Exp e1,e2;
@@ -358,6 +365,7 @@ public class JasminVisitor implements Visitor {
         jfw.mul();
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth--; // Pop values and push result
     }
 
     // Exp e1,e2;
@@ -386,6 +394,7 @@ public class JasminVisitor implements Visitor {
     // int i;
     public void visit(IntegerLiteral n) {
         jfw.pushInt(n);
+        stackDepth++;
     }
 
     public void visit(True n) {
@@ -397,6 +406,7 @@ public class JasminVisitor implements Visitor {
     // String s;
     public void visit(IdentifierExp n) {
         jfw.loadAccess(getVMAccess(n.s));
+        stackDepth++; // TODO
     }
 
     public void visit(This n) {
@@ -406,11 +416,13 @@ public class JasminVisitor implements Visitor {
     public void visit(NewArray n) {
         jfw.newArray();
         n.e.accept(this);
+        stackDepth++; // TODO
     }
 
     // Identifier i;
     public void visit(NewObject n) {
         jfw.newObject(n.i.s);
+        stackDepth++; // TODO
     }
 
     // Exp e;
