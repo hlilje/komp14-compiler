@@ -297,6 +297,7 @@ public class JasminVisitor implements Visitor {
     public void visit(If n) {
         n.e.accept(this);
         n.s1.accept(this);
+        jfw.setElse(blockId); // TODO
         n.s2.accept(this);
     }
 
@@ -307,7 +308,7 @@ public class JasminVisitor implements Visitor {
         jfw.whileBegin();
         n.e.accept(this);
         n.s.accept(this);
-        // TODO End while in block
+        jfw.whileEnd(); // TODO
     }
 
     // Exp e;
@@ -336,12 +337,15 @@ public class JasminVisitor implements Visitor {
     public void visit(And n) {
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
     public void visit(LessThan n) {
+        jfw.lessThan(blockId);
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
@@ -436,32 +440,40 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(LessThanEquals n) {
+        jfw.greaterThanEquals(blockId);
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
     public void visit(GreaterThan n) {
+        jfw.greaterThan(blockId);
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
     public void visit(GreaterThanEquals n) {
+        jfw.greaterThanEquals(blockId);
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
     public void visit(Equals n) {
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
     public void visit(EqualsNot n) {
         n.e1.accept(this);
         n.e2.accept(this);
+        stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;

@@ -190,7 +190,6 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
-    // TODO These are all WiP
     // Jasmin method for <
     public void lessThan(int blockId) {
         sb.append("    if_icmpge else"); sb.append(blockId);
@@ -216,8 +215,8 @@ public class JasminFileWriter {
     }
 
     // Jasmin method to set the jump label for 'else'
-    public void setElse() {
-        sb.append("else:");
+    public void setElse(int blockId) {
+        sb.append("else"); sb.append(blockId); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 }
