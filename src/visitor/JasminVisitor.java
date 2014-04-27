@@ -440,7 +440,7 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(LessThanEquals n) {
-        jfw.greaterThanEquals(blockId);
+        jfw.lessThanEquals(blockId);
         n.e1.accept(this);
         n.e2.accept(this);
         stackDepth = stackDepth - 2;
