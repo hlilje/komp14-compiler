@@ -20,8 +20,21 @@ fi
 for f in $(find $DIR -type f -name *.java)
 do
     echo "<<<< Now running test: `basename $f` >>>>"
-    java -jar mjc.jar $f
-    echo ""
+    echo "(File path: $f)"
+
+    java -jar mjc.jar $f # Run the test
+
+    if [ $? -eq 0 ] # Test exit status of last command
+    then
+        echo "OK"
+    elif [ $? -eq 1 ]
+    then
+        echo "TIGRIS FAIL"
+    else
+        echo "OTHER FAIL"
+    fi
+
+    echo "" # Blank line
 done
 
 exit 0
