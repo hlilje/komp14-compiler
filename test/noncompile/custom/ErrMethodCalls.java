@@ -42,7 +42,7 @@ class Test2 {
 
 class Test3 {
     public int hey() {
-        return 1 - 23423;
+        return 23423;
     }
 }
 
