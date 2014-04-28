@@ -11,14 +11,14 @@ class Inheritance {
 
 class Vehicle {
     int s;
-    int init() {
+    public int init() {
         s = 10;
         return 0;
     }
 }
 
 class Car extends Vehicle {
-    int test() {
+    public int test() {
         return s;
     }
 }

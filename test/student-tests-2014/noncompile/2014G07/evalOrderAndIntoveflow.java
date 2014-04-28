@@ -10,14 +10,14 @@ class test {
 	array = new int[c.printAndRet(1,10)];
 	array[c.printAndRet(2,9)] = c.printAndRet(3,256);
 	i = 0;
-	if (c.printAndRet(4,10) > c.printAndRet(5,10)) {
+	if (c.printAndRet(4,10) < c.printAndRet(5,10)) {
 		// 10 > 10 , should never happen
 		i = c.printAndRet(0,0); //Make sure fine is false
 	} else {
 		i = c.printAndRet(6,10);
 	}
 	
-	trash = (c.printAndRet(7,10) > c.printAndRet(8,11)) && (c.printAndRet(0,0) > c.printAndRet(0,1));
+	trash = (c.printAndRet(7,11) < c.printAndRet(8,10)) && (c.printAndRet(0,0) < c.printAndRet(0,1));
 	//Java evaluates things left to right, even if there's precedence thus (note compare val)
 	i = c.printAndRet(9,1)+c.printAndRet(10,1)+c.printAndRet(11,1)*c.printAndRet(12,1)+c.printAndRet(13,1);
 	

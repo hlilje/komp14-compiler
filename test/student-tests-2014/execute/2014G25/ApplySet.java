@@ -6,8 +6,6 @@
 // EXT:CNE
 // EXT:BDJ
 
-//kolla så  att vi tvingar fram alla dessa testkoder också.
-
 class ApplySet {
 
 	public static void main(String[] args) {

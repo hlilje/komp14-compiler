@@ -58,11 +58,15 @@ class Divide {
 		if (a < 0) {
 			a = 0 - a;
 			sign = 0 - sign;
+		} else {
+			a = a + 0;
 		}
 		
 		if (b < 0) {
 			b = 0 - b;
 			sign = 0 - sign;
+		} else {
+			b = b + 0;
 		}
 
 		result = 0;

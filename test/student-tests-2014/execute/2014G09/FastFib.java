@@ -9,14 +9,14 @@ class FastFib {
 		fib = new Fib();
 		f = fib.init();
 		f = 0;
-		while(47 > f) {
+		while(f < 47) {
 			System.out.println(fib.fib(f));
 			f = f + 1;
 		}
 		f = fib.setModulo(32768);
 		f = 1;
 		i = 0;
-		while( i < 10  ){
+		while( i < 10  ){ 
 			System.out.println(fib.fib(f));
 			f = f * 10;
 			i = i + 1;
@@ -71,7 +71,7 @@ class Fib {
 		m2[3] = 0;
 
 		if(! modular){
-			while(index > 0-1 && bitCount > 0) {
+			while( 0-1  < index && 0 < bitCount ) {
 				test = bs.test(index);
 				if(test) {
 					m2 = this.mmult(m2, m1);
@@ -81,7 +81,7 @@ class Fib {
 				index = index + 1;
 			}
 		} else {
-			while(index > 0-1 && bitCount > 0) {
+			while( 0-1 < index && 0 < bitCount ) {
 				test = bs.test(index);
 				if(test) {
 					m2 = this.mmult_m(m2, m1);
@@ -115,8 +115,8 @@ class Fib {
 			i = i+1;
 		}
 		i = i - 1;
-		while( i > 0-1 ){
-			while( a - bpow[i] > 0-1) {
+		while(  0-1  < i ){
+			while( 0-1 < a - bpow[i] ) {
 				a = a - bpow[i];
 			}
 			i = i - 1;
@@ -155,7 +155,7 @@ class BitSet {
 		pow2 = new int[32];
 		p2 = 1;
 		index = 0;
-		while(31 > index) {
+		while(index < 31) {
 			pow2[index] = p2;
 			index = index+1;
 			p2 = p2*2;
@@ -170,8 +170,8 @@ class BitSet {
 
 		index = 30;
 		bitcount = 0;
-		while(n > 0 && index > (0-1)) {
-			if(n > pow2[index]-1) {
+		while(0 < n && (0-1) < index ) {
+			if(pow2[index]-1 < n ) {
 				bitcount = bitcount + 1;
 				set[index] = 1;
 				n = n - pow2[index];

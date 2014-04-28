@@ -1,3 +1,4 @@
+// EXT:CEQ
 // compile:
 
 // Tests "empty" edgecases of repetitions in the grammar, such as empty classes.

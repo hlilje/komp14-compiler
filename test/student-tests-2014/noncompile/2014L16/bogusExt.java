@@ -1,5 +1,5 @@
-EXT:ICG
-EXT:ISC
+//EXT:ICG
+//EXT:ISC
 class bogusExt {
 
 //asdasda

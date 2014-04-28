@@ -14,6 +14,8 @@ class Main
 		
 		if (!a) {
 			System.out.println(b);
+		} else {
+			System.out.println(b - 1);
 		}
 	}
 }

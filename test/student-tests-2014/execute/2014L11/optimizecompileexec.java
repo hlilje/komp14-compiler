@@ -1,3 +1,4 @@
+// EXT:BDJ
 // SPECIALEXT:Optimize
 class Main {
 	public static void main(String[] s) {

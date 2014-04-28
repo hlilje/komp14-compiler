@@ -9,6 +9,12 @@ class Main {
 
 class Test {
 	public int getNum(boolean p, int q) {
-		return true;
+		return 7;
 	}
+}
+
+class Test {
+  public int getNum(boolean p, int q){
+ 	return 5;
+  }
 }

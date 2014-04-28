@@ -24,7 +24,7 @@ class execute1 {
 		loop = 10;
 		while( test < loop )
 		{
-			if(test == asdasdadasd){
+			if(test < asdasdadasd){
 				loop = s.seta( loop );
 				test = s.getb();
 				System.out.println(test);

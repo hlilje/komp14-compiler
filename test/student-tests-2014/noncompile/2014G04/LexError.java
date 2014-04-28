@@ -1,4 +1,4 @@
-﻿// EXT:CEQ
+// EXT:CEQ
 
 /// Tests that lexer is working fine
 ///

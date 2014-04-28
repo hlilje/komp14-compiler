@@ -35,7 +35,7 @@ class Tester {
 		array = new int[sz];
 		
 		j = 0;
-		while (!false && (!true || (j < size))) {
+		while (!false && (j < size)) {
 		    array[j] = size-j;
 		    j = j + 1;
 		}

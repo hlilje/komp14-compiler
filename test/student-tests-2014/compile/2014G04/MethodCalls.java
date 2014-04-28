@@ -1,4 +1,4 @@
-﻿// EXT:CEQ
+// EXT:CEQ
 
 /// Testing method calls
 ///

@@ -7,7 +7,6 @@ class Hello
 
     arr = new int[2];
     a = new A();
-    System.out.println(a);
   }
 }
 

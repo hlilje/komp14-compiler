@@ -2,7 +2,7 @@
 class bogus2 {
 
 	
-	int a;
+
 	
 	/**
 	 * param args

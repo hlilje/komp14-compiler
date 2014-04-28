@@ -158,7 +158,7 @@ class Queue {
 		boolean ret;
 		ret = false;
 		if(values.length < size)
-			System.out.println(false && true); //Can not add more elements than list has
+			System.out.println(false); //Can not add more elements than list has
 		else {
 			index = 0;
 			while(index < size){
@@ -182,7 +182,7 @@ class Queue {
 			rightPointer = rightPointer - 1;
 			sum = sum - 1;
 		} else {
-			System.out.println(false && true); //Should tell that something went wrong, can not throw error/return negative or w/e needed for this
+			System.out.println(false); //Should tell that something went wrong, can not throw error/return negative or w/e needed for this
 			ret = 0;
 		}
 		return ret;
@@ -250,7 +250,7 @@ class Sorter {
 				j = j + 1;
 			}
 
-			if(exchange==false) 
+			if(!exchange) 
 				i = len+1;
 			else
 				i = i + 1;

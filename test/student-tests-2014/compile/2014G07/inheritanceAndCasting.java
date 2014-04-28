@@ -12,7 +12,7 @@ class Inheritance {
         b = new Boat();
         v2 = c;
         v3 = b;
-        v1.setSpeed();
+        trash = v1.setSpeed();
         System.out.println(v1.getSpeed()); // 100
         System.out.println(v2.getSpeed()); // 120
         System.out.println(v3.getSpeed()); // 50
@@ -23,7 +23,7 @@ class Inheritance {
 
 class Vehicle {
     int speed; // Speed in km/h
-    int setSpeed() {
+    public int setSpeed() {
         speed = 100;
         return 0;
     }

@@ -1,4 +1,6 @@
 // EXT:IWE
+// EXT:CGE
+// EXT:CGT
 
 class iwe {
     public static void main(String [] str) {

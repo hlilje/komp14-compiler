@@ -28,6 +28,7 @@ class AM4 {
 		int i;
 		int j;
 		int res;
+		int printIndex;
 		aux = this.indata();
 		
 		dp = new int[(dist+1) * 201];
@@ -58,6 +59,7 @@ class AM4 {
 			}
 			i = i + 1;
 		}
+		printIndex = 0;
 		i = 1;
 		while(i<dist+1) {
 			aux = this.setCostDp(i, 200, 536870912);
@@ -74,14 +76,18 @@ class AM4 {
 					} else {}
 					j = j + 1;
 				}
-			}
+			} else {}
 			
 			// Debug print:
-			j = 0;
-			while(j<201) {
-				System.out.println(this.getCostDp(i, j));
-				j = j + 1;
-			}
+			printIndex = printIndex + 1;
+			if (!(printIndex < 17)) {
+				j = 0;
+				while(j<201) {
+					System.out.println(this.getCostDp(i, j));
+					j = j + 39;
+				}
+				printIndex = 0;
+			} else {}
 			
 			i = i + 1;
 		}

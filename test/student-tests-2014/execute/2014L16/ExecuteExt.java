@@ -5,6 +5,7 @@
 // EXT:CGE
 // EXT:IWE
 // EXT:ICG
+// EXT:ISC
 
 
 class ExecuteExt {
