@@ -42,7 +42,9 @@ public class DepthFirstVisitor implements Visitor {
                 if(!currClass.hasVar(s)) return false;
             }
         } else { // Check in block
+            if(DEBUG) System.out.println("  Looking for " + s + " in block");
             if(outerBlock.getVar(s) == null) {
+                if(DEBUG) System.out.println("    it wasn't found");
                 if(!currMethod.inScope(s)) {
                     if(!currClass.hasVar(s)) return false;
                 }
@@ -335,6 +337,7 @@ public class DepthFirstVisitor implements Visitor {
 
     // Exp e;
     public void visit(Print n) {
+        if(DEBUG) System.out.println(">>> VISIT PRINT");
         n.e.accept(this);
     }
 
@@ -430,6 +433,7 @@ public class DepthFirstVisitor implements Visitor {
     // String s;
     public void visit(IdentifierExp n) {
         Symbol s = Symbol.symbol(n.s);
+        if(DEBUG) System.out.println(">>> VISIT ID_EXP: " + s);
         if(!varInScope(s)) {
             error.complain(s + " is not defined in method " + currMethod.getId() + " in class " +
                     currClass.getId(), ErrorHandler.ErrorCode.NOT_FOUND);
