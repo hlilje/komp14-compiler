@@ -31,7 +31,7 @@ public class JasminVisitor implements Visitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
-        blockId = 0;
+        blockId = -1; // To give block #1 id 0
         jfw = new JasminFileWriter(error, tfp);
         stackDepth = 0;
     }
@@ -265,6 +265,7 @@ public class JasminVisitor implements Visitor {
     public void visit(Block n) {
         if(DEBUG) System.out.println(">>>> Block");
         currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
+        blockId++; // Keep track of blocks in method
 
         // TODO Handle VarDecl in Blocks
         Frame frame = new Frame(currMethod.getId().toString(), null, null);
@@ -288,7 +289,6 @@ public class JasminVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        blockId++; // Keep track of blocks in method
         currBlock = null; // End scope
     }
 

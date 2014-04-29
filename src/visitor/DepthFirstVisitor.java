@@ -9,7 +9,7 @@ import error.*;
 import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private ErrorHandler error;
     private SymbolTable symTable;
@@ -30,7 +30,7 @@ public class DepthFirstVisitor implements Visitor {
         outerBlock = null;
         prevOuterBlock = null;
         staticClass = false;
-        blockId = 0;
+        blockId = -1; // To give block #1 id 0
     }
 
     // Added helper method to find out if a variable is declared
@@ -274,6 +274,8 @@ public class DepthFirstVisitor implements Visitor {
         if(DEBUG) System.out.println("====== BEGIN BLOCK SCOPE ======");
         BlockTable bt;
         boolean wasOutmostBlock = false;
+        // Keep track of blocks in method, increase before potential nested blocks
+        blockId++;
 
         if(outerBlock == null) { // Non-nested block in method
             wasOutmostBlock = true;
@@ -309,7 +311,6 @@ public class DepthFirstVisitor implements Visitor {
             outerBlock = prevOuterBlock;
         }
         prevOuterBlock = null; // Must reset
-        blockId++; // Keep track of blocks in method
         if(DEBUG) System.out.println("======= END BLOCK SCOPE =======");
     }
 

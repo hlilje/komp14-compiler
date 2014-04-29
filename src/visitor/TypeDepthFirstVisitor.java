@@ -26,7 +26,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         currClass = null;
         currMethod = null;
         currBlock = null;
-        blockId = 0;
+        blockId = -1; // To give block #1 id 0
     }
 
     // Helper method to extract type of given var symbol, returns null
@@ -204,6 +204,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // StatementList sl;
     public Type visit(Block n) {
         currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
+        blockId++;
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);
@@ -212,7 +213,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        blockId++;
         currBlock = null; // End scope
         return null;
     }
