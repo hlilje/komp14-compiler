@@ -612,6 +612,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         } else if((t1 instanceof BooleanType) && !(t2 instanceof BooleanType)) {
             error.complain("Right side of Equals must be of type Boolean",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        } else if((t1 instanceof IdentifierType) && !t1.equals(t2)) {
+            error.complain("Different identifier types in equality comparison",
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
         } else {
             // Do nothing
         }
@@ -629,6 +632,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         } else if((t1 instanceof BooleanType) && !(t2 instanceof BooleanType)) {
             error.complain("Right side of EqualsNot must be of type Boolean",
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        } else if((t1 instanceof IdentifierType) && !t1.equals(t2)) {
+            error.complain("Different identifier types in non-equality comparison",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         } else {
             // Do nothing

@@ -254,7 +254,8 @@ Exp And() :
 Exp Equality() :
 { Exp e1, e2; String op; }
 {
-    e1 = Relational() [ op = EqualityOpHelper() e2 = Relational() { e1 = CompareOp(op, e1, e2); } ]
+    // TODO This was changed from [] to ()*
+    e1 = Relational() ( op = EqualityOpHelper() e2 = Relational() { e1 = CompareOp(op, e1, e2); } )*
     { return e1; }
 }
 
