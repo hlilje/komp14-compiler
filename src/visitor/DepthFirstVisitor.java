@@ -267,6 +267,8 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     // StatementList sl;
+    // TODO This doesn't work when declaring var and using it after a block?
+    // See test execute/2014G08/NestedBlocks.java
     public void visit(Block n) {
         if(DEBUG) System.out.println(">>> VISIT BLOCK ");
         if(DEBUG) System.out.println("====== BEGIN BLOCK SCOPE ======");
