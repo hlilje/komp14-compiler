@@ -4,7 +4,7 @@ import syntaxtree.*;
 import frame.VMAccess;
 
 public class BlockTable {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private int id;
     private BlockTable bt;

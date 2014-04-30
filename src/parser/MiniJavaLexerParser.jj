@@ -25,8 +25,6 @@ SKIP :
 { " " | "\t" | "\n" | "\r" | "\f" }
 
 // Comments
-// TODO Handle EOF in '//' comment
-// See test execute/2014G21/PriorityQueue.java
 SPECIAL_TOKEN:
 {
     < SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")? >

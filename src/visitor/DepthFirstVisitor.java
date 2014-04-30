@@ -9,14 +9,13 @@ import error.*;
 import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
     private SymbolTable symTable;
     private ClassTable currClass;
     private MethodTable currMethod;
-    private BlockTable outerBlock; // The outer block in a method
-    private BlockTable prevOuterBlock; // To support nested blocks
+    private BlockTable currBlock;
 
     private boolean staticClass; // If current class is static
     private int blockId; // To give a unique id for the outmost blocks
@@ -27,8 +26,7 @@ public class DepthFirstVisitor implements Visitor {
         this.symTable = symTable;
         currClass = null;
         currMethod = null;
-        outerBlock = null;
-        prevOuterBlock = null;
+        currBlock = null;
         staticClass = false;
         blockId = -1; // To give block #1 id 0
     }
@@ -38,14 +36,14 @@ public class DepthFirstVisitor implements Visitor {
         if(currMethod == null) {
             if(DEBUG) System.out.println("  Looking for " + s + " in class");
             if(!currClass.hasVar(s)) return false;
-        } else if(outerBlock == null) {
+        } else if(currBlock == null) {
             if(DEBUG) System.out.println("  Looking for " + s + " in method");
             if(!currMethod.inScope(s)) {
                 if(!currClass.hasVar(s)) return false;
             }
         } else { // Check in block
             if(DEBUG) System.out.println("  Looking for " + s + " in block");
-            if(outerBlock.getVar(s) == null) {
+            if(currBlock.getVar(s) == null) {
                 if(!currMethod.inScope(s)) {
                     if(!currClass.hasVar(s)) return false;
                 }
@@ -174,7 +172,7 @@ public class DepthFirstVisitor implements Visitor {
                 error.complain("VarDecl " + s + " is already defined in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.ALREADY_DEFINED);
             }
-        } else if(outerBlock == null) { // A decl in a method
+        } else if(currBlock == null) { // A decl in a method
             // Here we assume it's ok to override class decls in methods
             if(!currMethod.addVar(s, n.t)) {
                 error.complain("VarDecl " + s + " is already defined in method " + currMethod.getId() +
@@ -189,7 +187,7 @@ public class DepthFirstVisitor implements Visitor {
                         ErrorHandler.ErrorCode.ALREADY_DEFINED);
             } else { // Finally try the block
                 if(DEBUG) System.out.println("  Try to add " + s + " to the block");
-                if(!outerBlock.addVar(s, n.t)) {
+                if(!currBlock.addVar(s, n.t)) {
                     error.complain("  VarDecl " + s + " is already defined in block in method " +
                             currMethod.getId() + " in class " + currClass.getId(),
                             ErrorHandler.ErrorCode.ALREADY_DEFINED);
@@ -213,8 +211,7 @@ public class DepthFirstVisitor implements Visitor {
         if(DEBUG) System.out.println("====== BEGIN METHOD SCOPE =====");
         MethodTable mt = new MethodTable(s, n.t);
         // Reset block scopes
-        outerBlock = null;
-        prevOuterBlock = null;
+        currBlock = null;
 
         if(!currClass.addMethod(s, mt)) {
             error.complain("Method " + s + " is already defined in class " + currClass.getId(),
@@ -270,35 +267,33 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     // StatementList sl;
-    // TODO This doesn't work when declaring var and using it after a block?
-    // See test execute/2014G08/NestedBlocks.java
     public void visit(Block n) {
         if(DEBUG) System.out.println(">>> VISIT BLOCK ");
         if(DEBUG) System.out.println("====== BEGIN BLOCK SCOPE ======");
         BlockTable bt;
+        BlockTable prevBlock = null;
         boolean wasOutmostBlock = false;
         // Keep track of blocks in method, increase before potential nested blocks
         blockId++;
 
-        if(outerBlock == null) { // Non-nested block in method
+        if(currBlock == null) { // Non-nested block in method
             wasOutmostBlock = true;
             bt = new BlockTable(blockId, null); // Not a nested block
             if(DEBUG) {
                 System.out.println("  Set new outer block with id " + blockId);
                 System.out.println("    This is " + bt);
             }
-            prevOuterBlock = bt; // TODO Test
         } else {
-            bt = new BlockTable(blockId, outerBlock);
+            bt = new BlockTable(blockId, currBlock);
             if(DEBUG) {
                 System.out.println("  Set new nested block with id " + blockId);
-                System.out.println("    Parent is " + outerBlock);
+                System.out.println("    Parent is " + currBlock);
                 System.out.println("    This is " + bt);
             }
-            prevOuterBlock = outerBlock; // Save the old outer block
+            prevBlock = currBlock; // Save the old outer block
         }
 
-        outerBlock = bt; // Make this the outer block
+        currBlock = bt; // Make this the outer block
         currMethod.putBlock(Symbol.symbol(blockId + ""), bt);
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -309,14 +304,11 @@ public class DepthFirstVisitor implements Visitor {
         }
 
         if(wasOutmostBlock) {
-            outerBlock = null;
-            prevOuterBlock = null;
+            currBlock = null;
         }
         else {
-            outerBlock = prevOuterBlock;
+            currBlock = prevBlock;
         }
-        // TODO This doesn't work
-        prevOuterBlock = null; // Must reset
         if(DEBUG) System.out.println("======= END BLOCK SCOPE =======");
     }
 

@@ -888,6 +888,12 @@ el.addElement(e2);
     finally { jj_save(8, xla); }
   }
 
+  private boolean jj_3R_20()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
   private boolean jj_3_7()
  {
     if (jj_scan_token(DOT)) return true;
@@ -978,21 +984,15 @@ el.addElement(e2);
     return false;
   }
 
-  private boolean jj_3_4()
- {
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
   private boolean jj_3_2()
  {
     if (jj_3R_19()) return true;
     return false;
   }
 
-  private boolean jj_3R_20()
+  private boolean jj_3_4()
  {
-    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_3R_19()) return true;
     return false;
   }
 
