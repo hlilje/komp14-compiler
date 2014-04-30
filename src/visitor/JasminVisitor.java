@@ -306,7 +306,7 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     // Statement s;
     public void visit(While n) {
-        // TODO Add check for loop condition
+        // TODO Add check for loop condition?
         jfw.whileBegin(blockId);
         n.e.accept(this);
         n.s.accept(this);
@@ -339,12 +339,13 @@ public class JasminVisitor implements Visitor {
     public void visit(And n) {
         n.e1.accept(this);
         n.e2.accept(this);
+        jfw.setElse(blockId);
         stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
     public void visit(LessThan n) {
-        jfw.lessThan(blockId);
+        jfw.lessThan(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
         stackDepth = stackDepth - 2;
@@ -442,7 +443,7 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(LessThanEquals n) {
-        jfw.lessThanEquals(blockId);
+        jfw.lessThanEquals(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
         stackDepth = stackDepth - 2;
@@ -450,7 +451,7 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(GreaterThan n) {
-        jfw.greaterThan(blockId);
+        jfw.greaterThan(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
         stackDepth = stackDepth - 2;
@@ -458,7 +459,7 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(GreaterThanEquals n) {
-        jfw.greaterThanEquals(blockId);
+        jfw.greaterThanEquals(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
         stackDepth = stackDepth - 2;
@@ -480,6 +481,8 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(Or n) {
+        elseId++;
+        jfw.setElse(elseId); // TODO
         n.e1.accept(this);
         n.e2.accept(this);
     }

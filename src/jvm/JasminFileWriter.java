@@ -191,32 +191,32 @@ public class JasminFileWriter {
     }
 
     // Jasmin method for <
-    public void lessThan(int blockId) {
-        sb.append("    if_icmpge else"); sb.append(blockId);
+    public void lessThan(int id) {
+        sb.append("    if_icmpge else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method for >
-    public void greaterThan(int blockId) {
-        sb.append("    if_icmple else"); sb.append(blockId);
+    public void greaterThan(int id) {
+        sb.append("    if_icmple else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method for <=
-    public void greaterThanEquals(int blockId) {
-        sb.append("    if_icmplt else"); sb.append(blockId);
+    public void greaterThanEquals(int id) {
+        sb.append("    if_icmplt else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method for >=
-    public void lessThanEquals(int blockId) {
-        sb.append("    if_icmpgt else"); sb.append(blockId);
+    public void lessThanEquals(int id) {
+        sb.append("    if_icmpgt else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method to set the jump label for 'else'
-    public void setElse(int blockId) {
-        sb.append("else"); sb.append(blockId); sb.append(":");
+    public void setElse(int id) {
+        sb.append("else"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 }
