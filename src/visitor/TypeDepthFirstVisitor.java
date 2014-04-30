@@ -203,8 +203,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // StatementList sl;
     public Type visit(Block n) {
-        currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
         blockId++;
+        currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
             n.vl.elementAt(i).accept(this);

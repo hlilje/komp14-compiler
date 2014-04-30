@@ -264,8 +264,8 @@ public class JasminVisitor implements Visitor {
     // StatementList sl;
     public void visit(Block n) {
         if(DEBUG) System.out.println(">>>> Block");
-        currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
         blockId++; // Keep track of blocks in method
+        currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
         // TODO Handle VarDecl in Blocks
         Frame frame = new Frame(currMethod.getId().toString(), null, null);
