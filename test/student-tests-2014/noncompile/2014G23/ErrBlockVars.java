@@ -18,14 +18,14 @@ class Test {
         }
         j = 2; // j is declared inside a block
 
-        while(a > 0) {
+        while(a < 1) {
             int b;
             b = 3;
-            if(b > 0) {
+            if(b < 1) {
                 int b; // b is defined in outer block
             } else {
                 b = b - 1; // SHOULD BE LEGAL
-                if(b > 2) {
+                if(b < 2) {
                     b = b - 1; // SHOULD BE LEGAL
                 } else {
                     // DO NOTHING

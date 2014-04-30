@@ -1,4 +1,4 @@
-/* Tries to do string addition */
+/* Tries to do array lookup on non int array type */
 
 class Main
 {
@@ -31,10 +31,13 @@ class Other {
     }
 
     public int v() {
-        return 1;
-    }
-
-    public int v() {
-        return 1;
+        int y;
+        boolean z;
+        int[] array;
+        array = new int[8];
+        y[0] = 2; // Invalid
+        z[7] = 3; // Invalid
+        z[3] = false; // Invalid
+        return y[7]; // Invalid
     }
 }

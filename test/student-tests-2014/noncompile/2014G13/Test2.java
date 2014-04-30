@@ -1,5 +1,5 @@
 
-public class Test2 {
+class Test2 {
 	
 	public static void main(String[] args){
 		int a;
@@ -16,10 +16,6 @@ public class Test2 {
 }
 
 class Test2Additonal {
-	
-	public Test2Additonal(){
-		
-	}
 	
 	public int sum(int a, int b){
 		int c;

@@ -1,5 +1,6 @@
 /* Wrong type errors */
 // EXT:CEQ
+// EXT:CNE
 
 class Main {
     public static void main(String[] args) {
@@ -22,6 +23,10 @@ class Main {
         } else {
             x = 24;
         }
+
+        // Wrong type
+        if(false != 3) {
+        } else {}
 
         System.out.println(1);
     }

@@ -6,7 +6,7 @@ class InvalidBlock {
         int i;
         int u;
         i = 1;
-        u = i - 123;
+        u = i - 0;
         while(i < 10) {
             int i; // Already defined
             i = i + 1;
