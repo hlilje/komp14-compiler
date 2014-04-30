@@ -36,15 +36,16 @@ public class DepthFirstVisitor implements Visitor {
     // Added helper method to find out if a variable is declared
     public boolean varInScope(Symbol s) {
         if(currMethod == null) {
+            if(DEBUG) System.out.println("  Looking for " + s + " in class");
             if(!currClass.hasVar(s)) return false;
         } else if(outerBlock == null) {
+            if(DEBUG) System.out.println("  Looking for " + s + " in method");
             if(!currMethod.inScope(s)) {
                 if(!currClass.hasVar(s)) return false;
             }
         } else { // Check in block
             if(DEBUG) System.out.println("  Looking for " + s + " in block");
             if(outerBlock.getVar(s) == null) {
-                if(DEBUG) System.out.println("    it wasn't found");
                 if(!currMethod.inScope(s)) {
                     if(!currClass.hasVar(s)) return false;
                 }
@@ -286,6 +287,7 @@ public class DepthFirstVisitor implements Visitor {
                 System.out.println("  Set new outer block with id " + blockId);
                 System.out.println("    This is " + bt);
             }
+            prevOuterBlock = bt; // TODO Test
         } else {
             bt = new BlockTable(blockId, outerBlock);
             if(DEBUG) {
@@ -308,10 +310,12 @@ public class DepthFirstVisitor implements Visitor {
 
         if(wasOutmostBlock) {
             outerBlock = null;
+            prevOuterBlock = null;
         }
         else {
             outerBlock = prevOuterBlock;
         }
+        // TODO This doesn't work
         prevOuterBlock = null; // Must reset
         if(DEBUG) System.out.println("======= END BLOCK SCOPE =======");
     }
