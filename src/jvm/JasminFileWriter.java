@@ -172,19 +172,19 @@ public class JasminFileWriter {
 
     // Jasmin method to load the given VMAccess
     public void loadAccess(VMAccess vma) {
-        sb.append("    "); sb.append(vma.load());
+        sb.append(vma.load());
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method to begin a while loop
-    public void whileBegin() {
-        sb.append("while:");
+    public void whileBegin(int id) {
+        sb.append("while"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method to begin end a while loop
-    public void whileEnd() {
-        sb.append("    goto while");
+    public void whileEnd(int id) {
+        sb.append("    goto while"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
         sb.append("done:");
         sb.append(System.getProperty("line.separator"));

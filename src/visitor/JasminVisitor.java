@@ -21,7 +21,8 @@ public class JasminVisitor implements Visitor {
     private MethodTable currMethod;
     private BlockTable currBlock;
 
-    private int blockId; // Unique id for outmost blocks
+    private int blockId; // Unique id for blocks
+    private int elseId; // Unique id for else
     private JasminFileWriter jfw;
     private int stackDepth; // Keep track of needed stack depth
 
@@ -32,6 +33,7 @@ public class JasminVisitor implements Visitor {
         currMethod = null;
         currBlock = null;
         blockId = -1; // To give block #1 id 0
+        elseId = -1; // To give else #1 id 0
         jfw = new JasminFileWriter(error, tfp);
         stackDepth = 0;
     }
@@ -305,10 +307,10 @@ public class JasminVisitor implements Visitor {
     // Statement s;
     public void visit(While n) {
         // TODO Add check for loop condition
-        jfw.whileBegin();
+        jfw.whileBegin(blockId);
         n.e.accept(this);
         n.s.accept(this);
-        jfw.whileEnd(); // TODO
+        jfw.whileEnd(blockId);
     }
 
     // Exp e;
