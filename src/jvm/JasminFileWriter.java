@@ -182,11 +182,17 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
-    /* JASMIN LOADING */
+    /* JASMIN LOADING / STORING */
 
     // Jasmin method to load the given VMAccess
     public void loadAccess(VMAccess vma) {
         sb.append(vma.load());
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to store at the given VMAccess
+    public void storeAccess(VMAccess vma) {
+        sb.append(vma.store());
         sb.append(System.getProperty("line.separator"));
     }
 

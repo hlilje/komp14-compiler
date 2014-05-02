@@ -345,6 +345,8 @@ public class JasminVisitor implements Visitor {
     public void visit(Assign n) {
         n.i.accept(this);
         n.e.accept(this);
+        VMAccess vma = getVMAccess(n.i.s);
+        jfw.storeAccess(vma);
     }
 
     // Identifier i;
