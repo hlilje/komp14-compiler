@@ -470,7 +470,10 @@ public class JasminVisitor implements Visitor {
 
     // Exp e;
     public void visit(Not n) {
+        branchId++;
+        int thisBranchId = branchId;
         n.e.accept(this);
+        jfw.not(thisBranchId);
     }
 
     // String s;
