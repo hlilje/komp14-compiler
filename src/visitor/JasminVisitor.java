@@ -351,7 +351,7 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
-        stackDepth = stackDepth - 2; // TODO
+        stackDepth--; // The result is pushed onto the op stack
     }
 
     // Exp e1,e2;
@@ -361,7 +361,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.lessThan(branchId);
-        stackDepth = stackDepth - 2;
+        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -461,7 +461,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.lessThanEquals(branchId);
-        stackDepth = stackDepth - 2;
+        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -471,7 +471,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.greaterThanOr(branchId);
-        stackDepth = stackDepth - 2;
+        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -481,7 +481,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.greaterThanEquals(branchId);
-        stackDepth = stackDepth - 2;
+        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -491,7 +491,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.equals(branchId);
-        stackDepth = stackDepth - 2;
+        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -501,7 +501,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.equalsNot(branchId);
-        stackDepth = stackDepth - 2;
+        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -509,6 +509,6 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
-        stackDepth = stackDepth - 2; // TODO
+        stackDepth--; // The result is pushed onto the op stack
     }
 }
