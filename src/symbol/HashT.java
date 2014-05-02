@@ -3,7 +3,7 @@ package symbol;
 public class HashT {
     public static final boolean DEBUG = false;
 
-    final int SIZE = 256;
+    final int SIZE = 128;
     private Bucket table[] = new Bucket[SIZE];
 
     private int hash(String s) {
@@ -11,7 +11,7 @@ public class HashT {
         for(int i=0; i<s.length(); i++) {
             h = h * 65599 + s.charAt(i);
         }
-        return h < 0 ? -h : h; // Avoid negative values form int overflow
+        return h < 0 ? -h : h; // Avoid negative values from int overflow
     }
 
     // Changed from Binding b, possible error in Appel book
