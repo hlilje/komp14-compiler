@@ -330,16 +330,34 @@ public class JasminFileWriter {
 
     /* JASMIN LOGICAL CONNECTIVES */
 
-    // Jamin method for 'And'
+    // Jasmin method for 'And'
     public void and() {
         sb.append("    iand");
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jamin method for 'Or'
+    // Jasmin method for 'Or'
     public void or() {
         sb.append("    ior");
         sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for 'Not'
+    public void not(int id) {
+        // TODO This should be easier
+        sb.append("    ifeq "); sb.append("true"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // Switch to false
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("true"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // Switch to true
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+
     }
 
     /* JASMIN BRANCH LABELS */
@@ -376,12 +394,21 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
+
     /* JASMIN METHOD CALLS */
 
     // TODO: Not done, needs type info
     // Jasmin virtual method call
     public void methodCall(String className, String methodName) {
         sb.append("    invokevirtual " + className +"/"+ methodName);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    /* JASMIN THIS */
+
+    // Jasmin method for 'this' call
+    public void loadThis() {
+        sb.append("    aload_0");
         sb.append(System.getProperty("line.separator"));
     }
 }

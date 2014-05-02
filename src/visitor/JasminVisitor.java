@@ -460,6 +460,9 @@ public class JasminVisitor implements Visitor {
     }
 
     public void visit(This n) {
+        // TODO This might be done by calling a method somewhere
+        jfw.loadThis();
+        stackDepth++;
     }
 
     // Exp e;
@@ -477,7 +480,10 @@ public class JasminVisitor implements Visitor {
 
     // Exp e;
     public void visit(Not n) {
+        branchId++;
+        int thisBranchId = branchId;
         n.e.accept(this);
+        jfw.not(thisBranchId);
     }
 
     // String s;
