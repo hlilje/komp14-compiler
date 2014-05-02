@@ -375,4 +375,12 @@ public class JasminFileWriter {
         sb.append("    arraylength");
         sb.append(System.getProperty("line.separator"));
     }
+
+    /* JASMIN THIS */
+
+    // Jasmin method for 'this' call
+    public void loadThis() {
+        sb.append("    aload_0");
+        sb.append(System.getProperty("line.separator"));
+    }
 }
