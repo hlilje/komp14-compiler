@@ -46,17 +46,12 @@ public class JasminVisitor implements Visitor {
         if(currMethod == null)
             access = currClass.getFieldAccess(s);
         else if(currBlock == null) {
-            if(currMethod.getAccess(s) != null)
-                access = currMethod.getAccess(s);
-            else
-                access = currClass.getFieldAccess(s);
+            access = currMethod.getAccess(s);
+            if(access == null) access = currClass.getFieldAccess(s);
         } else {
-            if(currBlock.getAccess(s) != null)
-                access = currBlock.getAccess(s);
-            else if(currMethod.getAccess(s) != null)
-                access = currMethod.getAccess(s);
-            else
-                access = currClass.getFieldAccess(s);
+            access = currBlock.getAccess(s);
+            if(access == null) access = currMethod.getAccess(s);
+            if(access == null) access = currClass.getFieldAccess(s);
         }
 
         if(access == null) {
