@@ -299,7 +299,7 @@ public class JasminVisitor implements Visitor {
     // Statement s1,s2;
     public void visit(If n) {
         branchId++;
-        int thisBranchId = branchId; // Avoid id changed by nested blocks
+        int thisBranchId = branchId; // Avoid id change by nested blocks
 
         n.e.accept(this);
         jfw.ifCheck(thisBranchId); // Check branch condition
@@ -316,7 +316,7 @@ public class JasminVisitor implements Visitor {
     // Statement s;
     public void visit(While n) {
         branchId++;
-        int thisBranchId = branchId; // Avoid id changed by nested blocks
+        int thisBranchId = branchId; // Avoid id change by nested blocks
 
         jfw.setSkip(branchId);
         n.e.accept(this);
@@ -424,9 +424,13 @@ public class JasminVisitor implements Visitor {
     }
 
     public void visit(True n) {
+        jfw.pushTrue();
+        stackDepth++;
     }
 
     public void visit(False n) {
+        jfw.pushFalse();
+        stackDepth++;
     }
 
     // String s;

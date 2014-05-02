@@ -125,9 +125,21 @@ public class JasminFileWriter {
 
     /* JASMIN CONSTANTS */
 
-    // Wrapper method to push an interger literal to the stack
+    // Jasmin method to push an interger literal onto the stack
     public void pushInt(IntegerLiteral n) {
         sb.append("    ldc "); sb.append(n.i);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to push a 'true' literal onto the stack
+    public void pushTrue() {
+        sb.append("    ldc 1");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to push a 'false' literal onto the stack
+    public void pushFalse() {
+        sb.append("    ldc 0");
         sb.append(System.getProperty("line.separator"));
     }
 
