@@ -293,7 +293,22 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
+    /* JASMIN LOGICAL CONNECTIVES */
+
+    // Jamin method for 'And'
+    public void and() {
+        sb.append("    iand");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jamin method for 'Or'
+    public void and() {
+        sb.append("    ior");
+        sb.append(System.getProperty("line.separator"));
+    }
+
     /* JASMIN BRANCH LABELS */
+    // TODO Remove unused
 
     // Jasmin method to set the jump label for 'else'
     public void setElse(int id) {

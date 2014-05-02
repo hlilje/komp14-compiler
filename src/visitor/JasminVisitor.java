@@ -351,6 +351,7 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
+        jfw.and();
         stackDepth--; // The result is pushed onto the op stack
     }
 
@@ -509,6 +510,7 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
+        jfw.or();
         stackDepth--; // The result is pushed onto the op stack
     }
 }
