@@ -411,6 +411,7 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     public void visit(ArrayLength n) {
         n.e.accept(this);
+        jfw.arrayLength(); // Pop and push onto stack
     }
 
     // Exp e;

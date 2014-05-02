@@ -367,4 +367,12 @@ public class JasminFileWriter {
         sb.append("    goto skip"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
+
+    /* JASMIN ARRAY LENGTH */
+
+    // Jasmin method to load the length of an array
+    public void arrayLength() {
+        sb.append("    arraylength");
+        sb.append(System.getProperty("line.separator"));
+    }
 }
