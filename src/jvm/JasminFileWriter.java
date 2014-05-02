@@ -209,7 +209,7 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
         sb.append("    ldc 1"); // True
         sb.append(System.getProperty("line.separator"));
-        sb.append("skip") sb.append(id); sb.append(":");
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -225,7 +225,7 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
         sb.append("    ldc 1"); // True
         sb.append(System.getProperty("line.separator"));
-        sb.append("skip") sb.append(id); sb.append(":");
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -241,7 +241,7 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
         sb.append("    ldc 1"); // True
         sb.append(System.getProperty("line.separator"));
-        sb.append("skip") sb.append(id); sb.append(":");
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -257,7 +257,7 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
         sb.append("    ldc 1"); // True
         sb.append(System.getProperty("line.separator"));
-        sb.append("skip") sb.append(id); sb.append(":");
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -273,7 +273,7 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
         sb.append("    ldc 1"); // True
         sb.append(System.getProperty("line.separator"));
-        sb.append("skip") sb.append(id); sb.append(":");
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -289,7 +289,7 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
         sb.append("    ldc 1"); // True
         sb.append(System.getProperty("line.separator"));
-        sb.append("skip") sb.append(id); sb.append(":");
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -302,15 +302,20 @@ public class JasminFileWriter {
     }
 
     // Jamin method for 'Or'
-    public void and() {
+    public void or() {
         sb.append("    ior");
         sb.append(System.getProperty("line.separator"));
     }
 
     /* JASMIN BRANCH LABELS */
-    // TODO Remove unused
 
-    // Jasmin method to set the jump label for 'else'
+    // Jasmin method for if/while branch check
+    public void ifCheck(int id) {
+        sb.append("    ifeq "); sb.append("else"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to set the jump label for 'else' (if/while)
     public void setElse(int id) {
         sb.append("else"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
@@ -323,21 +328,8 @@ public class JasminFileWriter {
     }
 
     // Jasmin method to used to skip the 'else' block
-    public void setGotoSkip(int id) {
-        sb.append("goto skip"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin method to used to set a label for the 'if' block
-    public void setIf(int id) {
-        sb.append("if"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // By using this method for 'while' it's possible to reuse the
-    // methods for 'if' 'else' branching
-    public void setGotoIf(int id) {
-        sb.append("goto if"); sb.append(id);
+    public void skip(int id) {
+        sb.append("    goto skip"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 }

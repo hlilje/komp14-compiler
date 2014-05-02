@@ -15,6 +15,7 @@ public class JasminVisitor implements Visitor {
     public static final boolean DEBUG = false;
 
     private ErrorHandler error;
+    private JasminFileWriter jfw;
 
     private SymbolTable symTable;
     private ClassTable currClass;
@@ -24,9 +25,6 @@ public class JasminVisitor implements Visitor {
     private int blockId; // Unique id for blocks
     private int branchId; // Unique id for branching
     private int stackDepth; // Keep track of needed stack depth
-
-    private JasminFileWriter jfw;
-    private BranchType branch;
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
@@ -300,11 +298,14 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     // Statement s1,s2;
     public void visit(If n) {
-        n.e.accept(this);
+        branchId++;
+        int thisBranchId = branchId; // Avoid id changed by nested blocks
 
-        jfw.setIf(thisBranchId); // Branch here if an 'Or' expression was true
+        n.e.accept(this);
+        jfw.ifCheck(thisBranchId); // Check branch condition
+
         n.s1.accept(this);
-        jfw.setGotoSkip(thisBranchId); // To avoid always executing 'else'
+        jfw.skip(thisBranchId); // To avoid always executing 'else'
 
         jfw.setElse(thisBranchId); // 'Else' block
         n.s2.accept(this);
@@ -314,11 +315,15 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     // Statement s;
     public void visit(While n) {
-        jfw.setIf(thisBranchId); // Use 'if' branches for simplicity
+        branchId++;
+        int thisBranchId = branchId; // Avoid id changed by nested blocks
+
+        jfw.setSkip(branchId);
         n.e.accept(this);
+        jfw.ifCheck(thisBranchId); // Use 'if' branches for simplicity
 
         n.s.accept(this);
-        jfw.setGotoIf(branchId); // Loop
+        jfw.skip(thisBranchId); // Use 'skip' for looping for simplicity
         jfw.setElse(branchId); // The 'else' will skip the while block
     }
 
@@ -471,7 +476,7 @@ public class JasminVisitor implements Visitor {
         n.e2.accept(this);
 
         branchId++;
-        jfw.greaterThanOr(branchId);
+        jfw.greaterThan(branchId);
         stackDepth--; // Also loads a constant onto the stack
     }
 
