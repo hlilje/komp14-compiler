@@ -343,7 +343,7 @@ public class JasminVisitor implements Visitor {
     public void visit(ArrayAssign n) {
         n.i.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
-        jfw.storeAccess(vma);
+        jfw.loadAccess(vma);
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.storeArray();        
