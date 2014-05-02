@@ -1,4 +1,4 @@
-/* Multiple declarations of variables */
+/* Multiple declarations of variables and classes */
 
 class Main
 {
@@ -13,14 +13,14 @@ class Test {
     int a;
     Other b;
     Other a;
-    //b = new Other();
 
     public int start() {
         a = 17;
-        if(a != 4) {
 
+        if(false) {
+            a = 2;
         } else {
-
+            a = 12;
         }
 
         return a;
@@ -36,10 +36,3 @@ class Test {
         return 1;
     }
 }
-
-//class Other {
-//    int a;
-//    boolean a;
-//
-//    return a;
-//}
