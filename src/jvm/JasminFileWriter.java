@@ -196,6 +196,18 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
+    // Jasmin method to load from an Integer Array
+    public void loadArray() {
+        sb.append("    iaload");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to store in an Integer Array
+    public void storeArray() {
+        sb.append("    iastore");
+        sb.append(System.getProperty("line.separator"));
+    }
+
     /* JASMIN COMPARISON */
 
     // Jasmin method for < ('And' branch)

@@ -353,8 +353,11 @@ public class JasminVisitor implements Visitor {
     // Exp e1,e2;
     public void visit(ArrayAssign n) {
         n.i.accept(this);
+        VMAccess vma = getVMAccess(n.i.s);
+        jfw.storeAccess(vma);
         n.e1.accept(this);
         n.e2.accept(this);
+        jfw.storeArray();        
     }
 
     // Exp e1,e2;
@@ -389,25 +392,25 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(Plus n) {
-        jfw.add();
         n.e1.accept(this);
         n.e2.accept(this);
+        jfw.add();
         stackDepth--; // Pop values and push result
     }
 
     // Exp e1,e2;
     public void visit(Minus n) {
-        jfw.minus();
         n.e1.accept(this);
         n.e2.accept(this);
+        jfw.minus();
         stackDepth--; // Pop values and push result
     }
 
     // Exp e1,e2;
     public void visit(Times n) {
-        jfw.mul();
         n.e1.accept(this);
         n.e2.accept(this);
+        jfw.mul();
         stackDepth--; // Pop values and push result
     }
 
@@ -415,6 +418,7 @@ public class JasminVisitor implements Visitor {
     public void visit(ArrayLookup n) {
         n.e1.accept(this);
         n.e2.accept(this);
+        jfw.loadArray();
     }
 
     // Exp e;
@@ -457,8 +461,8 @@ public class JasminVisitor implements Visitor {
 
     // Exp e;
     public void visit(NewArray n) {
-        jfw.newArray();
         n.e.accept(this);
+        jfw.newArray();
         stackDepth++; // TODO
     }
 
