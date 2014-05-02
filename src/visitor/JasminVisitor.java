@@ -16,7 +16,7 @@ public class JasminVisitor implements Visitor {
 
     // For keeping track of which labels to branch to
     public static enum BranchType {
-        WHILE, IF, AND, OR, NONE
+        AND, OR, NONE
     }
 
     private ErrorHandler error;
@@ -304,8 +304,6 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     // Statement s1,s2;
     public void visit(If n) {
-        BranchType prevBranch = branch;
-        branch = BranchType.IF;
         branchId++;
         int thisBranchId = branchId; // To avoid increasing counter for nested blocks
 
@@ -318,15 +316,11 @@ public class JasminVisitor implements Visitor {
         jfw.setElse(thisBranchId); // 'Else' block
         n.s2.accept(this);
         jfw.setSkip(thisBranchId); // Skip here if not 'else'
-
-        branch = prevBranch;
     }
 
     // Exp e;
     // Statement s;
     public void visit(While n) {
-        BranchType prevBranch = branch;
-        branch = BranchType.WHILE;
         branchId++;
         int thisBranchId = branchId; // To avoid increasing counter for nested blocks
 
@@ -336,8 +330,6 @@ public class JasminVisitor implements Visitor {
         n.s.accept(this);
         jfw.setGotoIf(branchId); // Loop
         jfw.setElse(branchId); // The 'else' will skip the while block
-
-        branch = prevBranch;
     }
 
     // Exp e;
