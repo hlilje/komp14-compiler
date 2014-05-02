@@ -370,9 +370,19 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(LessThan n) {
-        jfw.lessThan(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
+
+        switch(branch) {
+            case AND:
+                jfw.greaterThan(elseId);
+                break;
+            case OR:
+                jfw.lessThanEquals(elseId);
+                break;
+            default:
+                break;
+        }
         stackDepth = stackDepth - 2;
     }
 
@@ -468,25 +478,55 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(LessThanEquals n) {
-        jfw.lessThanEquals(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
+
+        switch(branch) {
+            case AND:
+                jfw.greaterThan(elseId);
+                break;
+            case OR:
+                jfw.lessThanEquals(elseId);
+                break;
+            default:
+                break;
+        }
         stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
     public void visit(GreaterThan n) {
-        jfw.greaterThan(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
+
+        switch(branch) {
+            case AND:
+                jfw.lessThanEquals(elseId);
+                break;
+            case OR:
+                jfw.greaterThan(elseId);
+                break;
+            default:
+                break;
+        }
         stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
     public void visit(GreaterThanEquals n) {
-        jfw.greaterThanEquals(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
+
+        switch(branch) {
+            case AND:
+                jfw.lessThan(elseId);
+                break;
+            case OR:
+                jfw.greaterThanEquals(elseId);
+                break;
+            default:
+                break;
+        }
         stackDepth = stackDepth - 2;
     }
 
@@ -494,6 +534,17 @@ public class JasminVisitor implements Visitor {
     public void visit(Equals n) {
         n.e1.accept(this);
         n.e2.accept(this);
+
+        switch(branch) {
+            case AND:
+                jfw.equalsNot(elseId);
+                break;
+            case OR:
+                jfw.equals(elseId);
+                break;
+            default:
+                break;
+        }
         stackDepth = stackDepth - 2;
     }
 
@@ -501,6 +552,17 @@ public class JasminVisitor implements Visitor {
     public void visit(EqualsNot n) {
         n.e1.accept(this);
         n.e2.accept(this);
+
+        switch(branch) {
+            case AND:
+                jfw.equals(elseId);
+                break;
+            case OR:
+                jfw.equalsNot(elseId);
+                break;
+            default:
+                break;
+        }
         stackDepth = stackDepth - 2;
     }
 

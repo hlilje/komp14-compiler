@@ -214,6 +214,18 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
+    // Jasmin method for ==
+    public void equals(int id) {
+        sb.append("    if_icmpeq else"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for ==
+    public void equalsNot(int id) {
+        sb.append("    if_icmpne else"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
     // Jasmin method to set the jump label for 'else'
     public void setElse(int id) {
         sb.append("else"); sb.append(id); sb.append(":");
