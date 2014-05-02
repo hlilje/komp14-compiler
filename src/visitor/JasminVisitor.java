@@ -15,7 +15,7 @@ public class JasminVisitor implements Visitor {
     public static final boolean DEBUG = false;
 
     // For keeping track of which labels to branch to
-    public static enum BranchType {
+    private static enum BranchType {
         AND, OR, NONE
     }
 
@@ -28,8 +28,9 @@ public class JasminVisitor implements Visitor {
 
     private int blockId; // Unique id for blocks
     private int branchId; // Unique id for branching
-    private JasminFileWriter jfw;
     private int stackDepth; // Keep track of needed stack depth
+
+    private JasminFileWriter jfw;
     private BranchType branch;
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
@@ -40,8 +41,8 @@ public class JasminVisitor implements Visitor {
         currBlock = null;
         blockId = -1; // To give block #1 id 0
         branchId = -1; // To give branch block #1 id 0
-        jfw = new JasminFileWriter(error, tfp);
         stackDepth = 0;
+        jfw = new JasminFileWriter(error, tfp);
         branch = BranchType.NONE; // Default not branching
     }
 
