@@ -375,4 +375,13 @@ public class JasminFileWriter {
         sb.append("    arraylength");
         sb.append(System.getProperty("line.separator"));
     }
+
+    /* JASMIN METHOD CALLS */
+
+    // TODO: Not done, needs type info
+    // Jasmin virtual method call
+    public void methodCall(String className, String methodName) {
+        sb.append("    invokevirtual " + className +"/"+ methodName);
+        sb.append(System.getProperty("line.separator"));
+    }
 }

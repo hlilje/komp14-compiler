@@ -418,12 +418,22 @@ public class JasminVisitor implements Visitor {
     // Identifier i;
     // ExpList el;
     public void visit(Call n) {
+        VMAccess vma = getVMAccess(n.i.s);
+        jfw.loadAccess(vma);
+
         n.e.accept(this);
         n.i.accept(this);
-
         for ( int i = 0; i < n.el.size(); i++ ) {
             n.el.elementAt(i).accept(this);
         }
+
+        ClassTable ct = n.c==null ?
+            currClass : symTable.getClass(Symbol.symbol(n.c));
+
+        MethodTable mt = ct.getMethod(Symbol.symbol(n.i.toString()));
+
+        // TODO: find all types and use
+        // jfw.methodCall(String className, String methodName)
     }
 
     // int i;
