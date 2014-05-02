@@ -11,10 +11,12 @@ import frame.VMAccess;
 import frame.VMFrame;
 
 public class JasminFileWriter {
+    public static final boolean DEBUG = false;
+
     private ErrorHandler error;
+    private java.lang.StringBuilder sb; // The Jasmin string to write to file
 
     private String filePath; // Where to generate Jasmin files
-    private java.lang.StringBuilder sb; // The Jasmin string to write to file
 
     public JasminFileWriter(ErrorHandler error, String filePath) {
         this.error = error;
@@ -63,6 +65,9 @@ public class JasminFileWriter {
 
     // Wrapper method to declare a local Jasmin variable in a method
     public void declareLocal(VMAccess vma) {
+        if(DEBUG) {
+            if(vma == null) System.out.println("  Try to declare a NULL vma");
+        }
         sb.append(vma.declare());
         sb.append(System.getProperty("line.separator"));
     }
@@ -198,12 +203,18 @@ public class JasminFileWriter {
 
     // Jasmin method to load the given VMAccess
     public void loadAccess(VMAccess vma) {
+        if(DEBUG) {
+            if(vma == null) System.out.println("  Try to load a NULL vma");
+        }
         sb.append(vma.load());
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method to store at the given VMAccess
     public void storeAccess(VMAccess vma) {
+        if(DEBUG) {
+            if(vma == null) System.out.println("  Try to store a NULL vma");
+        }
         sb.append(vma.store());
         sb.append(System.getProperty("line.separator"));
     }

@@ -58,6 +58,9 @@ public class BlockTable {
     }
 
     public VMAccess getAccess(Symbol s) {
-        return (VMAccess)localAccesses.get(s);
+        VMAccess vma = (VMAccess)localAccesses.get(s);
+        if(vma == null && bt != null)
+            return bt.getAccess(s); // Up a scope level
+        return vma; // Not a nested block
     }
 }

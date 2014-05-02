@@ -199,6 +199,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // StatementList sl;
     public Type visit(Block n) {
+        BlockTable prevBlock = currBlock;
+
         blockId++;
         currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
@@ -209,7 +211,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        currBlock = null; // End scope
+        currBlock = prevBlock; // End scope
         return null;
     }
 

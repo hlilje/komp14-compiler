@@ -49,8 +49,11 @@ public class JasminVisitor implements Visitor {
             access = currMethod.getAccess(s);
             if(access == null) access = currClass.getFieldAccess(s);
         } else {
-            if(DEBUG) System.out.println("  Searching for VMA " + s + " block");
             access = currBlock.getAccess(s);
+            if(DEBUG) {
+                System.out.println("  Searching for VMA " + s + " in block");
+                if(access == null) System.out.println("  " + s + " was not found in block");
+            }
             if(access == null) access = currMethod.getAccess(s);
             if(access == null) access = currClass.getFieldAccess(s);
         }
@@ -263,6 +266,8 @@ public class JasminVisitor implements Visitor {
     // StatementList sl;
     public void visit(Block n) {
         if(DEBUG) System.out.println(">>>> Block");
+        BlockTable prevBlock = currBlock;
+
         blockId++; // Keep track of blocks in method
         currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
@@ -291,7 +296,7 @@ public class JasminVisitor implements Visitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        currBlock = null; // End scope
+        currBlock = prevBlock; // End scope
     }
 
     // Exp e;
@@ -438,6 +443,7 @@ public class JasminVisitor implements Visitor {
 
     // String s;
     public void visit(IdentifierExp n) {
+        if(DEBUG) System.out.println(">>>> IdentifierExp: " + n.s);
         jfw.loadAccess(getVMAccess(n.s));
         stackDepth++; // TODO
     }
