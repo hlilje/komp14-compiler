@@ -49,6 +49,7 @@ public class JasminVisitor implements Visitor {
             access = currMethod.getAccess(s);
             if(access == null) access = currClass.getFieldAccess(s);
         } else {
+            if(DEBUG) System.out.println("  Searching for VMA " + s + " block");
             access = currBlock.getAccess(s);
             if(access == null) access = currMethod.getAccess(s);
             if(access == null) access = currClass.getFieldAccess(s);
@@ -349,7 +350,7 @@ public class JasminVisitor implements Visitor {
         jfw.loadAccess(vma);
         n.e1.accept(this);
         n.e2.accept(this);
-        jfw.storeArray();        
+        jfw.storeArray();
     }
 
     // Exp e1,e2;
