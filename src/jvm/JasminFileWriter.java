@@ -190,45 +190,99 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for <
-    public void lessThan(int id) {
+    // Jasmin method for < ('And' branch)
+    public void lessThanAnd(int id) {
         sb.append("    if_icmpge else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for >
-    public void greaterThan(int id) {
+    // Jasmin method for < ('Or' branch)
+    public void lessThanOr(int id) {
+        sb.append("    if_icmpge if"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for > ('And' branch)
+    public void greaterThanAnd(int id) {
         sb.append("    if_icmple else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for <=
-    public void greaterThanEquals(int id) {
+    // Jasmin method for > ('Or' branch)
+    public void greaterThanOr(int id) {
+        sb.append("    if_icmple if"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for <= ('And' branch)
+    public void greaterThanEqualsAnd(int id) {
         sb.append("    if_icmplt else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for >=
-    public void lessThanEquals(int id) {
+    // Jasmin method for <= ('Or' branch)
+    public void greaterThanEqualsOr(int id) {
+        sb.append("    if_icmplt if"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for >= ('And' branch)
+    public void lessThanEqualsAnd(int id) {
         sb.append("    if_icmpgt else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for ==
-    public void equals(int id) {
+    // Jasmin method for >= ('Or' branch)
+    public void lessThanEqualsOr(int id) {
+        sb.append("    if_icmpgt if"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for == ('And' branch)
+    public void equalsAnd(int id) {
         sb.append("    if_icmpeq else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for ==
-    public void equalsNot(int id) {
+    // Jasmin method for == ('Or' branch)
+    public void equalsOr(int id) {
+        sb.append("    if_icmpeq if"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for == ('And' branch)
+    public void equalsNotAnd(int id) {
         sb.append("    if_icmpne else"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for == ('Or' branch)
+    public void equalsNotOr(int id) {
+        sb.append("    if_icmpne if"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method to set the jump label for 'else'
     public void setElse(int id) {
         sb.append("else"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to set the jump label when skipping 'else'
+    public void setSkip(int id) {
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to used to skip the 'else' block
+    public void setGotoSkip(int id) {
+        sb.append("goto skip"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to used to set a label for the 'if' block
+    public void setIf(int id) {
+        sb.append("if"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 }

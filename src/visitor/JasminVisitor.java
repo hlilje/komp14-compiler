@@ -306,12 +306,17 @@ public class JasminVisitor implements Visitor {
     public void visit(If n) {
         BranchType prevBranch = branch;
         branch = BranchType.IF;
+        elseId++;
+        int thisElseId = elseId; // To avoid increasing counter for nested blocks
 
         n.e.accept(this);
-        n.s1.accept(this);
 
-        jfw.setElse(blockId); // TODO
+        n.s1.accept(this);
+        jfw.setGotoSkip(thisElseId); // To avoid always executing 'else'
+
+        jfw.setElse(thisElseId);
         n.s2.accept(this);
+        jfw.setSkip(thisElseId); // Skip here if not 'else'
 
         branch = prevBranch;
     }
@@ -321,14 +326,16 @@ public class JasminVisitor implements Visitor {
     public void visit(While n) {
         BranchType prevBranch = branch;
         branch = BranchType.WHILE;
-
-        // TODO
         // Since blockId will be immediately incremented in the block
-        jfw.whileBegin(blockId + 1);
-        n.e.accept(this);
-        n.s.accept(this);
+        int thisBlockId = blockId + 1;
 
-        jfw.whileEnd(blockId);
+        jfw.whileBegin(thisBlockId);
+        n.e.accept(this);
+
+        n.s.accept(this);
+        jfw.whileEnd(thisBlockId);
+        jfw.setElse(thisBlockId); // Use 'else' to skip looping if exp was false
+
         branch = prevBranch;
     }
 
@@ -358,12 +365,10 @@ public class JasminVisitor implements Visitor {
     public void visit(And n) {
         BranchType prevBranch = branch;
         branch = BranchType.AND;
-        elseId++;
 
         n.e1.accept(this);
         n.e2.accept(this);
 
-        jfw.setElse(blockId);
         stackDepth = stackDepth - 2;
         branch = prevBranch;
     }
@@ -570,9 +575,7 @@ public class JasminVisitor implements Visitor {
     public void visit(Or n) {
         BranchType prevBranch = branch;
         branch = BranchType.OR;
-        elseId++;
 
-        jfw.setElse(elseId); // TODO
         n.e1.accept(this);
         n.e2.accept(this);
 
