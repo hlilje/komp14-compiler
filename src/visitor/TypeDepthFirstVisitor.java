@@ -163,7 +163,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        blockId = 0; // Reset the block counter for this method
+        blockId = -1; // Reset the block counter for this method
         return n.t;
     }
 

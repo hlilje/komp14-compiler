@@ -14,11 +14,6 @@ import frame.VMFrame;
 public class JasminVisitor implements Visitor {
     public static final boolean DEBUG = false;
 
-    // For keeping track of which labels to branch to
-    private static enum BranchType {
-        AND, OR, NONE
-    }
-
     private ErrorHandler error;
 
     private SymbolTable symTable;
@@ -43,7 +38,6 @@ public class JasminVisitor implements Visitor {
         branchId = -1; // To give branch block #1 id 0
         stackDepth = 0;
         jfw = new JasminFileWriter(error, tfp);
-        branch = BranchType.NONE; // Default not branching
     }
 
     // Helper method to search the scopes for the given string
@@ -248,7 +242,8 @@ public class JasminVisitor implements Visitor {
         jfw.setReturn(currMethod.getType());
         jfw.limitMethod(n.vl.size() + n.fl.size(), stackDepth);
         jfw.declareMethodEnd();
-        blockId = 0; // Reset the block counter for this method
+        blockId = -1; // Reset the block counter for this method
+        branchId = -1; // Reset branch id, will be inc before first assign
     }
 
     // void t;
@@ -305,9 +300,6 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     // Statement s1,s2;
     public void visit(If n) {
-        branchId++;
-        int thisBranchId = branchId; // To avoid increasing counter for nested blocks
-
         n.e.accept(this);
 
         jfw.setIf(thisBranchId); // Branch here if an 'Or' expression was true
@@ -322,9 +314,6 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     // Statement s;
     public void visit(While n) {
-        branchId++;
-        int thisBranchId = branchId; // To avoid increasing counter for nested blocks
-
         jfw.setIf(thisBranchId); // Use 'if' branches for simplicity
         n.e.accept(this);
 
@@ -359,14 +348,10 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(And n) {
-        BranchType prevBranch = branch;
-        branch = BranchType.AND;
-
         n.e1.accept(this);
         n.e2.accept(this);
 
-        stackDepth = stackDepth - 2;
-        branch = prevBranch;
+        stackDepth = stackDepth - 2; // TODO
     }
 
     // Exp e1,e2;
@@ -374,16 +359,8 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
-        switch(branch) {
-            case AND:
-                jfw.greaterThanAnd(branchId);
-                break;
-            case OR:
-                jfw.lessThanEqualsOr(branchId);
-                break;
-            default:
-                break;
-        }
+        branchId++;
+        jfw.lessThan(branchId);
         stackDepth = stackDepth - 2;
     }
 
@@ -482,16 +459,8 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
-        switch(branch) {
-            case AND:
-                jfw.greaterThanAnd(branchId);
-                break;
-            case OR:
-                jfw.lessThanEqualsOr(branchId);
-                break;
-            default:
-                break;
-        }
+        branchId++;
+        jfw.lessThanEquals(branchId);
         stackDepth = stackDepth - 2;
     }
 
@@ -500,16 +469,8 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
-        switch(branch) {
-            case AND:
-                jfw.lessThanEqualsAnd(branchId);
-                break;
-            case OR:
-                jfw.greaterThanOr(branchId);
-                break;
-            default:
-                break;
-        }
+        branchId++;
+        jfw.greaterThanOr(branchId);
         stackDepth = stackDepth - 2;
     }
 
@@ -518,16 +479,8 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
-        switch(branch) {
-            case AND:
-                jfw.lessThanAnd(branchId);
-                break;
-            case OR:
-                jfw.greaterThanEqualsOr(branchId);
-                break;
-            default:
-                break;
-        }
+        branchId++;
+        jfw.greaterThanEquals(branchId);
         stackDepth = stackDepth - 2;
     }
 
@@ -536,16 +489,8 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
-        switch(branch) {
-            case AND:
-                jfw.equalsNotAnd(branchId);
-                break;
-            case OR:
-                jfw.equalsOr(branchId);
-                break;
-            default:
-                break;
-        }
+        branchId++;
+        jfw.equals(branchId);
         stackDepth = stackDepth - 2;
     }
 
@@ -554,27 +499,16 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
 
-        switch(branch) {
-            case AND:
-                jfw.equalsAnd(branchId);
-                break;
-            case OR:
-                jfw.equalsNotOr(branchId);
-                break;
-            default:
-                break;
-        }
+        branchId++;
+        jfw.equalsNot(branchId);
         stackDepth = stackDepth - 2;
     }
 
     // Exp e1,e2;
     public void visit(Or n) {
-        BranchType prevBranch = branch;
-        branch = BranchType.OR;
-
         n.e1.accept(this);
         n.e2.accept(this);
 
-        branch = prevBranch;
+        stackDepth = stackDepth - 2; // TODO
     }
 }

@@ -245,19 +245,51 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for >= ('And' branch)
-    public void lessThanEqualsAnd(int id) {
-    }
-
-    // Jasmin method for == ('Or' branch)
-    public void equalsOr(int id) {
-        sb.append("    if_icmpeq if"); sb.append(id);
+    // Jasmin method for >=
+    public void lessThanEquals(int id) {
+        sb.append("    if_icmple const"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // False
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // True
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip") sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for == ('Or' branch)
-    public void equalsNotOr(int id) {
-        sb.append("    if_icmpne if"); sb.append(id);
+    // Jasmin method for ==
+    public void equals(int id) {
+        sb.append("    if_icmpeq const"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // False
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // True
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip") sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method for ==
+    public void equalsNot(int id) {
+        sb.append("    if_icmpne const"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // False
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // True
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip") sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 

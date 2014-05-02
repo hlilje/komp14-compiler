@@ -233,7 +233,7 @@ public class DepthFirstVisitor implements Visitor {
 
         n.t.accept(this);
         n.e.accept(this);
-        blockId = 0; // Reset the block counter for this method
+        blockId = -1; // Reset the block counter for this method
         if(DEBUG) System.out.println("======= END METHOD SCOPE ======");
     }
 
