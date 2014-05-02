@@ -279,6 +279,9 @@ public class JasminVisitor implements Visitor {
                     System.out.println(((IntegerInFrame)vma).toString());
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
+                if(vma == null) {
+                    System.out.println("  VMA was null for block id: " + blockId);
+                }
             }
             jfw.declareLocal(vma); // TODO This might need to be handled differently
             vd.accept(this);
