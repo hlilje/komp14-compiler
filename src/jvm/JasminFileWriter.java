@@ -9,7 +9,6 @@ import error.*;
 import jvm.*;
 import frame.VMAccess;
 import frame.VMFrame;
-import visitor.JasminVisitor;
 
 public class JasminFileWriter {
     private ErrorHandler error;
@@ -192,25 +191,25 @@ public class JasminFileWriter {
     }
 
     // Jasmin method for <
-    public void lessThan(int id, JasminVisitor.BranchType bt) {
+    public void lessThan(int id) {
         sb.append("    if_icmpge else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method for >
-    public void greaterThan(int id, JasminVisitor.BranchType bt) {
+    public void greaterThan(int id) {
         sb.append("    if_icmple else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method for <=
-    public void greaterThanEquals(int id, JasminVisitor.BranchType bt) {
+    public void greaterThanEquals(int id) {
         sb.append("    if_icmplt else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 
     // Jasmin method for >=
-    public void lessThanEquals(int id, JasminVisitor.BranchType bt) {
+    public void lessThanEquals(int id) {
         sb.append("    if_icmpgt else"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }

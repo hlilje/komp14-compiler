@@ -370,7 +370,7 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(LessThan n) {
-        jfw.lessThan(elseId, branch);
+        jfw.lessThan(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
         stackDepth = stackDepth - 2;
@@ -468,7 +468,7 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(LessThanEquals n) {
-        jfw.lessThanEquals(elseId, branch);
+        jfw.lessThanEquals(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
         stackDepth = stackDepth - 2;
@@ -476,7 +476,7 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(GreaterThan n) {
-        jfw.greaterThan(elseId, branch);
+        jfw.greaterThan(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
         stackDepth = stackDepth - 2;
@@ -484,7 +484,7 @@ public class JasminVisitor implements Visitor {
 
     // Exp e1,e2;
     public void visit(GreaterThanEquals n) {
-        jfw.greaterThanEquals(elseId, branch);
+        jfw.greaterThanEquals(elseId);
         n.e1.accept(this);
         n.e2.accept(this);
         stackDepth = stackDepth - 2;
