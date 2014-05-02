@@ -109,9 +109,9 @@ public class MethodTable {
 
     // Helper method to avoid having to check both locals and formals
     public VMAccess getAccess(Symbol s) {
-        if(localAccesses.get(s) != null)
-            return (VMAccess)localAccesses.get(s);
-        else
+        VMAccess vma = (VMAccess)localAccesses.get(s);
+        if(vma == null)
             return (VMAccess)formalAccesses.get(s);
+        return vma;
     }
 }

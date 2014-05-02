@@ -125,9 +125,21 @@ public class JasminFileWriter {
 
     /* JASMIN CONSTANTS */
 
-    // Wrapper method to push an interger literal to the stack
+    // Jasmin method to push an interger literal onto the stack
     public void pushInt(IntegerLiteral n) {
         sb.append("    ldc "); sb.append(n.i);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to push a 'true' literal onto the stack
+    public void pushTrue() {
+        sb.append("    ldc 1");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to push a 'false' literal onto the stack
+    public void pushFalse() {
+        sb.append("    ldc 0");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -210,81 +222,124 @@ public class JasminFileWriter {
 
     /* JASMIN COMPARISON */
 
-    // Jasmin method for < ('And' branch)
-    public void lessThanAnd(int id) {
-        sb.append("    if_icmpge else"); sb.append(id);
+    public void lessThan(int id) {
+        sb.append("    if_icmplt const"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // False
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // True
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for < ('Or' branch)
-    public void lessThanOr(int id) {
-        sb.append("    if_icmpge if"); sb.append(id);
+    // Jasmin method for >
+    public void greaterThan(int id) {
+        sb.append("    if_icmpgt const"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // False
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // True
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for > ('And' branch)
-    public void greaterThanAnd(int id) {
-        sb.append("    if_icmple else"); sb.append(id);
+    // Jasmin method for <=
+    public void greaterThanEquals(int id) {
+        sb.append("    if_icmpge const"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // False
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // True
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for > ('Or' branch)
-    public void greaterThanOr(int id) {
-        sb.append("    if_icmple if"); sb.append(id);
+    // Jasmin method for >=
+    public void lessThanEquals(int id) {
+        sb.append("    if_icmple const"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // False
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // True
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for <= ('And' branch)
-    public void greaterThanEqualsAnd(int id) {
-        sb.append("    if_icmplt else"); sb.append(id);
+    // Jasmin method for ==
+    public void equals(int id) {
+        sb.append("    if_icmpeq const"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // False
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // True
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for <= ('Or' branch)
-    public void greaterThanEqualsOr(int id) {
-        sb.append("    if_icmplt if"); sb.append(id);
+    // Jasmin method for ==
+    public void equalsNot(int id) {
+        sb.append("    if_icmpne const"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 0"); // False
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    goto skip "); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    ldc 1"); // True
+        sb.append(System.getProperty("line.separator"));
+        sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for >= ('And' branch)
-    public void lessThanEqualsAnd(int id) {
-        sb.append("    if_icmpgt else"); sb.append(id);
+    /* JASMIN LOGICAL CONNECTIVES */
+
+    // Jamin method for 'And'
+    public void and() {
+        sb.append("    iand");
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method for >= ('Or' branch)
-    public void lessThanEqualsOr(int id) {
-        sb.append("    if_icmpgt if"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin method for == ('And' branch)
-    public void equalsAnd(int id) {
-        sb.append("    if_icmpeq else"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin method for == ('Or' branch)
-    public void equalsOr(int id) {
-        sb.append("    if_icmpeq if"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin method for == ('And' branch)
-    public void equalsNotAnd(int id) {
-        sb.append("    if_icmpne else"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin method for == ('Or' branch)
-    public void equalsNotOr(int id) {
-        sb.append("    if_icmpne if"); sb.append(id);
+    // Jamin method for 'Or'
+    public void or() {
+        sb.append("    ior");
         sb.append(System.getProperty("line.separator"));
     }
 
     /* JASMIN BRANCH LABELS */
 
-    // Jasmin method to set the jump label for 'else'
+    // Jasmin method for if/while branch check
+    public void ifCheck(int id) {
+        sb.append("    ifeq "); sb.append("else"); sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to set the jump label for 'else' (if/while)
     public void setElse(int id) {
         sb.append("else"); sb.append(id); sb.append(":");
         sb.append(System.getProperty("line.separator"));
@@ -297,21 +352,8 @@ public class JasminFileWriter {
     }
 
     // Jasmin method to used to skip the 'else' block
-    public void setGotoSkip(int id) {
-        sb.append("goto skip"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin method to used to set a label for the 'if' block
-    public void setIf(int id) {
-        sb.append("if"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // By using this method for 'while' it's possible to reuse the
-    // methods for 'if' 'else' branching
-    public void setGotoIf(int id) {
-        sb.append("goto if"); sb.append(id);
+    public void skip(int id) {
+        sb.append("    goto skip"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 }

@@ -36,18 +36,14 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(currMethod == null)
             b = currClass.getVar(s);
         else if(currBlock == null) {
-            if(currMethod.getVar(s) == null)
-                b = (Binding)currClass.getVar(s);
-            else
-                b = (Binding)currMethod.getVar(s);
+            b = (Binding)currMethod.getVar(s);
+            if(b == null) b = (Binding)currClass.getVar(s);
         } else { // Check block
-            if(currBlock.getVar(s) == null) {
-                if(currMethod.getVar(s) == null)
-                    b = currClass.getVar(s);
-                else
-                    b = currMethod.getVar(s);
-            } else
-                b = currBlock.getVar(s);
+            b = currBlock.getVar(s);
+            if(b == null) {
+                b = currMethod.getVar(s);
+                if(b == null) b = currClass.getVar(s);
+            } else b = currBlock.getVar(s);
         }
 
         return b != null ? b.getType() : null;
@@ -163,7 +159,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        blockId = 0; // Reset the block counter for this method
+        blockId = -1; // Reset the block counter for this method
         return n.t;
     }
 
