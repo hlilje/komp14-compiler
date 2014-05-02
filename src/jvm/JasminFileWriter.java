@@ -42,6 +42,8 @@ public class JasminFileWriter {
         }
     }
 
+    /* JASMIN DECLARATIONS */
+
     // Helper method to write a class declaration in Jasmin syntax
     public void declareClass(String src, String clss, String spr) {
         // Declare Jasmin source file
@@ -55,6 +57,12 @@ public class JasminFileWriter {
 
     // Wrapper method to declare a field in a Jasmin source file
     public void declareField(VMAccess vma) {
+        sb.append(vma.declare());
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Wrapper method to declare a local Jasmin variable in a method
+    public void declareLocal(VMAccess vma) {
         sb.append(vma.declare());
         sb.append(System.getProperty("line.separator"));
     }
@@ -78,6 +86,16 @@ public class JasminFileWriter {
         sb.append(".end method");
         sb.append(System.getProperty("line.separator"));
     }
+
+    // Helper method to set which directives to use for the Jasmin method decl
+    public void limitMethod(int locals, int stackDepth) {
+        sb.append("    .limit stack "); sb.append(stackDepth);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("    .limit locals "); sb.append(locals);
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    /* JASMIN RETURNS */
 
     // Sets the return op based on given type
     public void setReturn(Type t) {
@@ -105,25 +123,15 @@ public class JasminFileWriter {
         }
     }
 
-    // Helper method to set which directives to use for the Jasmin method decl
-    public void limitMethod(int locals, int stackDepth) {
-        sb.append("    .limit stack "); sb.append(stackDepth);
-        sb.append(System.getProperty("line.separator"));
-        sb.append("    .limit locals "); sb.append(locals);
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Wrapper method to declare a local Jasmin variable in a method
-    public void declareLocal(VMAccess vma) {
-        sb.append(vma.declare());
-        sb.append(System.getProperty("line.separator"));
-    }
+    /* JASMIN CONSTANTS */
 
     // Wrapper method to push an interger literal to the stack
     public void pushInt(IntegerLiteral n) {
         sb.append("    ldc "); sb.append(n.i);
         sb.append(System.getProperty("line.separator"));
     }
+
+    /* JASMIN OPERATORS */
 
     // Jasmin add op
     public void add() {
@@ -144,6 +152,8 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
+    /* JASMIN OBJECT CREATION */
+
     // Declare new Jasmin class
     // No inheritance
     public void newObject(String className) {
@@ -158,6 +168,8 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
+    /* JASMIN PRINT */
+
     // Call Java's print method with Jasmin
     public void print() {
         sb.append("    getstatic java/lang/System/out Ljava/io/PrintStream;");
@@ -170,25 +182,15 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
+    /* JASMIN LOADING */
+
     // Jasmin method to load the given VMAccess
     public void loadAccess(VMAccess vma) {
         sb.append(vma.load());
         sb.append(System.getProperty("line.separator"));
     }
 
-    // Jasmin method to begin a while loop
-    public void whileBegin(int id) {
-        sb.append("while"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
-    }
-
-    // Jasmin method to begin end a while loop
-    public void whileEnd(int id) {
-        sb.append("    goto while"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
-        sb.append("done:");
-        sb.append(System.getProperty("line.separator"));
-    }
+    /* JASMIN COMPARISON */
 
     // Jasmin method for < ('And' branch)
     public void lessThanAnd(int id) {
@@ -262,6 +264,8 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
+    /* JASMIN BRANCH LABELS */
+
     // Jasmin method to set the jump label for 'else'
     public void setElse(int id) {
         sb.append("else"); sb.append(id); sb.append(":");
@@ -283,6 +287,13 @@ public class JasminFileWriter {
     // Jasmin method to used to set a label for the 'if' block
     public void setIf(int id) {
         sb.append("if"); sb.append(id); sb.append(":");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // By using this method for 'while' it's possible to reuse the
+    // methods for 'if' 'else' branching
+    public void setGotoIf(int id) {
+        sb.append("goto if"); sb.append(id);
         sb.append(System.getProperty("line.separator"));
     }
 }

@@ -27,7 +27,7 @@ public class JasminVisitor implements Visitor {
     private BlockTable currBlock;
 
     private int blockId; // Unique id for blocks
-    private int elseId; // Unique id for else
+    private int branchId; // Unique id for branching
     private JasminFileWriter jfw;
     private int stackDepth; // Keep track of needed stack depth
     private BranchType branch;
@@ -39,7 +39,7 @@ public class JasminVisitor implements Visitor {
         currMethod = null;
         currBlock = null;
         blockId = -1; // To give block #1 id 0
-        elseId = -1; // To give else #1 id 0
+        branchId = -1; // To give branch block #1 id 0
         jfw = new JasminFileWriter(error, tfp);
         stackDepth = 0;
         branch = BranchType.NONE; // Default not branching
@@ -306,17 +306,18 @@ public class JasminVisitor implements Visitor {
     public void visit(If n) {
         BranchType prevBranch = branch;
         branch = BranchType.IF;
-        elseId++;
-        int thisElseId = elseId; // To avoid increasing counter for nested blocks
+        branchId++;
+        int thisBranchId = branchId; // To avoid increasing counter for nested blocks
 
         n.e.accept(this);
 
+        jfw.setIf(thisBranchId); // Branch here if an 'Or' expression was true
         n.s1.accept(this);
-        jfw.setGotoSkip(thisElseId); // To avoid always executing 'else'
+        jfw.setGotoSkip(thisBranchId); // To avoid always executing 'else'
 
-        jfw.setElse(thisElseId);
+        jfw.setElse(thisBranchId); // 'Else' block
         n.s2.accept(this);
-        jfw.setSkip(thisElseId); // Skip here if not 'else'
+        jfw.setSkip(thisBranchId); // Skip here if not 'else'
 
         branch = prevBranch;
     }
@@ -326,15 +327,15 @@ public class JasminVisitor implements Visitor {
     public void visit(While n) {
         BranchType prevBranch = branch;
         branch = BranchType.WHILE;
-        // Since blockId will be immediately incremented in the block
-        int thisBlockId = blockId + 1;
+        branchId++;
+        int thisBranchId = branchId; // To avoid increasing counter for nested blocks
 
-        jfw.whileBegin(thisBlockId);
+        jfw.setIf(thisBranchId); // Use 'if' branches for simplicity
         n.e.accept(this);
 
         n.s.accept(this);
-        jfw.whileEnd(thisBlockId);
-        jfw.setElse(thisBlockId); // Use 'else' to skip looping if exp was false
+        jfw.setGotoIf(branchId); // Loop
+        jfw.setElse(branchId); // The 'else' will skip the while block
 
         branch = prevBranch;
     }
@@ -380,10 +381,10 @@ public class JasminVisitor implements Visitor {
 
         switch(branch) {
             case AND:
-                jfw.greaterThan(elseId);
+                jfw.greaterThanAnd(branchId);
                 break;
             case OR:
-                jfw.lessThanEquals(elseId);
+                jfw.lessThanEqualsOr(branchId);
                 break;
             default:
                 break;
@@ -488,10 +489,10 @@ public class JasminVisitor implements Visitor {
 
         switch(branch) {
             case AND:
-                jfw.greaterThan(elseId);
+                jfw.greaterThanAnd(branchId);
                 break;
             case OR:
-                jfw.lessThanEquals(elseId);
+                jfw.lessThanEqualsOr(branchId);
                 break;
             default:
                 break;
@@ -506,10 +507,10 @@ public class JasminVisitor implements Visitor {
 
         switch(branch) {
             case AND:
-                jfw.lessThanEquals(elseId);
+                jfw.lessThanEqualsAnd(branchId);
                 break;
             case OR:
-                jfw.greaterThan(elseId);
+                jfw.greaterThanOr(branchId);
                 break;
             default:
                 break;
@@ -524,10 +525,10 @@ public class JasminVisitor implements Visitor {
 
         switch(branch) {
             case AND:
-                jfw.lessThan(elseId);
+                jfw.lessThanAnd(branchId);
                 break;
             case OR:
-                jfw.greaterThanEquals(elseId);
+                jfw.greaterThanEqualsOr(branchId);
                 break;
             default:
                 break;
@@ -542,10 +543,10 @@ public class JasminVisitor implements Visitor {
 
         switch(branch) {
             case AND:
-                jfw.equalsNot(elseId);
+                jfw.equalsNotAnd(branchId);
                 break;
             case OR:
-                jfw.equals(elseId);
+                jfw.equalsOr(branchId);
                 break;
             default:
                 break;
@@ -560,10 +561,10 @@ public class JasminVisitor implements Visitor {
 
         switch(branch) {
             case AND:
-                jfw.equals(elseId);
+                jfw.equalsAnd(branchId);
                 break;
             case OR:
-                jfw.equalsNot(elseId);
+                jfw.equalsNotOr(branchId);
                 break;
             default:
                 break;
