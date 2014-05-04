@@ -398,11 +398,9 @@ public class JasminFileWriter {
     /* JASMIN METHOD CALLS */
 
     // Jasmin virtual method call
-    public void methodCall(String className, String methodName,
-            java.util.ArrayList<Binding> fl, Type t) {
+    public void methodCall(String className, VMFrame vmf) {
         sb.append("    invokevirtual "); sb.append(className);
-        sb.append("/"); sb.append(methodName);
-        sb.append(Hardware.methodSignature(fl, t));
+        sb.append("/"); sb.append(vmf.procEntry());
         sb.append(System.getProperty("line.separator"));
     }
 

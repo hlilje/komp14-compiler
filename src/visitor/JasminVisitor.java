@@ -434,8 +434,7 @@ public class JasminVisitor implements Visitor {
 
         // TODO This doesn't work since the class may not have been
         // visited yet, meaning that the VMAccess won't be found
-        jfw.methodCall(ct.getId().toString(), mt.getId().toString(),
-                mt.getOrderedFormals(), mt.getType());
+        //jfw.methodCall(ct.getId().toString(), VMFrame vmf);
     }
 
     // int i;
