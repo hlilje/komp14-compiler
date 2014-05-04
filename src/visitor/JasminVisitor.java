@@ -203,6 +203,7 @@ public class JasminVisitor implements Visitor {
         currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
         currBlock = null; // Reset block scope
 
+        // TODO Maybe do this earlier/in another Visitor
         Frame frame = new Frame(currMethod.getId().toString(), n.fl, currMethod.getType());
         if(DEBUG) System.out.println(frame.toString());
         jfw.declareMethod("public", frame);
@@ -433,7 +434,8 @@ public class JasminVisitor implements Visitor {
         MethodTable mt = ct.getMethod(Symbol.symbol(n.i.toString()));
 
         // TODO This doesn't work since the class may not have been
-        // visited yet, meaning that the VMAccess won't be found
+        // visited yet, meaning that the VMFrame won't be allocated.
+        // Either make a new Visitor, or save it in one of the earlier.
         //jfw.methodCall(ct.getId().toString(), VMFrame vmf);
     }
 
