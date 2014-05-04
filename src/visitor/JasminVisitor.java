@@ -203,7 +203,7 @@ public class JasminVisitor implements Visitor {
         currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
         currBlock = null; // Reset block scope
 
-        Frame frame = new Frame("main", n.fl, currMethod.getType());
+        Frame frame = new Frame(currMethod.getId().toString(), n.fl, currMethod.getType());
         if(DEBUG) System.out.println(frame.toString());
         jfw.declareMethod("public", frame);
         stackDepth = stackDepth + n.fl.size();
