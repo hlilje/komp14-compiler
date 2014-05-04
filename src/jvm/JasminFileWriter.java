@@ -9,6 +9,7 @@ import error.*;
 import jvm.*;
 import frame.VMAccess;
 import frame.VMFrame;
+import symbol.Binding;
 
 public class JasminFileWriter {
     public static final boolean DEBUG = false;
@@ -394,17 +395,16 @@ public class JasminFileWriter {
         sb.append(System.getProperty("line.separator"));
     }
 
-
     /* JASMIN METHOD CALLS */
 
-    // TODO: Not done, needs type info
     // Jasmin virtual method call
-    public void methodCall(String className, String methodName) {
-        sb.append("    invokevirtual " + className +"/"+ methodName);
+    public void methodCall(String className, String methodName,
+            java.util.ArrayList<Binding> fl, Type t) {
+        sb.append("    invokevirtual "); sb.append(className);
+        sb.append("/"); sb.append(methodName);
+        sb.append(Hardware.methodSignature(fl, t));
         sb.append(System.getProperty("line.separator"));
     }
-
-    /* JASMIN THIS */
 
     // Jasmin method for 'this' call
     public void loadThis() {

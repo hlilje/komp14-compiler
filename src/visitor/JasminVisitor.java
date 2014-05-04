@@ -432,8 +432,10 @@ public class JasminVisitor implements Visitor {
 
         MethodTable mt = ct.getMethod(Symbol.symbol(n.i.toString()));
 
-        // TODO: find all types and use
-        // jfw.methodCall(String className, String methodName)
+        // TODO This doesn't work since the class may not have been
+        // visited yet, meaning that the VMAccess won't be found
+        jfw.methodCall(ct.getId().toString(), mt.getId().toString(),
+                mt.getOrderedFormals(), mt.getType());
     }
 
     // int i;
