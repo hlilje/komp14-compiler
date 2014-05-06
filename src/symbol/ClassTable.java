@@ -2,18 +2,21 @@ package symbol;
 
 import syntaxtree.*;
 import frame.VMAccess;
+import frame.VMFrame;
 
 public class ClassTable {
     private Symbol s;
     private Table locals;
     private Table methods;
     private Table fieldAccesses; // VMAccesses for fields
+    private Table frames; // JVM Frames
 
     public ClassTable(Symbol s) {
         this.s = s;
         locals = new Table();
         methods = new Table();
         fieldAccesses = new Table();
+        frames = new Table();
     }
 
     public Symbol getId() {
@@ -57,5 +60,14 @@ public class ClassTable {
 
     public VMAccess getFieldAccess(Symbol s) {
         return (VMAccess)fieldAccesses.get(s);
+    }
+
+    // Save a JVM frame
+    public void addFrame(Symbol s, VMFrame f) {
+        fieldAccesses.put(s, f);
+    }
+
+    public VMFrame getFrame(Symbol s) {
+        return (VMFrame)locals.get(s);
     }
 }
