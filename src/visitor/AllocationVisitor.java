@@ -1,5 +1,5 @@
 /**
- * Visitor for generating Jasmin code.
+ * Visitor for creating classes used for Jasmin code generation.
  */
 
 package visitor;
@@ -11,11 +11,10 @@ import jvm.*;
 import frame.VMAccess;
 import frame.VMFrame;
 
-public class JasminVisitor implements Visitor {
+public class AllocationVisitor implements Visitor {
     public static final boolean DEBUG = true;
 
     private ErrorHandler error;
-    private JasminFileWriter jfw;
 
     private SymbolTable symTable;
     private ClassTable currClass;
@@ -23,19 +22,14 @@ public class JasminVisitor implements Visitor {
     private BlockTable currBlock;
 
     private int blockId; // Unique id for blocks
-    private int branchId; // Unique id for branching
-    private int stackDepth; // Keep track of needed stack depth
 
-    public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
+    public AllocationVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
         this.symTable = symTable;
         currClass = null;
         currMethod = null;
         currBlock = null;
         blockId = -1; // To give block #1 id 0
-        branchId = -1; // To give branch block #1 id 0
-        stackDepth = 0;
-        jfw = new JasminFileWriter(error, tfp);
     }
 
     // Helper method to search the scopes for the given string
@@ -103,7 +97,7 @@ public class JasminVisitor implements Visitor {
         } else if(n.e instanceof This) {
             className = currClass.getMethod(Symbol.symbol(n.i.s)).getId().toString();
         } else {
-            error.complain("Invalid expression type of Call in JasminVisitor",
+            error.complain("Invalid expression type of Call in AllocationVisitor",
                     ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
@@ -508,30 +502,20 @@ public class JasminVisitor implements Visitor {
     }
 
     public void visit(This n) {
-        // TODO This might be done by calling a method somewhere
-        jfw.loadThis();
-        stackDepth++;
     }
 
     // Exp e;
     public void visit(NewArray n) {
         n.e.accept(this);
-        jfw.newArray();
-        stackDepth++; // TODO
     }
 
     // Identifier i;
     public void visit(NewObject n) {
-        jfw.newObject(n.i.s);
-        stackDepth++; // TODO
     }
 
     // Exp e;
     public void visit(Not n) {
-        branchId++;
-        int thisBranchId = branchId;
         n.e.accept(this);
-        jfw.not(thisBranchId);
     }
 
     // String s;
@@ -542,58 +526,35 @@ public class JasminVisitor implements Visitor {
     public void visit(LessThanEquals n) {
         n.e1.accept(this);
         n.e2.accept(this);
-
-        branchId++;
-        jfw.lessThanEquals(branchId);
-        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
     public void visit(GreaterThan n) {
         n.e1.accept(this);
         n.e2.accept(this);
-
-        branchId++;
-        jfw.greaterThan(branchId);
-        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
     public void visit(GreaterThanEquals n) {
         n.e1.accept(this);
         n.e2.accept(this);
-
-        branchId++;
-        jfw.greaterThanEquals(branchId);
-        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
     public void visit(Equals n) {
         n.e1.accept(this);
         n.e2.accept(this);
-
-        branchId++;
-        jfw.equals(branchId);
-        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
     public void visit(EqualsNot n) {
         n.e1.accept(this);
         n.e2.accept(this);
-
-        branchId++;
-        jfw.equalsNot(branchId);
-        stackDepth--; // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
     public void visit(Or n) {
         n.e1.accept(this);
         n.e2.accept(this);
-
-        jfw.or();
-        stackDepth--; // The result is pushed onto the op stack
     }
 }
