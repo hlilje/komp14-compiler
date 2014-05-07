@@ -2,6 +2,7 @@ package symbol;
 
 import syntaxtree.*;
 import frame.VMAccess;
+import frame.VMFrame;
 
 public class BlockTable {
     public static final boolean DEBUG = false;
@@ -10,12 +11,14 @@ public class BlockTable {
     private BlockTable bt;
     private Table locals;
     private Table localAccesses; // VMAccesses for locals
+    private Table frames; // JVM Frames
 
     public BlockTable(int id, BlockTable bt) {
         this.id = id;
         this.bt = bt;
         locals = new Table();
         localAccesses = new Table();
+        frames = new Table();
     }
 
     public int getId() {
@@ -62,5 +65,14 @@ public class BlockTable {
         if(vma == null && bt != null)
             return bt.getAccess(s); // Up a scope level
         return vma; // Not a nested block
+    }
+
+    // Save a JVM frame
+    public void addFrame(Symbol s, VMFrame f) {
+        frames.put(s, f);
+    }
+
+    public VMFrame getFrame(Symbol s) {
+        return (VMFrame)frames.get(s);
     }
 }
