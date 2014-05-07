@@ -183,7 +183,8 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            jfw.declareLocal(vma);
+            // TODO This is only for debugging
+            //jfw.declareLocal(vma);
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
@@ -311,7 +312,8 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            jfw.declareLocal(vma);
+            // TODO This is only for debugging
+            //jfw.declareLocal(vma);
             // TODO Don't think this is correct, should only stack size 1 for all vars
             // Need to fix jasmin code for programs with several classes first to test
             incrStack();
@@ -375,7 +377,8 @@ public class JasminVisitor implements Visitor {
                     System.out.println("  VMA was null for block id: " + blockId);
                 }
             }
-            jfw.declareLocal(vma); // TODO This might need to be handled differently
+            // TODO This is only for debugging
+            //jfw.declareLocal(vma); // TODO This might need to be handled differently
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
