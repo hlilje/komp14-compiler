@@ -15,7 +15,7 @@
         <delete dir="${build.dir}" />
         <delete file="${jar.file}" />
         <delete>
-            <fileset dir="." includes="**/*.s, **/*.j"/>
+            <fileset dir="." includes="**/*.s, **/*.j, **/*.class"/>
         </delete>
     </target>
 

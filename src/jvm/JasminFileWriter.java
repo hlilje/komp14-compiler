@@ -257,7 +257,7 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
         sb.append(System.lineSeparator());
-        sb.append("    goto skip "); sb.append(id);
+        sb.append("    goto skip"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
@@ -273,7 +273,7 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
         sb.append(System.lineSeparator());
-        sb.append("    goto skip "); sb.append(id);
+        sb.append("    goto skip"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
@@ -289,7 +289,7 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
         sb.append(System.lineSeparator());
-        sb.append("    goto skip "); sb.append(id);
+        sb.append("    goto skip"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
@@ -305,7 +305,7 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
         sb.append(System.lineSeparator());
-        sb.append("    goto skip "); sb.append(id);
+        sb.append("    goto skip"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
@@ -321,7 +321,7 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
         sb.append(System.lineSeparator());
-        sb.append("    goto skip "); sb.append(id);
+        sb.append("    goto skip"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
@@ -352,7 +352,7 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // Switch to false
         sb.append(System.lineSeparator());
-        sb.append("    goto skip "); sb.append(id);
+        sb.append("    goto skip"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("true"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
