@@ -12,7 +12,7 @@ import frame.VMFrame;
 import symbol.Binding;
 
 public class JasminFileWriter {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
     private java.lang.StringBuilder sb; // The Jasmin string to write to file

@@ -12,7 +12,7 @@ import frame.VMAccess;
 import frame.VMFrame;
 
 public class JasminVisitor implements Visitor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
     private JasminFileWriter jfw;
@@ -121,7 +121,12 @@ public class JasminVisitor implements Visitor {
         } else if(n.e instanceof IdentifierExp) {
             className = getClassFromVar(((IdentifierExp)n.e).s);
         } else if(n.e instanceof Call) {
-            className = getClassFromCall((Call)n.e);
+            // TODO Might recursively become current class which is wrong
+            //className = getClassFromCall((Call)n.e);
+            String tempName = getClassFromCall((Call)n.e);
+            ClassTable ct = symTable.getClass(Symbol.symbol(tempName));
+            MethodTable mt = ct.getMethod(Symbol.symbol(((Call)n.e).i.s));
+            className = ((IdentifierType)mt.getType()).toString();
         } else if(n.e instanceof This) {
             className = currClass.getId().toString();
         } else {
@@ -510,11 +515,11 @@ public class JasminVisitor implements Visitor {
             if(ct == null) {
                 System.out.println("    class was not found");
             } else if(ct.getFrame(Symbol.symbol(n.i.s)) == null) {
-                System.out.println("    got no frame");
+                System.out.println("    got no frame for " + n.i.s);
             }
         }
 
-        VMFrame vmf = symTable.getClass(Symbol.symbol(className))
+        Frame frame = (Frame)symTable.getClass(Symbol.symbol(className))
             .getFrame(Symbol.symbol(n.i.s));
 
         n.e.accept(this);
@@ -523,10 +528,10 @@ public class JasminVisitor implements Visitor {
             n.el.elementAt(i).accept(this);
         }
 
-        if(DEBUG && vmf == null) {
-            System.out.println("    Will call methodCall with null vmf");
+        if(DEBUG && frame == null) {
+            System.out.println("    Will call methodCall with null frame");
         }
-        jfw.methodCall(className, vmf);
+        jfw.methodCall(className, frame);
     }
 
     // int i;

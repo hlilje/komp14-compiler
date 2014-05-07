@@ -222,6 +222,7 @@ public class DepthFirstVisitor implements Visitor {
 
         // Create this frame here since it may not be declared yet due to
         // depth first visit in JasminVisitior
+        if(DEBUG) System.out.println("Adding frame " + s + " to class " + currClass.getId());
         Frame frame = new Frame(n.i.s, n.fl, n.t);
         currClass.addFrame(s, frame);
 
