@@ -5,7 +5,8 @@
 // EXT:BDJ
 // EXT:ISC
 // EXT:ICG
-
+// EXT:CEQ
+// EXT:CNE
 class SequencePrinting {
 	public static void main(String[] args) {
 		SequencePrinter sp;

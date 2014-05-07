@@ -1,3 +1,4 @@
+//EXT:!CNE
 /* Various syntax errors */
 
 /* This is a comment */

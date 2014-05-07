@@ -1,5 +1,5 @@
 //EXT:CEQ
-//EXT:NEQ
+//EXT:CNE
 //EXT:BDJ
 class BooleanTrouble {
 

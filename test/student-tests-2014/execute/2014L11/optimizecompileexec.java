@@ -1,5 +1,7 @@
 // EXT:BDJ
-// SPECIALEXT:Optimize
+// EXT:CEQ
+// EXT:CNE
+
 class Main {
 	public static void main(String[] s) {
 		System.out.println((new Pass0()).test());

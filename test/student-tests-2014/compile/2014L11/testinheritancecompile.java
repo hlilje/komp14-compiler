@@ -1,6 +1,11 @@
 // EXT:ISC
 // EXT:LONG
 // EXT:SPILL
+// EXT:CLE
+// EXT:CGT
+// EXT:CGE
+// EXT:CEQ
+// EXT:CNE
 class Main {
 	public static void main(String[] s) {
 		B b1;

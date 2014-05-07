@@ -1,3 +1,4 @@
+//EXT:CNE
 /* Multiple declarations of variables */
 
 class Main

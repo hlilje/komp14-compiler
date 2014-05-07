@@ -1,5 +1,5 @@
 // EXT:CEQ
-// EXT:NEQ
+// EXT:CNE
 // EXT:CLE
 // EXT:CGT
 // EXT:CGE
