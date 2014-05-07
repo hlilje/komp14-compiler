@@ -142,7 +142,7 @@ MainClass MainClass() :
     VarDeclList vdl = new VarDeclList(); VarDecl vd;
 }
 {
-    "class" i1 = Identifier() "{" "public" "static" "void" i3 = Identifier() "(" "String" "[" "]"
+    "class" i1 = Identifier() "{" "public" "static" "void" i3 = MainIdentifier() "(" "String" "[" "]"
     i2 = Identifier() ")" "{" ( LOOKAHEAD(2) vd = VarDecl() { vdl.addElement(vd); } )*
     ( s = Stmt() { sl.addElement(s); } )* "}" "}"
     { return new MainClass(i1, i2, i3, sl, vdl); }
@@ -198,13 +198,13 @@ Formal FormalRest() :
 }
 
 Type Type() :
-{ Type t; Token tok; }
+{ Type t; Identifier i; }
 {
     (
     LOOKAHEAD(2) "int" "[" "]" { t = new IntArrayType(); }
     | "boolean" { t = new BooleanType(); }
     | "int" { t = new IntegerType(); }
-    | tok = <IDENTIFIER> { t  = new IdentifierType(tok.toString()); }
+    | i = Identifier() { t  = new IdentifierType(i.s); }
     )
     { return t; }
 }
@@ -384,13 +384,13 @@ Exp PostfixExp() :
 
 // Binds the tightest
 Exp PrimaryExp() :
-{ Exp e, ie, ep; Token i; Identifier id; }
+{ Exp e, ie, ep; Identifier i, id; }
 {
     (
     e = IntegerLiteral()
     | "true" { e = new True(); }
     | "false" { e = new False(); }
-    | i = <IDENTIFIER> { e = new IdentifierExp(i.toString()); }
+    | i = Identifier() { e = new IdentifierExp(i.s); }
     | "this" { e = new This(); }
     | "(" e = Exp() ")"
     | LOOKAHEAD(2) "new" "int" "[" ie = Exp() "]" NewArrayRest(ie) { e = new NewArray(ie); }
@@ -429,6 +429,15 @@ Identifier Identifier() :
 { Token i; }
 {
     i = <IDENTIFIER>
+    // Add '_' to make sure names are not reserved in Jasmin
+    { return new Identifier(i.toString() + "_"); }
+}
+
+Identifier MainIdentifier() :
+{ Token i; }
+{
+    i = <IDENTIFIER>
+    // Allow 'main' to be anything
     { return new Identifier(i.toString()); }
 }
 

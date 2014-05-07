@@ -44,7 +44,7 @@ System.err.println(e);
     jj_consume_token(PUBLIC);
     jj_consume_token(STATIC);
     jj_consume_token(VOID);
-    i3 = Identifier();
+    i3 = MainIdentifier();
     jj_consume_token(LPAREN);
     jj_consume_token(STRING);
     jj_consume_token(LBRACKET);
@@ -220,7 +220,7 @@ fl.addElement(f);
     throw new Error("Missing return statement in function");
   }
 
-  final public Type Type() throws ParseException {Type t; Token tok;
+  final public Type Type() throws ParseException {Type t; Identifier i;
     if (jj_2_3(2)) {
       jj_consume_token(INT);
       jj_consume_token(LBRACKET);
@@ -239,8 +239,8 @@ t = new IntegerType();
         break;
         }
       case IDENTIFIER:{
-        tok = jj_consume_token(IDENTIFIER);
-t  = new IdentifierType(tok.toString());
+        i = Identifier();
+t  = new IdentifierType(i.s);
         break;
         }
       default:
@@ -687,7 +687,7 @@ e = new ArrayLength(e);
   }
 
 // Binds the tightest
-  final public Exp PrimaryExp() throws ParseException {Exp e, ie, ep; Token i; Identifier id;
+  final public Exp PrimaryExp() throws ParseException {Exp e, ie, ep; Identifier i, id;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INTEGER_LITERAL:{
       e = IntegerLiteral();
@@ -704,8 +704,8 @@ e = new False();
       break;
       }
     case IDENTIFIER:{
-      i = jj_consume_token(IDENTIFIER);
-e = new IdentifierExp(i.toString());
+      i = Identifier();
+e = new IdentifierExp(i.s);
       break;
       }
     case THIS:{
@@ -804,6 +804,12 @@ el.addElement(e2);
 
 // To be able to extract the identifier value
   final public Identifier Identifier() throws ParseException {Token i;
+    i = jj_consume_token(IDENTIFIER);
+{if ("" != null) return new Identifier(i.toString() + "_");}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Identifier MainIdentifier() throws ParseException {Token i;
     i = jj_consume_token(IDENTIFIER);
 {if ("" != null) return new Identifier(i.toString());}
     throw new Error("Missing return statement in function");
@@ -937,7 +943,7 @@ el.addElement(e2);
 
   private boolean jj_3R_24()
  {
-    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_3R_20()) return true;
     return false;
   }
 
