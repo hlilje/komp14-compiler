@@ -89,6 +89,7 @@ public class JVMMain {
             }
         } catch (Exception e) {
             error.complain(e.toString(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
+            e.printStackTrace();
         }
 
         if(error.anyErrors()) {

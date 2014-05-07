@@ -7,6 +7,7 @@ package visitor;
 import syntaxtree.*;
 import error.*;
 import symbol.*;
+import jvm.Frame;
 
 public class DepthFirstVisitor implements Visitor {
     public static final boolean DEBUG = false;
@@ -218,6 +219,11 @@ public class DepthFirstVisitor implements Visitor {
                     ErrorHandler.ErrorCode.ALREADY_DEFINED);
         } else
             currMethod = mt;
+
+        // Create this frame here since it may not be declared yet due to
+        // depth first visit in JasminVisitior
+        Frame frame = new Frame(n.i.s, n.fl, n.t);
+        currClass.addFrame(s, frame);
 
         n.i.accept(this);
 

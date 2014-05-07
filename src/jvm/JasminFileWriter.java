@@ -12,7 +12,7 @@ import frame.VMFrame;
 import symbol.Binding;
 
 public class JasminFileWriter {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private ErrorHandler error;
     private java.lang.StringBuilder sb; // The Jasmin string to write to file
@@ -401,6 +401,9 @@ public class JasminFileWriter {
 
     // Jasmin virtual method call
     public void methodCall(String className, VMFrame vmf) {
+        if(DEBUG) {
+            if(vmf == null) System.out.println("  Got a NULL vmf for class name " + className);
+        }
         sb.append("    invokevirtual "); sb.append(className);
         sb.append("/"); sb.append(vmf.procEntry());
         sb.append(System.lineSeparator());

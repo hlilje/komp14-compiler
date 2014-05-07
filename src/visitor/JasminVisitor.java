@@ -12,7 +12,7 @@ import frame.VMAccess;
 import frame.VMFrame;
 
 public class JasminVisitor implements Visitor {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private ErrorHandler error;
     private JasminFileWriter jfw;
@@ -101,10 +101,15 @@ public class JasminVisitor implements Visitor {
         } else if(n.e instanceof Call) {
             className = getClassFromCall((Call)n.e);
         } else if(n.e instanceof This) {
-            className = currClass.getMethod(Symbol.symbol(n.i.s)).getId().toString();
+            className = currClass.getId().toString();
         } else {
             error.complain("Invalid expression type of Call in JasminVisitor",
                     ErrorHandler.ErrorCode.INTERNAL_ERROR);
+        }
+
+        if(className == null) {
+            error.complain("null className for call in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
         return className;
@@ -251,6 +256,10 @@ public class JasminVisitor implements Visitor {
 
         Frame frame = (Frame)currClass.getFrame(s); // Created in DepthFirstVisitor
         if(DEBUG) System.out.println(frame.toString());
+        if(frame == null) {
+            error.complain("null frame for method " + s + " in class " + currClass.getId(),
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
+        }
         jfw.declareMethod("public", frame);
         stackDepth = stackDepth + n.fl.size();
 
@@ -318,7 +327,6 @@ public class JasminVisitor implements Visitor {
         currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
         // TODO Handle VarDecl in Blocks
-        // TODO Don't save this frame as it won't be needed for the Jasmin Call
         Frame frame = new Frame(currMethod.getId().toString(), null, null);
         if(DEBUG) System.out.println(frame.toString());
 
@@ -465,8 +473,19 @@ public class JasminVisitor implements Visitor {
     // Identifier i;
     // ExpList el;
     public void visit(Call n) {
-        if(DEBUG) System.out.println(">>>> Call");
+        if(DEBUG) System.out.println(">>>> Call: " + n.i.s);
         String className = getClassFromCall(n);
+
+        if(DEBUG) {
+            System.out.println("  Try to get class " + className);
+            ClassTable ct = symTable.getClass(Symbol.symbol(className));
+            if(ct == null) {
+                System.out.println("    class was not found");
+            } else if(ct.getFrame(Symbol.symbol(n.i.s)) == null) {
+                System.out.println("    got no frame");
+            }
+        }
+
         VMFrame vmf = symTable.getClass(Symbol.symbol(className))
             .getFrame(Symbol.symbol(n.i.s));
 
@@ -476,9 +495,9 @@ public class JasminVisitor implements Visitor {
             n.el.elementAt(i).accept(this);
         }
 
-        // TODO This doesn't work since the class may not have been
-        // visited yet, meaning that the VMFrame won't be allocated.
-        // Either make a new Visitor, or save it in one of the earlier.
+        if(DEBUG && vmf == null) {
+            System.out.println("    Will call methodCall with null vmf");
+        }
         jfw.methodCall(className, vmf);
     }
 
