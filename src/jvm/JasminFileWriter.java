@@ -51,17 +51,17 @@ public class JasminFileWriter {
     public void declareClass(String src, String clss, String spr) {
         // Declare Jasmin source file
         sb.append(".source "); sb.append(src); sb.append(".j");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append(".class "); sb.append(clss);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append(".super "); sb.append(spr);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Wrapper method to declare a field in a Jasmin source file
     public void declareField(VMAccess vma) {
         sb.append(vma.declare());
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Wrapper method to declare a local Jasmin variable in a method
@@ -70,7 +70,7 @@ public class JasminFileWriter {
             if(vma == null) System.out.println("  Try to declare a NULL vma");
         }
         sb.append(vma.declare());
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Helper method to declare a method for a Jasmin source file
@@ -78,27 +78,27 @@ public class JasminFileWriter {
     public void declareMethod(String acs, VMFrame vmf) {
         sb.append(".method "); sb.append(acs); sb.append(" ");
         sb.append(vmf.procEntry()); // Name decl according to Jasmin spec
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Special method to handle the main method with Jasmin
     public void declareMainMethod() {
         sb.append(".method public static main([Ljava/lang/String;)V");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Helper method to end a Jasmin method declaration
     public void declareMethodEnd() {
         sb.append(".end method");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Helper method to set which directives to use for the Jasmin method decl
     public void limitMethod(int locals, int stackDepth) {
         sb.append("    .limit stack "); sb.append(stackDepth);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    .limit locals "); sb.append(locals);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     /* JASMIN RETURNS */
@@ -109,7 +109,7 @@ public class JasminFileWriter {
             sb.append("    return");
         else
             sb.append(returnWithType(t));
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Helper method to format the return type for Jasmin
@@ -134,19 +134,19 @@ public class JasminFileWriter {
     // Jasmin method to push an interger literal onto the stack
     public void pushInt(IntegerLiteral n) {
         sb.append("    ldc "); sb.append(n.i);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method to push a 'true' literal onto the stack
     public void pushTrue() {
         sb.append("    ldc 1");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method to push a 'false' literal onto the stack
     public void pushFalse() {
         sb.append("    ldc 0");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     /* JASMIN OPERATORS */
@@ -154,20 +154,20 @@ public class JasminFileWriter {
     // Jasmin add op
     public void add() {
         sb.append("    iadd");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin minus op
     public void minus() {
         sb.append("    ineg");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         add(); // Add negated number
     }
 
     // Jasmin multiplication op
     public void mul() {
         sb.append("    imul");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     /* JASMIN OBJECT CREATION */
@@ -177,13 +177,13 @@ public class JasminFileWriter {
     public void newObject(String className) {
         //sb.append("    new java/lang/Object/"); sb.append(className);
         sb.append("    new "); sb.append(className);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Declare new Jasmin int array
     public void newArray() {
         sb.append("    newarray int");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     /* JASMIN PRINT */
@@ -191,7 +191,7 @@ public class JasminFileWriter {
     // Call Java's print method with Jasmin
     public void print() {
         sb.append("    getstatic java/lang/System/out Ljava/io/PrintStream;");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method to finish the print call
@@ -210,7 +210,7 @@ public class JasminFileWriter {
             if(vma == null) System.out.println("  Try to load a NULL vma");
         }
         sb.append(vma.load());
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method to store at the given VMAccess
@@ -219,116 +219,116 @@ public class JasminFileWriter {
             if(vma == null) System.out.println("  Try to store a NULL vma");
         }
         sb.append(vma.store());
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method to load from an Integer Array
     public void loadArray() {
         sb.append("    iaload");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method to store in an Integer Array
     public void storeArray() {
         sb.append("    iastore");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     /* JASMIN COMPARISON */
 
     public void lessThan(int id) {
         sb.append("    if_icmplt const"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    goto skip "); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("skip"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method for >
     public void greaterThan(int id) {
         sb.append("    if_icmpgt const"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    goto skip "); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("skip"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method for <=
     public void greaterThanEquals(int id) {
         sb.append("    if_icmpge const"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    goto skip "); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("skip"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method for >=
     public void lessThanEquals(int id) {
         sb.append("    if_icmple const"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    goto skip "); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("skip"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method for ==
     public void equals(int id) {
         sb.append("    if_icmpeq const"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    goto skip "); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("skip"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method for ==
     public void equalsNot(int id) {
         sb.append("    if_icmpne const"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    goto skip "); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("skip"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     /* JASMIN LOGICAL CONNECTIVES */
@@ -336,30 +336,30 @@ public class JasminFileWriter {
     // Jasmin method for 'And'
     public void and() {
         sb.append("    iand");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method for 'Or'
     public void or() {
         sb.append("    ior");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method for 'Not'
     public void not(int id) {
         // TODO This should be easier
         sb.append("    ifeq "); sb.append("true"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // Switch to false
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    goto skip "); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("true"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // Switch to true
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
         sb.append("skip"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
 
     }
 
@@ -368,25 +368,25 @@ public class JasminFileWriter {
     // Jasmin method for if/while branch check
     public void ifCheck(int id) {
         sb.append("    ifeq "); sb.append("else"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method to set the jump label for 'else' (if/while)
     public void setElse(int id) {
         sb.append("else"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method to set the jump label when skipping 'else'
     public void setSkip(int id) {
         sb.append("skip"); sb.append(id); sb.append(":");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method to used to skip the 'else' block
     public void skip(int id) {
         sb.append("    goto skip"); sb.append(id);
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     /* JASMIN ARRAY LENGTH */
@@ -394,7 +394,7 @@ public class JasminFileWriter {
     // Jasmin method to load the length of an array
     public void arrayLength() {
         sb.append("    arraylength");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     /* JASMIN METHOD CALLS */
@@ -403,12 +403,12 @@ public class JasminFileWriter {
     public void methodCall(String className, VMFrame vmf) {
         sb.append("    invokevirtual "); sb.append(className);
         sb.append("/"); sb.append(vmf.procEntry());
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 
     // Jasmin method for 'this' call
     public void loadThis() {
         sb.append("    aload_0");
-        sb.append(System.getProperty("line.separator"));
+        sb.append(System.lineSeparator());
     }
 }

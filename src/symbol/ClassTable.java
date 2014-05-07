@@ -64,10 +64,10 @@ public class ClassTable {
 
     // Save a JVM frame
     public void addFrame(Symbol s, VMFrame f) {
-        fieldAccesses.put(s, f);
+        frames.put(s, f);
     }
 
     public VMFrame getFrame(Symbol s) {
-        return (VMFrame)locals.get(s);
+        return (VMFrame)frames.get(s);
     }
 }

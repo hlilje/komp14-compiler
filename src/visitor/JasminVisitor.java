@@ -12,7 +12,7 @@ import frame.VMAccess;
 import frame.VMFrame;
 
 public class JasminVisitor implements Visitor {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     private ErrorHandler error;
     private JasminFileWriter jfw;
@@ -249,9 +249,7 @@ public class JasminVisitor implements Visitor {
         currMethod = currClass.getMethod(s);
         currBlock = null; // Reset block scope
 
-        // TODO Maybe do this earlier/in another Visitor
-        Frame frame = new Frame(n.i.s, n.fl, currMethod.getType());
-        currClass.addFrame(s, frame);
+        Frame frame = (Frame)currClass.getFrame(s); // Created in DepthFirstVisitor
         if(DEBUG) System.out.println(frame.toString());
         jfw.declareMethod("public", frame);
         stackDepth = stackDepth + n.fl.size();
