@@ -9,7 +9,7 @@ import error.*;
 import symbol.*;
 
 public class DepthFirstVisitor implements Visitor {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private ErrorHandler error;
     private SymbolTable symTable;

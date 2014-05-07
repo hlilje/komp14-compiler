@@ -12,7 +12,7 @@ import frame.VMAccess;
 import frame.VMFrame;
 
 public class JasminVisitor implements Visitor {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private ErrorHandler error;
     private JasminFileWriter jfw;
@@ -63,6 +63,51 @@ public class JasminVisitor implements Visitor {
                     ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
         return access;
+    }
+
+    // Returns the class name of the given variable's type
+    private String getClassFromVar(String varName) {
+        Symbol s = Symbol.symbol(varName);
+        Binding binding;
+
+        if(currMethod == null)
+            binding = currClass.getVar(s);
+        else if(currBlock == null) {
+            binding = currMethod.getVar(s);
+            if(binding == null) binding = currClass.getVar(s);
+        } else {
+            binding = currBlock.getVar(s);
+            if(binding == null) binding = currMethod.getVar(s);
+            if(binding == null) binding = currClass.getVar(s);
+        }
+
+        if(binding == null) {
+            error.complain(varName + " missing variable",
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
+        }
+
+        // Use the Id Type to extract the class name
+        return ((IdentifierType)binding.getType()).toString();
+    }
+
+    // Recursive helper function to get the class name from a call
+    private String getClassFromCall(Call n) {
+        String className = null;
+
+        if(n.e instanceof NewObject) {
+            className = ((NewObject)n.e).i.s;
+        } else if(n.e instanceof IdentifierExp) {
+            className = getClassFromVar(((IdentifierExp)n.e).s);
+        } else if(n.e instanceof Call) {
+            className = getClassFromCall((Call)n.e);
+        } else if(n.e instanceof This) {
+            className = currClass.getMethod(Symbol.symbol(n.i.s)).getId().toString();
+        } else {
+            error.complain("Invalid expression type of Call in JasminVisitor",
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
+        }
+
+        return className;
     }
 
     // MainClass m;
@@ -123,7 +168,7 @@ public class JasminVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
-        String className = n.i.toString();
+        String className = n.i.s;
         if(DEBUG) System.out.println(">>>> ClassDeclSimple");
         currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = null;
@@ -157,7 +202,7 @@ public class JasminVisitor implements Visitor {
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
         if(DEBUG) System.out.println(">>>> ClassDeclExtends");
-        String className = n.i.toString();
+        String className = n.i.s;
         currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = null;
 
@@ -200,11 +245,13 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     public void visit(MethodDecl n) {
         if(DEBUG) System.out.println(">>>> MethodDecl");
-        currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
+        Symbol s = Symbol.symbol(n.i.s);
+        currMethod = currClass.getMethod(s);
         currBlock = null; // Reset block scope
 
         // TODO Maybe do this earlier/in another Visitor
-        Frame frame = new Frame(currMethod.getId().toString(), n.fl, currMethod.getType());
+        Frame frame = new Frame(n.i.s, n.fl, currMethod.getType());
+        currClass.addFrame(s, frame);
         if(DEBUG) System.out.println(frame.toString());
         jfw.declareMethod("public", frame);
         stackDepth = stackDepth + n.fl.size();
@@ -273,6 +320,7 @@ public class JasminVisitor implements Visitor {
         currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
         // TODO Handle VarDecl in Blocks
+        // TODO Don't save this frame as it won't be needed for the Jasmin Call
         Frame frame = new Frame(currMethod.getId().toString(), null, null);
         if(DEBUG) System.out.println(frame.toString());
 
@@ -419,8 +467,10 @@ public class JasminVisitor implements Visitor {
     // Identifier i;
     // ExpList el;
     public void visit(Call n) {
-        VMAccess vma = getVMAccess(n.i.s);
-        jfw.loadAccess(vma);
+        if(DEBUG) System.out.println(">>>> Call");
+        String className = getClassFromCall(n);
+        VMFrame vmf = symTable.getClass(Symbol.symbol(className))
+            .getFrame(Symbol.symbol(n.i.s));
 
         n.e.accept(this);
         n.i.accept(this);
@@ -428,15 +478,10 @@ public class JasminVisitor implements Visitor {
             n.el.elementAt(i).accept(this);
         }
 
-        ClassTable ct = n.c==null ?
-            currClass : symTable.getClass(Symbol.symbol(n.c));
-
-        MethodTable mt = ct.getMethod(Symbol.symbol(n.i.toString()));
-
         // TODO This doesn't work since the class may not have been
         // visited yet, meaning that the VMFrame won't be allocated.
         // Either make a new Visitor, or save it in one of the earlier.
-        //jfw.methodCall(ct.getId().toString(), VMFrame vmf);
+        jfw.methodCall(className, vmf);
     }
 
     // int i;
