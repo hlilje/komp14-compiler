@@ -408,13 +408,13 @@ public class JasminVisitor implements Visitor {
         branchId++;
         int thisBranchId = branchId; // Avoid id change by nested blocks
 
-        jfw.setSkip(branchId);
+        jfw.setSkip(thisBranchId);
         n.e.accept(this);
         jfw.ifCheck(thisBranchId); // Use 'if' branches for simplicity
 
         n.s.accept(this);
         jfw.skip(thisBranchId); // Use 'skip' for looping for simplicity
-        jfw.setElse(branchId); // The 'else' will skip the while block
+        jfw.setElse(thisBranchId); // The 'else' will skip the while block
     }
 
     // Exp e;
