@@ -854,7 +854,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                      kind = 6;
                   { jjAddStates(0, 2); }
                   break;
-               default : if (i1 == 0 || l1 == 0 || i2 == 0 || l2 == 0) break; else break;
+               default : if (i1 == 0 || l1 == 0 || i2 == 0 ||  l2 == 0) break; else break;
             }
          } while(i != startsAt);
       }
