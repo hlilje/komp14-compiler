@@ -24,7 +24,8 @@ public class JasminVisitor implements Visitor {
 
     private int blockId; // Unique id for blocks
     private int branchId; // Unique id for branching
-    private int stackDepth; // Keep track of needed stack depth
+    private int stackDepth; // Keep track of current stack depth
+    private int stackDepthMax; // Keep track of max stack depth
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
@@ -35,7 +36,28 @@ public class JasminVisitor implements Visitor {
         blockId = -1; // To give block #1 id 0
         branchId = -1; // To give branch block #1 id 0
         stackDepth = 0;
+        stackDepthMax = 0;
         jfw = new JasminFileWriter(error, tfp);
+    }
+
+    // Helper method for incrementing stack depth
+    private void incrStack() {
+        stackDepth++;
+        if (stackDepth > stackDepthMax)
+            stackDepthMax = stackDepth;
+    }
+
+    // Helper method for decrementing stack depth
+    // Don't need to compare to max here since it must've been incremented before
+    private void decrStack() {
+        if (stackDepth > 0)
+            stackDepth--;
+    }
+
+    // Helper method for setting stack depth, only use for reseting stack depth
+    private void setStackDepth(int i) {
+        stackDepth = i;
+        stackDepthMax = i;
     }
 
     // Helper method to search the scopes for the given string
@@ -140,7 +162,8 @@ public class JasminVisitor implements Visitor {
         // No inheritance
         jfw.declareClass(className, className, "java/lang/Object");
         jfw.declareMainMethod();
-        stackDepth++;
+        // TODO: Seems to be needed
+        setStackDepth(1);
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -164,7 +187,7 @@ public class JasminVisitor implements Visitor {
 
         // TODO Calculate needed stack depth
         jfw.setReturn(null);
-        jfw.limitMethod(n.vl.size() + 1, stackDepth); // Add one local for args
+        jfw.limitMethod(Math.max(n.vl.size(), 1), stackDepthMax); // Need at least one local for args
         jfw.declareMethodEnd();
         jfw.createSourceFile(className);
     }
@@ -261,7 +284,8 @@ public class JasminVisitor implements Visitor {
                     ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
         jfw.declareMethod("public", frame);
-        stackDepth = stackDepth + n.fl.size();
+        // TODO: think this works
+        setStackDepth(n.fl.size());
 
         n.t.accept(this);
         n.i.accept(this);
@@ -283,7 +307,9 @@ public class JasminVisitor implements Visitor {
                     System.out.println(((ObjectInFrame)vma).toString());
             }
             jfw.declareLocal(vma);
-            stackDepth++; // TODO This seems to be correct
+            // TODO Don't think this is correct, should only stack size 1 for all vars
+            // Need to fix jasmin code for programs with several classes first to test
+            incrStack();
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
@@ -292,7 +318,7 @@ public class JasminVisitor implements Visitor {
 
         n.e.accept(this);
         jfw.setReturn(currMethod.getType());
-        jfw.limitMethod(n.vl.size() + n.fl.size(), stackDepth);
+        jfw.limitMethod(n.vl.size() + n.fl.size(), stackDepthMax);
         jfw.declareMethodEnd();
         blockId = -1; // Reset the block counter for this method
         branchId = -1; // Reset branch id, will be inc before first assign
@@ -391,6 +417,7 @@ public class JasminVisitor implements Visitor {
         jfw.print();
         n.e.accept(this);
         jfw.printAfter();
+        decrStack();
     }
 
     // Identifier i;
@@ -400,6 +427,7 @@ public class JasminVisitor implements Visitor {
         n.e.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
         jfw.storeAccess(vma);
+        decrStack();
     }
 
     // Identifier i;
@@ -419,7 +447,7 @@ public class JasminVisitor implements Visitor {
         n.e2.accept(this);
 
         jfw.and();
-        stackDepth--; // The result is pushed onto the op stack
+        decrStack(); // The result is pushed onto the op stack
     }
 
     // Exp e1,e2;
@@ -429,7 +457,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.lessThan(branchId);
-        stackDepth--; // Also loads a constant onto the stack
+        decrStack(); // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -437,7 +465,7 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.add();
-        stackDepth--; // Pop values and push result
+        decrStack(); // Pop values and push result
     }
 
     // Exp e1,e2;
@@ -445,7 +473,7 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.minus();
-        stackDepth--; // Pop values and push result
+        decrStack(); // Pop values and push result
     }
 
     // Exp e1,e2;
@@ -453,7 +481,7 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.mul();
-        stackDepth--; // Pop values and push result
+        decrStack(); // Pop values and push result
     }
 
     // Exp e1,e2;
@@ -504,43 +532,43 @@ public class JasminVisitor implements Visitor {
     // int i;
     public void visit(IntegerLiteral n) {
         jfw.pushInt(n);
-        stackDepth++;
+        incrStack();
     }
 
     public void visit(True n) {
         jfw.pushTrue();
-        stackDepth++;
+        incrStack();
     }
 
     public void visit(False n) {
         jfw.pushFalse();
-        stackDepth++;
+        incrStack();
     }
 
     // String s;
     public void visit(IdentifierExp n) {
         if(DEBUG) System.out.println(">>>> IdentifierExp: " + n.s);
         jfw.loadAccess(getVMAccess(n.s));
-        stackDepth++; // TODO
+        incrStack(); // TODO
     }
 
     public void visit(This n) {
         // TODO This might be done by calling a method somewhere
         jfw.loadThis();
-        stackDepth++;
+        incrStack();
     }
 
     // Exp e;
     public void visit(NewArray n) {
         n.e.accept(this);
         jfw.newArray();
-        stackDepth++; // TODO
+        incrStack(); // TODO
     }
 
     // Identifier i;
     public void visit(NewObject n) {
         jfw.newObject(n.i.s);
-        stackDepth++; // TODO
+        incrStack(); // TODO
     }
 
     // Exp e;
@@ -562,7 +590,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.lessThanEquals(branchId);
-        stackDepth--; // Also loads a constant onto the stack
+        decrStack(); // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -572,7 +600,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.greaterThan(branchId);
-        stackDepth--; // Also loads a constant onto the stack
+        decrStack(); // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -582,7 +610,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.greaterThanEquals(branchId);
-        stackDepth--; // Also loads a constant onto the stack
+        decrStack(); // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -592,7 +620,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.equals(branchId);
-        stackDepth--; // Also loads a constant onto the stack
+        decrStack(); // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -602,7 +630,7 @@ public class JasminVisitor implements Visitor {
 
         branchId++;
         jfw.equalsNot(branchId);
-        stackDepth--; // Also loads a constant onto the stack
+        decrStack(); // Also loads a constant onto the stack
     }
 
     // Exp e1,e2;
@@ -611,6 +639,6 @@ public class JasminVisitor implements Visitor {
         n.e2.accept(this);
 
         jfw.or();
-        stackDepth--; // The result is pushed onto the op stack
+        decrStack(); // The result is pushed onto the op stack
     }
 }
