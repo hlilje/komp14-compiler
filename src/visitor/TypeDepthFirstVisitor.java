@@ -7,6 +7,7 @@ package visitor;
 import syntaxtree.*;
 import error.*;
 import symbol.*;
+import jvm.Frame;
 
 public class TypeDepthFirstVisitor implements TypeVisitor {
     public static final boolean DEBUG = false;
@@ -138,8 +139,14 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // StatementList sl;
     // Exp e;
     public Type visit(MethodDecl n) {
-        currMethod = currClass.getMethod(Symbol.symbol(n.i.toString()));
+        Symbol s = Symbol.symbol(n.i.s);
+        currMethod = currClass.getMethod(s);
         currBlock = null; // Reset block scope
+
+        // Create this frame here since it may not be declared yet due to
+        // depth first visit in JasminVisitior
+        Frame frame = new Frame(n.i.s, n.fl, currMethod.getType());
+        currClass.addFrame(s, frame);
 
         n.t.accept(this);
         n.i.accept(this);
