@@ -107,7 +107,7 @@ public class DepthFirstVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclSimple n) {
-        Symbol s = Symbol.symbol(n.i.toString());
+        Symbol s = Symbol.symbol(n.i.s);
         if(DEBUG) System.out.println(">>> VISIT CLASS_DECL_SIMP: " + s);
         if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ====== ");
         ClassTable ct = new ClassTable(s);
@@ -136,7 +136,7 @@ public class DepthFirstVisitor implements Visitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
-        Symbol s = Symbol.symbol(n.i.toString());
+        Symbol s = Symbol.symbol(n.i.s);
         if(DEBUG) System.out.println(">>> VISIT CLASS_DECLEXT: " + s);
         if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ======");
         ClassTable ct = new ClassTable(s);
@@ -164,7 +164,7 @@ public class DepthFirstVisitor implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(VarDecl n) {
-        Symbol s = Symbol.symbol(n.i.toString());
+        Symbol s = Symbol.symbol(n.i.s);
         if(DEBUG) System.out.println(">>> VISIT VAR_DECL: " + s);
 
         // We only need to check class decls here since they are visited first
@@ -207,7 +207,7 @@ public class DepthFirstVisitor implements Visitor {
     // StatementList sl;
     // Exp e;
     public void visit(MethodDecl n) {
-        Symbol s = Symbol.symbol(n.i.toString());
+        Symbol s = Symbol.symbol(n.i.s);
         if(DEBUG) System.out.println(">>> VISIT METHOD_DECL: " + s);
         if(DEBUG) System.out.println("====== BEGIN METHOD SCOPE =====");
         MethodTable mt = new MethodTable(s, n.t);
@@ -246,7 +246,7 @@ public class DepthFirstVisitor implements Visitor {
     // Type t;
     // Identifier i;
     public void visit(Formal n) {
-        Symbol s = Symbol.symbol(n.i.toString());
+        Symbol s = Symbol.symbol(n.i.s);
         if(DEBUG) System.out.println(">>> VISIT FORMAL: " + s);
 
         // Here we assume it's ok to override class decls in formal decls
@@ -346,7 +346,7 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i;
     // Exp e;
     public void visit(Assign n) {
-        Symbol s = Symbol.symbol(n.i.toString());
+        Symbol s = Symbol.symbol(n.i.s);
         if(!varInScope(s))
             error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
         if(DEBUG) System.out.println("    Assigning to " + s);
@@ -358,7 +358,7 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i;
     // Exp e1,e2;
     public void visit(ArrayAssign n) {
-        Symbol s = Symbol.symbol(n.i.toString());
+        Symbol s = Symbol.symbol(n.i.s);
         if(!varInScope(s))
             error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
 
@@ -412,7 +412,7 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i;
     // ExpList el;
     public void visit(Call n) {
-        if(DEBUG) System.out.println(">>> VISIT CALL: " + n.i.toString());
+        if(DEBUG) System.out.println(">>> VISIT CALL: " + n.i.s);
         // Cannot check if method exists here since class/method may not have
         // been visited
         n.e.accept(this);

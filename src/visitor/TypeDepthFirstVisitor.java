@@ -89,7 +89,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public Type visit(ClassDeclSimple n) {
-        currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
+        currClass = symTable.getClass(Symbol.symbol(n.i.s));
         currMethod = null;
 
         n.i.accept(this);
@@ -100,7 +100,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.ml.elementAt(i).accept(this);
         }
 
-        return new IdentifierType(n.i.toString());
+        return new IdentifierType(n.i.s);
     }
 
     // Identifier i;
@@ -108,7 +108,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public Type visit(ClassDeclExtends n) {
-        currClass = symTable.getClass(Symbol.symbol(n.i.toString()));
+        currClass = symTable.getClass(Symbol.symbol(n.i.s));
         currMethod = null;
 
         n.i.accept(this);
@@ -120,7 +120,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.ml.elementAt(i).accept(this);
         }
 
-        return new IdentifierType(n.i.toString());
+        return new IdentifierType(n.i.s);
     }
 
     // Type t;
@@ -272,7 +272,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e1,e2;
     public Type visit(ArrayAssign n) {
-        Symbol s = Symbol.symbol(n.i.toString());
+        Symbol s = Symbol.symbol(n.i.s);
         if(!(getVarType(s) instanceof IntArrayType)) {
             error.complain("Array lookup on non int array type in array assign in method " +
                     currMethod.getId() + " in class " + currClass.getId(),
@@ -397,7 +397,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     public Type visit(Call n) {
         /* This method has to be massive since it's impossible to check for
          * method/class existance in the first visit (it may not have been visited yet). */
-        Symbol s1 = Symbol.symbol(n.i.toString()); // Method name
+        Symbol s1 = Symbol.symbol(n.i.s); // Method name
         Type t = null; Exp e = n.e; Symbol s2;
         java.util.ArrayList<Binding> fl = null; // To be able to check for formal type in call
         ClassTable ct = null; MethodTable mt = null; // For null checks
