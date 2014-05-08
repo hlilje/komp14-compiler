@@ -328,7 +328,7 @@ public class JasminVisitor implements Visitor {
 
         n.e.accept(this);
         jfw.setReturn(currMethod.getType());
-        jfw.limitMethod(Math.max(n.vl.size() + n.fl.size(), 1), stackDepthMax);
+        jfw.limitMethod(n.vl.size() + n.fl.size() + 1, stackDepthMax);
         jfw.declareMethodEnd();
         blockId = -1; // Reset the block counter for this method
         branchId = -1; // Reset branch id, will be inc before first assign
