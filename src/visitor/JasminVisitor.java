@@ -432,9 +432,12 @@ public class JasminVisitor implements Visitor {
 
     // Exp e;
     public void visit(Print n) {
+        // 1 extra value (ref to print method) is added to stack, and 2 removed
         jfw.print();
+        incrStack();
         n.e.accept(this);
         jfw.printAfter();
+        decrStack();
         decrStack();
     }
 
