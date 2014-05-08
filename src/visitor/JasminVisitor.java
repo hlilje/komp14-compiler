@@ -293,8 +293,9 @@ public class JasminVisitor implements Visitor {
                     ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
         jfw.declareMethod("public", frame);
-        // TODO: think this works
-        setStackDepth(n.fl.size() + 1);
+
+        // TODO: this stack depth should be correct
+        setStackDepth(0);
 
         n.t.accept(this);
         n.i.accept(this);
@@ -325,7 +326,7 @@ public class JasminVisitor implements Visitor {
             //jfw.declareLocal(vma);
             // TODO Don't think this is correct, should only stack size 1 for all vars
             // Need to fix jasmin code for programs with several classes first to test
-            incrStack();
+            //incrStack();
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
@@ -443,8 +444,14 @@ public class JasminVisitor implements Visitor {
         n.i.accept(this);
         n.e.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
+        // If the variable to be assigned is a field, one extra value is put on the stack
+        if( vma instanceof OnHeap )
+            incrStack();
         jfw.storeAccess(vma);
         decrStack();
+        // The extra stack value for fields is used
+        if( vma instanceof OnHeap)
+            decrStack();
     }
 
     // Identifier i;
@@ -456,6 +463,7 @@ public class JasminVisitor implements Visitor {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.storeArray();
+        // TODO: nothing is done to stack here, which is probably wrong
     }
 
     // Exp e1,e2;
