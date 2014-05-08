@@ -291,7 +291,7 @@ public class JasminVisitor implements Visitor {
         }
         jfw.declareMethod("public", frame);
         // TODO: think this works
-        setStackDepth(n.fl.size());
+        setStackDepth(n.fl.size() + 1);
 
         n.t.accept(this);
         n.i.accept(this);
@@ -325,7 +325,7 @@ public class JasminVisitor implements Visitor {
 
         n.e.accept(this);
         jfw.setReturn(currMethod.getType());
-        jfw.limitMethod(n.vl.size() + n.fl.size(), stackDepthMax);
+        jfw.limitMethod(Math.max(n.vl.size() + n.fl.size(), 1), stackDepthMax);
         jfw.declareMethodEnd();
         blockId = -1; // Reset the block counter for this method
         branchId = -1; // Reset branch id, will be inc before first assign
