@@ -298,6 +298,12 @@ public class JasminVisitor implements Visitor {
 
         n.t.accept(this);
         n.i.accept(this);
+
+        // Alloc dummy formal just to increment frame variable offset by one
+        // since the first local variable in a method call is the object the
+        // method is being called on. TODO: maybe do this in a better way.
+        frame.allocFormal("this", new IdentifierType(null));
+
         for ( int i = 0; i < n.fl.size(); i++ ) {
             Formal f = n.fl.elementAt(i); String formName = f.i.toString();
             VMAccess vma = frame.allocFormal(formName, f.t);
