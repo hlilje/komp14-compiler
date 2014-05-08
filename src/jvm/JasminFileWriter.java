@@ -58,6 +58,20 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
+    // Helper method to write a default constructor declaration in Jasmin syntax
+    public void declareConstructor() {
+        sb.append(".method public <init>()V");
+        sb.append(System.lineSeparator());
+        sb.append("    aload_0");
+        sb.append(System.lineSeparator());
+        sb.append("    invokespecial java/lang/Object/<init>()V");
+        sb.append(System.lineSeparator());
+        sb.append("    return");
+        sb.append(System.lineSeparator());
+        sb.append(".end method");
+        sb.append(System.lineSeparator());
+    }
+
     // Wrapper method to declare a field in a Jasmin source file
     public void declareField(VMAccess vma) {
         sb.append(vma.declare());
@@ -177,6 +191,11 @@ public class JasminFileWriter {
     public void newObject(String className) {
         //sb.append("    new java/lang/Object/"); sb.append(className);
         sb.append("    new "); sb.append(className);
+        sb.append(System.lineSeparator());
+        sb.append("    dup");
+        sb.append(System.lineSeparator());
+        sb.append("    invokespecial "); sb.append(className);
+        sb.append("/<init>()V");
         sb.append(System.lineSeparator());
     }
 

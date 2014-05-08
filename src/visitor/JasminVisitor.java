@@ -223,6 +223,9 @@ public class JasminVisitor implements Visitor {
             jfw.declareField(vma);
             vd.accept(this);
         }
+
+        jfw.declareConstructor();
+
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }
