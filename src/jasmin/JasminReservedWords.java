@@ -1,5 +1,5 @@
 /**
- * A hash set which contains all the reserved words in Jasmin.
+ * A hash set which contains (almost) all the reserved words in Jasmin.
  */
 
 package jasmin;
