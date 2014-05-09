@@ -7,8 +7,7 @@ import syntaxtree.IntArrayType;
 import syntaxtree.IntegerType;
 import syntaxtree.Type;
 
-public class Hardware
-{
+public class Hardware {
     static String signature(Type t) {
         if(t instanceof BooleanType) {
             return "B";

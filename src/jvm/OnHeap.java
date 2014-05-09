@@ -1,34 +1,40 @@
 package jvm;
 
-public class OnHeap implements frame.VMAccess
-{
+import jasmin.JasminReservedWords;
+
+public class OnHeap implements frame.VMAccess {
     public OnHeap(String className, String fieldName, String signature) {
-	c = className;
-	f = fieldName;
-	s = signature;
+        // Added checks to handle reserved Jasmin words
+        if(JasminReservedWords.reservedWord(className))
+            className += "_";
+        if(JasminReservedWords.reservedWord(fieldName))
+            fieldName += "_";
+        c = className;
+        f = fieldName;
+        s = signature;
     }
 
     public String toString() {
-	return "jvm.OnHeap(" + c + ", " + f + ", " + s + ")";
+        return "jvm.OnHeap(" + c + ", " + f + ", " + s + ")";
     }
 
     public String declare() {
-	return ".field public " + f + " " + s;
+        return ".field public " + f + " " + s;
     }
 
     public String load() {
         return
-	    "    aload_0 ; this\n" +
-	    "    getfield " + c + "/" + f + " " + s;
+            "    aload_0 ; this\n" +
+            "    getfield " + c + "/" + f + " " + s;
     }
 
     // We get one extra instruction here, since the arguments
     // end up in wrong order on the stack.
     public String store() {
         return
-	    "    aload_0 ; this\n" +
-	    "    swap\n" +
-	    "    putfield " + c + "/" + f + " " + s;
+            "    aload_0 ; this\n" +
+            "    swap\n" +
+            "    putfield " + c + "/" + f + " " + s;
     }
 
     private String c;

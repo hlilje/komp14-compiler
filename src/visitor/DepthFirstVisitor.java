@@ -8,7 +8,6 @@ import syntaxtree.*;
 import error.*;
 import symbol.*;
 import jvm.Frame;
-import jasmin.JasminReservedWords;
 
 public class DepthFirstVisitor implements Visitor {
     public static final boolean DEBUG = false;
@@ -53,14 +52,6 @@ public class DepthFirstVisitor implements Visitor {
         }
 
         return true;
-    }
-
-    // Helper method to check if a given word is reserved in Jasmin,
-    // and replace it, if that is the case
-    private String replaceReserved(String word) {
-        if(JasminReservedWords.reservedWord(word))
-            return word + "_";
-        return word;
     }
 
     // MainClass m;
@@ -232,8 +223,7 @@ public class DepthFirstVisitor implements Visitor {
         // Create this frame here since it may not be declared yet due to
         // depth first visit in JasminVisitior
         if(DEBUG) System.out.println("Adding frame " + s + " to class " + currClass.getId());
-        // Must be replaced here since the frame cannot be changed later
-        Frame frame = new Frame(replaceReserved(n.i.s), n.fl, n.t);
+        Frame frame = new Frame(n.i.s, n.fl, n.t);
         currClass.addFrame(s, frame);
 
         n.i.accept(this);

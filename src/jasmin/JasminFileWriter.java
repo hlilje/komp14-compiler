@@ -94,6 +94,8 @@ public class JasminFileWriter {
     // Helper method to declare a method for a Jasmin source file
     // Doesn't close the method tag since it must happen after visit
     public void declareMethod(String acs, VMFrame vmf) {
+        if(JasminReservedWords.reservedWord(acs))
+            acs += "_";
         sb.append(".method "); sb.append(acs); sb.append(" ");
         sb.append(vmf.procEntry()); // Name decl according to Jasmin spec
         sb.append(System.lineSeparator());
@@ -374,7 +376,7 @@ public class JasminFileWriter {
 
     // Jasmin method for 'Not'
     public void not(int id) {
-        // TODO This should be easier
+        // This might be done in an easier way
         sb.append("    ifeq "); sb.append("true"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // Switch to false
@@ -428,11 +430,11 @@ public class JasminFileWriter {
 
     // Jasmin virtual method call
     public void methodCall(String className, VMFrame vmf) {
-        if(JasminReservedWords.reservedWord(className))
-            className += "_";
         if(DEBUG) {
             if(vmf == null) System.out.println("  Got a NULL vmf for class name " + className);
         }
+        if(JasminReservedWords.reservedWord(className))
+            className += "_";
         sb.append("    invokevirtual "); sb.append(className);
         sb.append("/"); sb.append(vmf.procEntry());
         sb.append(System.lineSeparator());

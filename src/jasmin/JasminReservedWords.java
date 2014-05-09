@@ -170,6 +170,7 @@ public class JasminReservedWords {
         reservedWords.add("astore");
         reservedWords.add("bipush");
         reservedWords.add("checkcast");
+        reservedWords.add("default");
         reservedWords.add("dload");
         reservedWords.add("dstore");
         reservedWords.add("getfield");
@@ -216,5 +217,25 @@ public class JasminReservedWords {
         reservedWords.add("ret");
         reservedWords.add("sipush");
         reservedWords.add("tableswitch");
+
+        // Reserved words for Jasmin directives
+        reservedWords.add("class");
+        reservedWords.add("field");
+        reservedWords.add("from");
+        reservedWords.add("inner");
+        reservedWords.add("invisible");
+        reservedWords.add("invisibleparam");
+        reservedWords.add("is");
+        reservedWords.add("locals");
+        reservedWords.add("method");
+        reservedWords.add("offset");
+        reservedWords.add("outer");
+        reservedWords.add("signature");
+        reservedWords.add("stack");
+        reservedWords.add("to");
+        reservedWords.add("use");
+        reservedWords.add("using");
+        reservedWords.add("visible");
+        reservedWords.add("visibleparam");
     }
 }
