@@ -11,6 +11,7 @@ import jvm.*;
 import jasmin.*;
 import frame.VMAccess;
 import frame.VMFrame;
+import jasmin.JasminReservedWords;
 
 public class JasminVisitor implements Visitor {
     public static final boolean DEBUG = false;
@@ -141,6 +142,14 @@ public class JasminVisitor implements Visitor {
         return className;
     }
 
+    // Helper method to check if a given word is reserved in Jasmin,
+    // and replace it, if that is the case
+    private String replaceReserved(String word) {
+        if(JasminReservedWords.reservedWord(word))
+            return word + "_";
+        return word;
+    }
+
     // MainClass m;
     // ClassDeclList cl;
     public void visit(Program n) {
@@ -213,7 +222,8 @@ public class JasminVisitor implements Visitor {
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
             VarDecl vd = n.vl.elementAt(i); String fieldName = vd.i.toString();
-            VMAccess vma = record.allocField(fieldName, vd.t);
+            // Must be replaced here since the vma cannot be changed later
+            VMAccess vma = record.allocField(replaceReserved(fieldName), vd.t);
             currClass.addFieldAccess(Symbol.symbol(fieldName), vma);
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
@@ -250,7 +260,8 @@ public class JasminVisitor implements Visitor {
         n.j.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
             VarDecl vd = n.vl.elementAt(i); String fieldName = vd.i.toString();
-            VMAccess vma = record.allocField(fieldName, vd.t);
+            // Must be replaced here since the vma cannot be changed later
+            VMAccess vma = record.allocField(replaceReserved(fieldName), vd.t);
             currClass.addFieldAccess(Symbol.symbol(fieldName), vma);
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());

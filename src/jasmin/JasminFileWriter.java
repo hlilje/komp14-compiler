@@ -48,8 +48,6 @@ public class JasminFileWriter {
 
     // Helper method to write a class declaration in Jasmin syntax
     public void declareClass(String src, String clss, String spr) {
-        if(JasminReservedWords.reservedWord(src))
-            src += "_";
         if(JasminReservedWords.reservedWord(clss))
             clss += "_";
         if(JasminReservedWords.reservedWord(spr))
@@ -80,15 +78,12 @@ public class JasminFileWriter {
 
     // Wrapper method to declare a field in a Jasmin source file
     public void declareField(VMAccess vma) {
-        // TODO Change name if reserved
-
         sb.append(vma.declare());
         sb.append(System.lineSeparator());
     }
 
     // Wrapper method to declare a local Jasmin variable in a method
     public void declareLocal(VMAccess vma) {
-        // TODO Change name if reserved
         if(DEBUG) {
             if(vma == null) System.out.println("  Try to declare a NULL vma");
         }
@@ -99,7 +94,6 @@ public class JasminFileWriter {
     // Helper method to declare a method for a Jasmin source file
     // Doesn't close the method tag since it must happen after visit
     public void declareMethod(String acs, VMFrame vmf) {
-        // TODO Change name if reserved
         sb.append(".method "); sb.append(acs); sb.append(" ");
         sb.append(vmf.procEntry()); // Name decl according to Jasmin spec
         sb.append(System.lineSeparator());
@@ -238,7 +232,6 @@ public class JasminFileWriter {
 
     // Jasmin method to load the given VMAccess
     public void loadAccess(VMAccess vma) {
-        // TODO Change name if reserved
         if(DEBUG) {
             if(vma == null) System.out.println("  Try to load a NULL vma");
         }
@@ -248,7 +241,6 @@ public class JasminFileWriter {
 
     // Jasmin method to store at the given VMAccess
     public void storeAccess(VMAccess vma) {
-        // TODO Change name if reserved
         if(DEBUG) {
             if(vma == null) System.out.println("  Try to store a NULL vma");
         }
@@ -436,7 +428,8 @@ public class JasminFileWriter {
 
     // Jasmin virtual method call
     public void methodCall(String className, VMFrame vmf) {
-        // TODO Change name if reserved
+        if(JasminReservedWords.reservedWord(className))
+            className += "_";
         if(DEBUG) {
             if(vmf == null) System.out.println("  Got a NULL vmf for class name " + className);
         }
