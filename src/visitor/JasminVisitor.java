@@ -8,6 +8,7 @@ import syntaxtree.*;
 import error.*;
 import symbol.*;
 import jvm.*;
+import jasmin.*;
 import frame.VMAccess;
 import frame.VMFrame;
 
@@ -121,8 +122,6 @@ public class JasminVisitor implements Visitor {
         } else if(n.e instanceof IdentifierExp) {
             className = getClassFromVar(((IdentifierExp)n.e).s);
         } else if(n.e instanceof Call) {
-            // TODO Might recursively become current class which is wrong
-            //className = getClassFromCall((Call)n.e);
             String tempName = getClassFromCall((Call)n.e);
             ClassTable ct = symTable.getClass(Symbol.symbol(tempName));
             MethodTable mt = ct.getMethod(Symbol.symbol(((Call)n.e).i.s));
@@ -183,15 +182,13 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            // TODO This is only for debugging
-            //jfw.declareLocal(vma);
+            //jfw.declareLocal(vma); // DEBUG
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
 
-        // TODO Calculate needed stack depth
         jfw.setReturn(null);
         jfw.limitMethod(Math.max(n.vl.size(), 1), stackDepthMax); // Need at least one local for args
         jfw.declareMethodEnd();
@@ -322,8 +319,7 @@ public class JasminVisitor implements Visitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            // TODO This is only for debugging
-            //jfw.declareLocal(vma);
+            //jfw.declareLocal(vma); // DEBUG
             // TODO Don't think this is correct, should only stack size 1 for all vars
             // Need to fix jasmin code for programs with several classes first to test
             //incrStack();
@@ -369,7 +365,6 @@ public class JasminVisitor implements Visitor {
         blockId++; // Keep track of blocks in method
         currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
-        // TODO Handle VarDecl in Blocks
         Frame frame = new Frame(currMethod.getId().toString(), null, null);
         if(DEBUG) System.out.println(frame.toString());
 
@@ -387,8 +382,7 @@ public class JasminVisitor implements Visitor {
                     System.out.println("  VMA was null for block id: " + blockId);
                 }
             }
-            // TODO This is only for debugging
-            //jfw.declareLocal(vma); // TODO This might need to be handled differently
+            //jfw.declareLocal(vma); // DEBUG
             vd.accept(this);
         }
         for ( int i = 0; i < n.sl.size(); i++ ) {
@@ -448,12 +442,12 @@ public class JasminVisitor implements Visitor {
         n.e.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
         // If the variable to be assigned is a field, one extra value is put on the stack
-        if( vma instanceof OnHeap )
+        if(vma instanceof OnHeap)
             incrStack();
         jfw.storeAccess(vma);
         decrStack();
         // The extra stack value for fields is used
-        if( vma instanceof OnHeap)
+        if(vma instanceof OnHeap)
             decrStack();
     }
 

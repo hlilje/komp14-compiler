@@ -1,12 +1,11 @@
 /**
- * Generates Jasmin assembly code
+ * Generates Jasmin assembly code.
  */
 
-package jvm;
+package jasmin;
 
 import syntaxtree.*;
 import error.*;
-import jvm.*;
 import frame.VMAccess;
 import frame.VMFrame;
 import symbol.Binding;
@@ -131,11 +130,11 @@ public class JasminFileWriter {
         if(t instanceof IntegerType)
             return "    ireturn";
         else if(t instanceof BooleanType)
-            return "    ireturn"; // TODO Float?
+            return "    ireturn"; // Boolean is int
         else if(t instanceof IdentifierType)
-            return "    areturn"; // TODO Object?
+            return "    areturn";
         else if(t instanceof IntArrayType)
-            return "    areturn"; // TODO Object?
+            return "    areturn"; // Array is object
         else {
             error.complain("Invalid return type in JasminFileWriter",
                     ErrorHandler.ErrorCode.INTERNAL_ERROR);
@@ -255,6 +254,7 @@ public class JasminFileWriter {
 
     /* JASMIN COMPARISON */
 
+    // Jasmin method for <
     public void lessThan(int id) {
         sb.append("    if_icmplt const"); sb.append(id);
         sb.append(System.lineSeparator());

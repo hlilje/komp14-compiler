@@ -44,7 +44,7 @@ System.err.println(e);
     jj_consume_token(PUBLIC);
     jj_consume_token(STATIC);
     jj_consume_token(VOID);
-    i3 = MainIdentifier();
+    i3 = Identifier();
     jj_consume_token(LPAREN);
     jj_consume_token(STRING);
     jj_consume_token(LBRACKET);
@@ -86,7 +86,7 @@ sl.addElement(s);
     throw new Error("Missing return statement in function");
   }
 
-// ClassDeclExtends is an extension to the grammar
+// NOTE ClassDeclExtends is an extension to the grammar
   final public ClassDecl ClassDecl() throws ParseException {Identifier i; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
     MethodDeclList mdl = new MethodDeclList();
     jj_consume_token(CLASS);
@@ -403,7 +403,7 @@ e1 = new And(e1, e2);
   }
 
   final public Exp Equality() throws ParseException {Exp e1, e2; String op;
-    // TODO This was changed from [] to ()*
+    // NOTE This was changed from [] to ()*
         e1 = Relational();
     label_13:
     while (true) {
@@ -804,12 +804,6 @@ el.addElement(e2);
 
 // To be able to extract the identifier value
   final public Identifier Identifier() throws ParseException {Token i;
-    i = jj_consume_token(IDENTIFIER);
-{if ("" != null) return new Identifier(i.toString() + "_");}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Identifier MainIdentifier() throws ParseException {Token i;
     i = jj_consume_token(IDENTIFIER);
 {if ("" != null) return new Identifier(i.toString());}
     throw new Error("Missing return statement in function");

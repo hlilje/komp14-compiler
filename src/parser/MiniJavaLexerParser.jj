@@ -142,13 +142,13 @@ MainClass MainClass() :
     VarDeclList vdl = new VarDeclList(); VarDecl vd;
 }
 {
-    "class" i1 = Identifier() "{" "public" "static" "void" i3 = MainIdentifier() "(" "String" "[" "]"
+    "class" i1 = Identifier() "{" "public" "static" "void" i3 = Identifier() "(" "String" "[" "]"
     i2 = Identifier() ")" "{" ( LOOKAHEAD(2) vd = VarDecl() { vdl.addElement(vd); } )*
     ( s = Stmt() { sl.addElement(s); } )* "}" "}"
     { return new MainClass(i1, i2, i3, sl, vdl); }
 }
 
-// ClassDeclExtends is an extension to the grammar
+// NOTE ClassDeclExtends is an extension to the grammar
 ClassDecl ClassDecl() :
 {
     Identifier i; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
@@ -254,7 +254,7 @@ Exp And() :
 Exp Equality() :
 { Exp e1, e2; String op; }
 {
-    // TODO This was changed from [] to ()*
+    // NOTE This was changed from [] to ()*
     e1 = Relational() ( op = EqualityOpHelper() e2 = Relational() { e1 = CompareOp(op, e1, e2); } )*
     { return e1; }
 }
@@ -429,15 +429,6 @@ Identifier Identifier() :
 { Token i; }
 {
     i = <IDENTIFIER>
-    // Add '_' to make sure names are not reserved in Jasmin
-    { return new Identifier(i.toString() + "_"); }
-}
-
-Identifier MainIdentifier() :
-{ Token i; }
-{
-    i = <IDENTIFIER>
-    // Allow 'main' to be anything
     { return new Identifier(i.toString()); }
 }
 
