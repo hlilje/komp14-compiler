@@ -27,6 +27,7 @@ public class JasminVisitor implements Visitor {
     private int branchId; // Unique id for branching
     private int stackDepth; // Keep track of current stack depth
     private int stackDepthMax; // Keep track of max stack depth
+    private int localVars; // Keep track of number of local vars through blocks
 
     public JasminVisitor(ErrorHandler error, SymbolTable symTable, String tfp) {
         this.error = error;
@@ -163,6 +164,9 @@ public class JasminVisitor implements Visitor {
         Frame frame = new Frame("main", null, null);
         if(DEBUG) System.out.println(frame.toString());
 
+        // Add frame to class table so blocks can get it
+        currClass.addFrame(Symbol.symbol("main"), frame);
+
         // No inheritance
         jfw.declareClass(className, className, "java/lang/Object");
         jfw.declareMainMethod();
@@ -185,12 +189,16 @@ public class JasminVisitor implements Visitor {
             //jfw.declareLocal(vma); // DEBUG
             vd.accept(this);
         }
+        // Set number of local vars before visiting blocks
+        localVars = n.vl.size();
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
-
         jfw.setReturn(null);
-        jfw.limitMethod(Math.max(n.vl.size(), 1), stackDepthMax); // Need at least one local for args
+
+        // Need at least one local for args
+        // TODO: should be +1 like in regular methods?
+        jfw.limitMethod(Math.max(localVars, 1), stackDepthMax);
         jfw.declareMethodEnd();
         jfw.createSourceFile(className);
     }
@@ -325,13 +333,15 @@ public class JasminVisitor implements Visitor {
             //incrStack();
             vd.accept(this);
         }
+        // Set number of local vars before visiting blocks
+        localVars = n.vl.size();
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
 
         n.e.accept(this);
         jfw.setReturn(currMethod.getType());
-        jfw.limitMethod(n.vl.size() + n.fl.size() + 1, stackDepthMax);
+        jfw.limitMethod(localVars + n.fl.size() + 1, stackDepthMax);
         jfw.declareMethodEnd();
         blockId = -1; // Reset the block counter for this method
         branchId = -1; // Reset branch id, will be inc before first assign
@@ -365,7 +375,9 @@ public class JasminVisitor implements Visitor {
         blockId++; // Keep track of blocks in method
         currBlock = currMethod.getBlock(Symbol.symbol(blockId + ""));
 
-        Frame frame = new Frame(currMethod.getId().toString(), null, null);
+        // Get method frame, in order to use to the same local var list
+        Frame frame = (Frame)currClass.getFrame(currMethod.getId());
+        //Frame frame = new Frame(currMethod.getId().toString(), null, null);
         if(DEBUG) System.out.println(frame.toString());
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -385,6 +397,8 @@ public class JasminVisitor implements Visitor {
             //jfw.declareLocal(vma); // DEBUG
             vd.accept(this);
         }
+        // Add block var decl to method local vars
+        localVars += n.vl.size();
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
