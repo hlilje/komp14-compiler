@@ -364,9 +364,10 @@ Exp PrefixExp() :
 }
 
 Exp Not() :
-{ Exp e; }
+{ Exp e; int nots = 0; }
 {
-    ( "!" )+ e = PostfixExp() { e = new Not(e); }
+    // Create one negation at most
+    ( "!" { nots++; } )+ e = PostfixExp() { if(nots % 2 != 0) e = new Not(e); }
     { return e; }
 }
 

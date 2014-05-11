@@ -621,10 +621,11 @@ e1 = new Times(e1, e2);
     throw new Error("Missing return statement in function");
   }
 
-  final public Exp Not() throws ParseException {Exp e;
+  final public Exp Not() throws ParseException {Exp e; int nots = 0;
     label_16:
     while (true) {
       jj_consume_token(BANG);
+nots++;
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case BANG:{
         ;
@@ -636,7 +637,7 @@ e1 = new Times(e1, e2);
       }
     }
     e = PostfixExp();
-e = new Not(e);
+if(nots % 2 != 0) e = new Not(e);
 {if ("" != null) return e;}
     throw new Error("Missing return statement in function");
   }
@@ -888,12 +889,6 @@ el.addElement(e2);
     finally { jj_save(8, xla); }
   }
 
-  private boolean jj_3R_20()
- {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
   private boolean jj_3_7()
  {
     if (jj_scan_token(DOT)) return true;
@@ -981,6 +976,12 @@ el.addElement(e2);
     }
     }
     }
+    return false;
+  }
+
+  private boolean jj_3R_20()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 

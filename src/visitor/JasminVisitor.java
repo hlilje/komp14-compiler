@@ -723,6 +723,7 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e;
     public Type visit(Not n) {
+        if(DEBUG) System.out.println(">>>> Not");
         branchId++;
         int thisBranchId = branchId;
         n.e.accept(this);
