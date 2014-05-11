@@ -307,6 +307,7 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(VarDecl n) {
         n.t.accept(this);
         n.i.accept(this);
+        incrStack(); // TODO Should this always be the case?
         return n.t;
     }
 
@@ -546,7 +547,7 @@ public class JasminVisitor implements TypeVisitor {
 
         jfw.and();
         jfw.setElse(thisBranchId); // Skip to 'else' if first exp was false
-        decrStack(); // The result is pushed onto the op stack
+        // No need to decrease stack here due to dup
 
         return new BooleanType();
     }
@@ -722,6 +723,7 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(NewObject n) {
         jfw.newObject(n.i.s);
         incrStack(); // TODO
+        incrStack(); // TODO for dup?
 
         return new IdentifierType(n.i.s);
     }
@@ -815,7 +817,7 @@ public class JasminVisitor implements TypeVisitor {
 
         jfw.or();
         jfw.setElse(thisBranchId); // Skip here
-        decrStack(); // The result is pushed onto the op stack
+        // No need to decrease stack here due to dup
 
         return new BooleanType();
     }

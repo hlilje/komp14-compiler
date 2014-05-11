@@ -198,7 +198,6 @@ public class JasminFileWriter {
         if(JasminReservedWords.reservedWord(className))
             className += "_";
 
-        //sb.append("    new java/lang/Object/"); sb.append(className);
         sb.append("    new "); sb.append(className);
         sb.append(System.lineSeparator());
         sb.append("    dup");
