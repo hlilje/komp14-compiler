@@ -232,7 +232,7 @@ public class JasminFileWriter {
 
     // Jasmin method to finish the print call for booleans
     public void printBoolean() {
-        sb.append("    invokevirtual java/io/PrintStream/println(B)V");
+        sb.append("    invokevirtual java/io/PrintStream/println(Z)V");
         sb.append(System.getProperty("line.separator"));
     }
 
