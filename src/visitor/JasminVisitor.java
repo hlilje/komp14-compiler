@@ -536,8 +536,13 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(And n) {
+        branchId++;
+        int thisBranchId = branchId;
         n.e1.accept(this);
+        // Short-circuit
+        jfw.ifCheck(thisBranchId); // Use 'if' check for simplicity
         n.e2.accept(this);
+        jfw.setElse(thisBranchId); // Skip to 'else' if first exp was false
 
         jfw.and();
         decrStack(); // The result is pushed onto the op stack
@@ -799,8 +804,13 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Or n) {
+        branchId++;
+        int thisBranchId = branchId;
         n.e1.accept(this);
+        // Short circuit
+        jfw.ifInvCheck(thisBranchId); // Skip if true (> 0)
         n.e2.accept(this);
+        jfw.setElse(thisBranchId); // Skip here
 
         jfw.or();
         decrStack(); // The result is pushed onto the op stack

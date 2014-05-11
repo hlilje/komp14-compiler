@@ -395,14 +395,20 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
         sb.append("false"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
-
     }
 
     /* JASMIN BRANCH LABELS */
 
     // Jasmin method for if/while branch check
+    // Also used by other types of branching
     public void ifCheck(int id) {
         sb.append("    ifeq "); sb.append("else"); sb.append(id);
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin method to branch if > 0
+    public void ifInvCheck(int id) {
+        sb.append("    ifgt "); sb.append("else"); sb.append(id);
         sb.append(System.lineSeparator());
     }
 
