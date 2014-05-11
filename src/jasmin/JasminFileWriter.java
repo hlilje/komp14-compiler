@@ -457,4 +457,12 @@ public class JasminFileWriter {
         sb.append("    aload_0");
         sb.append(System.lineSeparator());
     }
+
+    /* JASMIN HELPERS */
+
+    // Jasmin method to duplicate the topmost stack item
+    public void dup() {
+        sb.append("    dup");
+        sb.append(System.lineSeparator());
+    }
 }
