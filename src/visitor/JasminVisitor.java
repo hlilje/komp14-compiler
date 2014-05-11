@@ -441,10 +441,16 @@ public class JasminVisitor implements Visitor {
     // Exp e;
     public void visit(Print n) {
         // 1 extra value (ref to print method) is added to stack, and 2 removed
-        jfw.print();
+        jfw.printInvoke();
         incrStack();
+        //Exp e = n.e.accept(this);
         n.e.accept(this);
-        jfw.printAfter();
+
+        // TODO Print ints and booleans differently
+        //if (e instanceof IntegerType)
+            jfw.printInt();
+        //else if(e instanceof BooleanType)
+            //jfw.printBoolean();
         decrStack();
         decrStack();
     }

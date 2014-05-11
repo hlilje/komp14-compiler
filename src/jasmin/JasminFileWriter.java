@@ -217,16 +217,22 @@ public class JasminFileWriter {
     /* JASMIN PRINT */
 
     // Call Java's print method with Jasmin
-    public void print() {
+    public void printInvoke() {
         sb.append("    getstatic java/lang/System/out Ljava/io/PrintStream;");
         sb.append(System.lineSeparator());
     }
 
-    // Jasmin method to finish the print call
-    public void printAfter() {
+    // Jasmin method to finish the print call for ints
+    public void printInt() {
         // There is no boolean in JVM, so we only need to print Integer types
         // Will need update if Long is implemented
         sb.append("    invokevirtual java/io/PrintStream/println(I)V");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to finish the print call for booleans
+    public void printBoolean() {
+        sb.append("    invokevirtual java/io/PrintStream/println(B)V");
         sb.append(System.getProperty("line.separator"));
     }
 
