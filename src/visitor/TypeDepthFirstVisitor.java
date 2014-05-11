@@ -415,7 +415,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                 t = mt.getType();
                 fl = mt.getOrderedFormals();
             }
-
         } else if(e instanceof IdentifierExp) {
             if(DEBUG) System.out.println("  instanceof IdentifierExp");
             IdentifierExp ie = (IdentifierExp)e;
@@ -430,7 +429,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                 t = mt.getType();
                 fl = mt.getOrderedFormals();
             }
-
         } else if(e instanceof Call) {
             if(DEBUG) System.out.println("  instanceof Call");
             Type t2 = n.e.accept(this); // For nullchecks
@@ -454,7 +452,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     fl = mt.getOrderedFormals();
                 }
             }
-
         } else if(e instanceof This) {
             // TODO There needs to be more checks here if the method doesn't exist
             if(DEBUG) System.out.println("  instanceof This");

@@ -123,6 +123,7 @@ public class JasminVisitor implements TypeVisitor {
         } else if(n.e instanceof IdentifierExp) {
             className = getClassFromVar(((IdentifierExp)n.e).s);
         } else if(n.e instanceof Call) {
+            if(DEBUG) System.out.println("  Will call getClassFromCall recursively");
             String tempName = getClassFromCall((Call)n.e);
             ClassTable ct = symTable.getClass(Symbol.symbol(tempName));
             MethodTable mt = ct.getMethod(Symbol.symbol(((Call)n.e).i.s));
@@ -626,6 +627,8 @@ public class JasminVisitor implements TypeVisitor {
         Frame frame = (Frame)symTable.getClass(Symbol.symbol(className))
             .getFrame(Symbol.symbol(n.i.s));
 
+        t2 = n.e.accept(this); // Save for Call on Call
+
         if(e instanceof NewObject) {
             s2 = Symbol.symbol(((NewObject)e).i.toString());
             ct = symTable.getClass(s2); mt = ct.getMethod(s1);
@@ -636,11 +639,8 @@ public class JasminVisitor implements TypeVisitor {
             ct = symTable.getClass(s2); mt = ct.getMethod(s1);
             t = mt.getType();
         } else if(e instanceof Call) {
-            t2 = n.e.accept(this); // For nullchecks
-            if(t2 != null) {
-                s2 = Symbol.symbol(((IdentifierType)t2).s);
-                ct = symTable.getClass(s2);
-            }
+            s2 = Symbol.symbol(((IdentifierType)t2).s);
+            ct = symTable.getClass(s2);
             mt = ct.getMethod(s1); t = mt.getType();
         } else if(e instanceof This) {
             mt = currClass.getMethod(s1);
@@ -650,7 +650,6 @@ public class JasminVisitor implements TypeVisitor {
                     ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
-        n.e.accept(this);
         n.i.accept(this);
         for ( int i = 0; i < n.el.size(); i++ ) {
             n.el.elementAt(i).accept(this);
