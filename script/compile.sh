@@ -41,11 +41,13 @@ then
 fi
 
 # Clean up existing .class or .j files
-if [ -f *.class ]
+CLASSES=$(ls *.class 2> /dev/null | wc -l)
+if [ "$CLASSES" != "0" ]
 then
     rm *.class
 fi
-if [ -f *.j ]
+JASMINS=$(ls *.j 2> /dev/null | wc -l)
+if [ "$JASMINS" != "0" ]
 then
     rm *.j
 fi

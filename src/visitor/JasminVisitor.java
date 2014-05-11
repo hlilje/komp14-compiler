@@ -487,13 +487,13 @@ public class JasminVisitor implements TypeVisitor {
         incrStack();
         Type t = n.e.accept(this);
 
-        // TODO Print ints and booleans differently
-        if (t instanceof IntegerType)
+        if(t instanceof IntegerType)
             jfw.printInt();
         else if(t instanceof BooleanType)
             jfw.printBoolean();
         else {
-            // TODO
+            error.complain("Print of unknown type in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
         decrStack();
         decrStack();

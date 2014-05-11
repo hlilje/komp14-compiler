@@ -387,13 +387,13 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // Switch to false
         sb.append(System.lineSeparator());
-        sb.append("    goto skip"); sb.append(id);
+        sb.append("    goto false"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("true"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // Switch to true
         sb.append(System.lineSeparator());
-        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append("false"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
 
     }
