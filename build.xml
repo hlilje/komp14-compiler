@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <project name="MiniJavaCompiler" default="main" basedir=".">
     <property name="jar.file" value="mjc.jar" />
+    <property name="out.file" value="out.jar" />
     <property name="main.class" value="mjc.JVMMain" />
     <property name="javacc.file" value="MiniJavaLexerParser.jj" />
 
@@ -14,6 +15,7 @@
     <target name="clean">
         <delete dir="${build.dir}" />
         <delete file="${jar.file}" />
+        <delete file="${out.file}" />
         <delete>
             <fileset dir="." includes="**/*.s, **/*.j, **/*.class"/>
         </delete>
