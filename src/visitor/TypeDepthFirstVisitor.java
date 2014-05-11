@@ -398,9 +398,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         /* This method has to be massive since it's impossible to check for
          * method/class existance in the first visit (it may not have been visited yet). */
         Symbol s1 = Symbol.symbol(n.i.s); // Method name
-        Type t = null; Exp e = n.e; Symbol s2;
+        Type t = null; Type t2; Exp e = n.e; Symbol s2;
         java.util.ArrayList<Binding> fl = null; // To be able to check for formal type in call
         ClassTable ct = null; MethodTable mt = null; // For null checks
+
+        t2 = n.e.accept(this); // Save for call on call
 
         if(e instanceof NewObject) {
             if(DEBUG) System.out.println("  instanceof NewObject");
@@ -431,11 +433,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             }
         } else if(e instanceof Call) {
             if(DEBUG) System.out.println("  instanceof Call");
-            Type t2 = n.e.accept(this); // For nullchecks
-            if(t2 != null) {
-                s2 = Symbol.symbol(((IdentifierType)t2).s);
-                ct = symTable.getClass(s2);
-            }
+            s2 = Symbol.symbol(((IdentifierType)t2).s);
+            ct = symTable.getClass(s2);
 
             if(ct == null) {
                 error.complain("Misformed call on call for method " + s1 + " in method " +
@@ -470,7 +469,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     currClass.getId().toString(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
-        n.e.accept(this);
         n.i.accept(this);
 
         if(fl != null && n.el.size() != fl.size()) {
