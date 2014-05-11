@@ -12,7 +12,7 @@ import jasmin.*;
 import frame.VMAccess;
 import frame.VMFrame;
 
-public class JasminVisitor implements Visitor {
+public class JasminVisitor implements TypeVisitor {
     public static final boolean DEBUG = false;
 
     private ErrorHandler error;
@@ -142,18 +142,41 @@ public class JasminVisitor implements Visitor {
         return className;
     }
 
+    // Helper method to extract type of given var symbol, returns null
+    // if not found
+    // Copied from TypeVisitor
+    public Type getVarType(Symbol s) {
+        Type t; Binding b;
+        if(currMethod == null)
+            b = currClass.getVar(s);
+        else if(currBlock == null) {
+            b = (Binding)currMethod.getVar(s);
+            if(b == null) b = (Binding)currClass.getVar(s);
+        } else { // Check block
+            b = currBlock.getVar(s);
+            if(b == null) {
+                b = currMethod.getVar(s);
+                if(b == null) b = currClass.getVar(s);
+            } else b = currBlock.getVar(s);
+        }
+
+        return b != null ? b.getType() : null;
+    }
+
     // MainClass m;
     // ClassDeclList cl;
-    public void visit(Program n) {
+    public Type visit(Program n) {
         n.m.accept(this);
         for ( int i = 0; i < n.cl.size(); i++ ) {
             n.cl.elementAt(i).accept(this);
         }
+
+        return null;
     }
 
     // Identifier i1,i2;
     // Statement s;
-    public void visit(MainClass n) {
+    public Type visit(MainClass n) {
         if(DEBUG) System.out.println(">>>> MainClass");
         String className = n.i1.toString();
         currClass = symTable.getClass(Symbol.symbol(className));
@@ -201,12 +224,14 @@ public class JasminVisitor implements Visitor {
         jfw.limitMethod(Math.max(localVars, 1), stackDepthMax);
         jfw.declareMethodEnd();
         jfw.createSourceFile(className);
+
+        return null;
     }
 
     // Identifier i;
     // VarDeclList vl;
     // MethodDeclList ml;
-    public void visit(ClassDeclSimple n) {
+    public Type visit(ClassDeclSimple n) {
         String className = n.i.s;
         if(DEBUG) System.out.println(">>>> ClassDeclSimple");
         currClass = symTable.getClass(Symbol.symbol(className));
@@ -236,13 +261,15 @@ public class JasminVisitor implements Visitor {
         }
 
         jfw.createSourceFile(className);
+
+        return new IdentifierType(n.i.s);
     }
 
     // Identifier i;
     // Identifier j;
     // VarDeclList vl;
     // MethodDeclList ml;
-    public void visit(ClassDeclExtends n) {
+    public Type visit(ClassDeclExtends n) {
         if(DEBUG) System.out.println(">>>> ClassDeclExtends");
         String className = n.i.s;
         currClass = symTable.getClass(Symbol.symbol(className));
@@ -270,13 +297,16 @@ public class JasminVisitor implements Visitor {
         }
 
         jfw.createSourceFile(className);
+
+        return new IdentifierType(n.i.s);
     }
 
     // void t;
     // Identifier i;
-    public void visit(VarDecl n) {
+    public Type visit(VarDecl n) {
         n.t.accept(this);
         n.i.accept(this);
+        return n.t;
     }
 
     // void t;
@@ -285,7 +315,7 @@ public class JasminVisitor implements Visitor {
     // VarDeclList vl;
     // StatementList sl;
     // Exp e;
-    public void visit(MethodDecl n) {
+    public Type visit(MethodDecl n) {
         if(DEBUG) System.out.println(">>>> MethodDecl");
         Symbol s = Symbol.symbol(n.i.s);
         currMethod = currClass.getMethod(s);
@@ -345,30 +375,37 @@ public class JasminVisitor implements Visitor {
         jfw.declareMethodEnd();
         blockId = -1; // Reset the block counter for this method
         branchId = -1; // Reset branch id, will be inc before first assign
+
+        return n.t;
     }
 
     // void t;
     // Identifier i;
-    public void visit(Formal n) {
+    public Type visit(Formal n) {
         n.t.accept(this);
         n.i.accept(this);
+        return n.t;
     }
 
-    public void visit(IntArrayType n) {
+    public Type visit(IntArrayType n) {
+        return n;
     }
 
-    public void visit(BooleanType n) {
+    public Type visit(BooleanType n) {
+        return n;
     }
 
-    public void visit(IntegerType n) {
+    public Type visit(IntegerType n) {
+        return n;
     }
 
     // String s;
-    public void visit(IdentifierType n) {
+    public Type visit(IdentifierType n) {
+        return n;
     }
 
     // StatementList sl;
-    public void visit(Block n) {
+    public Type visit(Block n) {
         if(DEBUG) System.out.println(">>>> Block");
         BlockTable prevBlock = currBlock;
 
@@ -404,11 +441,12 @@ public class JasminVisitor implements Visitor {
         }
 
         currBlock = prevBlock; // End scope
+        return null;
     }
 
     // Exp e;
     // Statement s1,s2;
-    public void visit(If n) {
+    public Type visit(If n) {
         branchId++;
         int thisBranchId = branchId; // Avoid id change by nested blocks
 
@@ -421,11 +459,13 @@ public class JasminVisitor implements Visitor {
         jfw.setElse(thisBranchId); // 'Else' block
         n.s2.accept(this);
         jfw.setSkip(thisBranchId); // Skip here if not 'else'
+
+        return null;
     }
 
     // Exp e;
     // Statement s;
-    public void visit(While n) {
+    public Type visit(While n) {
         branchId++;
         int thisBranchId = branchId; // Avoid id change by nested blocks
 
@@ -436,28 +476,34 @@ public class JasminVisitor implements Visitor {
         n.s.accept(this);
         jfw.skip(thisBranchId); // Use 'skip' for looping for simplicity
         jfw.setElse(thisBranchId); // The 'else' will skip the while block
+
+        return null;
     }
 
     // Exp e;
-    public void visit(Print n) {
+    public Type visit(Print n) {
         // 1 extra value (ref to print method) is added to stack, and 2 removed
         jfw.printInvoke();
         incrStack();
-        //Exp e = n.e.accept(this);
-        n.e.accept(this);
+        Type t = n.e.accept(this);
 
         // TODO Print ints and booleans differently
-        //if (e instanceof IntegerType)
+        if (t instanceof IntegerType)
             jfw.printInt();
-        //else if(e instanceof BooleanType)
-            //jfw.printBoolean();
+        else if(t instanceof BooleanType)
+            jfw.printBoolean();
+        else {
+            // TODO
+        }
         decrStack();
         decrStack();
+
+        return null;
     }
 
     // Identifier i;
     // Exp e;
-    public void visit(Assign n) {
+    public Type visit(Assign n) {
         n.i.accept(this);
         n.e.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
@@ -469,11 +515,13 @@ public class JasminVisitor implements Visitor {
         // The extra stack value for fields is used
         if(vma instanceof OnHeap)
             decrStack();
+
+        return null;
     }
 
     // Identifier i;
     // Exp e1,e2;
-    public void visit(ArrayAssign n) {
+    public Type visit(ArrayAssign n) {
         n.i.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
         jfw.loadAccess(vma);
@@ -481,74 +529,93 @@ public class JasminVisitor implements Visitor {
         n.e2.accept(this);
         jfw.storeArray();
         // TODO: nothing is done to stack here, which is probably wrong
+
+        return new IntArrayType();
     }
 
     // Exp e1,e2;
-    public void visit(And n) {
+    public Type visit(And n) {
         n.e1.accept(this);
         n.e2.accept(this);
 
         jfw.and();
         decrStack(); // The result is pushed onto the op stack
+
+        return new BooleanType();
     }
 
     // Exp e1,e2;
-    public void visit(LessThan n) {
+    public Type visit(LessThan n) {
         n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
         jfw.lessThan(branchId);
         decrStack(); // Also loads a constant onto the stack
+
+        return new BooleanType();
     }
 
     // Exp e1,e2;
-    public void visit(Plus n) {
+    public Type visit(Plus n) {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.add();
         decrStack(); // Pop values and push result
+
+        return new IntegerType();
     }
 
     // Exp e1,e2;
-    public void visit(Minus n) {
+    public Type visit(Minus n) {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.minus();
         decrStack(); // Pop values and push result
+
+        return new IntegerType();
     }
 
     // Exp e1,e2;
-    public void visit(Times n) {
+    public Type visit(Times n) {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.mul();
         decrStack(); // Pop values and push result
+
+        return new IntegerType();
     }
 
     // Exp e1,e2;
-    public void visit(ArrayLookup n) {
+    public Type visit(ArrayLookup n) {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.loadArray();
+
+        return new IntegerType();
     }
 
     // Exp e;
-    public void visit(ArrayLength n) {
+    public Type visit(ArrayLength n) {
         n.e.accept(this);
         jfw.arrayLength(); // Pop and push onto stack
+
+        return new IntegerType();
     }
 
     // Exp e;
     // Identifier i;
     // ExpList el;
-    public void visit(Call n) {
+    public Type visit(Call n) {
         if(DEBUG) System.out.println(">>>> Call: " + n.i.s);
         String className = getClassFromCall(n);
+        Symbol s1 = Symbol.symbol(n.i.s); // Method name
+        Exp e = n.e; Type t = null; Type t2; Symbol s2;
+        ClassTable ct = null; MethodTable mt = null; // For null checks
 
         if(DEBUG) {
             System.out.println("  Try to get class " + className);
-            ClassTable ct = symTable.getClass(Symbol.symbol(className));
+            ct = symTable.getClass(Symbol.symbol(className));
             if(ct == null) {
                 System.out.println("    class was not found");
             } else if(ct.getFrame(Symbol.symbol(n.i.s)) == null) {
@@ -558,6 +625,30 @@ public class JasminVisitor implements Visitor {
 
         Frame frame = (Frame)symTable.getClass(Symbol.symbol(className))
             .getFrame(Symbol.symbol(n.i.s));
+
+        if(e instanceof NewObject) {
+            s2 = Symbol.symbol(((NewObject)e).i.toString());
+            ct = symTable.getClass(s2); mt = ct.getMethod(s1);
+            t = mt.getType();
+        } else if(e instanceof IdentifierExp) {
+            IdentifierExp ie = (IdentifierExp)e;
+            s2 = Symbol.symbol(getClassFromCall(n));
+            ct = symTable.getClass(s2); mt = ct.getMethod(s1);
+            t = mt.getType();
+        } else if(e instanceof Call) {
+            t2 = n.e.accept(this); // For nullchecks
+            if(t2 != null) {
+                s2 = Symbol.symbol(((IdentifierType)t2).s);
+                ct = symTable.getClass(s2);
+            }
+            mt = ct.getMethod(s1); t = mt.getType();
+        } else if(e instanceof This) {
+            mt = currClass.getMethod(s1);
+            t = mt.getType();
+        } else {
+            error.complain("Call on invalid object with method call in JasminVisitor",
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
+        }
 
         n.e.accept(this);
         n.i.accept(this);
@@ -569,118 +660,151 @@ public class JasminVisitor implements Visitor {
             System.out.println("    Will call methodCall with null frame");
         }
         jfw.methodCall(className, frame);
+
+        return t;
     }
 
     // int i;
-    public void visit(IntegerLiteral n) {
+    public Type visit(IntegerLiteral n) {
         jfw.pushInt(n);
         incrStack();
+
+        return new IntegerType();
     }
 
-    public void visit(True n) {
+    public Type visit(True n) {
         jfw.pushTrue();
         incrStack();
+
+        return new BooleanType();
     }
 
-    public void visit(False n) {
+    public Type visit(False n) {
         jfw.pushFalse();
         incrStack();
+
+        return new BooleanType();
     }
 
     // String s;
-    public void visit(IdentifierExp n) {
+    public Type visit(IdentifierExp n) {
+        Symbol s = Symbol.symbol(n.s);
         if(DEBUG) System.out.println(">>>> IdentifierExp: " + n.s);
         jfw.loadAccess(getVMAccess(n.s));
         incrStack(); // TODO
+
+        return getVarType(s);
     }
 
-    public void visit(This n) {
+    public Type visit(This n) {
         // TODO This might be done by calling a method somewhere
         jfw.loadThis();
         incrStack();
+
+        return new IdentifierType(currClass.getId().toString());
     }
 
     // Exp e;
-    public void visit(NewArray n) {
+    public Type visit(NewArray n) {
         n.e.accept(this);
         jfw.newArray();
         incrStack(); // TODO
+
+        return new IntArrayType();
     }
 
     // Identifier i;
-    public void visit(NewObject n) {
+    public Type visit(NewObject n) {
         jfw.newObject(n.i.s);
         incrStack(); // TODO
+
+        return new IdentifierType(n.i.s);
     }
 
     // Exp e;
-    public void visit(Not n) {
+    public Type visit(Not n) {
         branchId++;
         int thisBranchId = branchId;
         n.e.accept(this);
         jfw.not(thisBranchId);
+
+        return new BooleanType();
     }
 
     // String s;
-    public void visit(Identifier n) {
+    public Type visit(Identifier n) {
+        Symbol s = Symbol.symbol(n.s);
+        return getVarType(s);
     }
 
     // Exp e1,e2;
-    public void visit(LessThanEquals n) {
+    public Type visit(LessThanEquals n) {
         n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
         jfw.lessThanEquals(branchId);
         decrStack(); // Also loads a constant onto the stack
+
+        return new BooleanType();
     }
 
     // Exp e1,e2;
-    public void visit(GreaterThan n) {
+    public Type visit(GreaterThan n) {
         n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
         jfw.greaterThan(branchId);
         decrStack(); // Also loads a constant onto the stack
+
+        return new BooleanType();
     }
 
     // Exp e1,e2;
-    public void visit(GreaterThanEquals n) {
+    public Type visit(GreaterThanEquals n) {
         n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
         jfw.greaterThanEquals(branchId);
         decrStack(); // Also loads a constant onto the stack
+
+        return new BooleanType();
     }
 
     // Exp e1,e2;
-    public void visit(Equals n) {
+    public Type visit(Equals n) {
         n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
         jfw.equals(branchId);
         decrStack(); // Also loads a constant onto the stack
+
+        return new BooleanType();
     }
 
     // Exp e1,e2;
-    public void visit(EqualsNot n) {
+    public Type visit(EqualsNot n) {
         n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
         jfw.equalsNot(branchId);
         decrStack(); // Also loads a constant onto the stack
+
+        return new BooleanType();
     }
 
     // Exp e1,e2;
-    public void visit(Or n) {
+    public Type visit(Or n) {
         n.e1.accept(this);
         n.e2.accept(this);
 
         jfw.or();
         decrStack(); // The result is pushed onto the op stack
+
+        return new BooleanType();
     }
 }
