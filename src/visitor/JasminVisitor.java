@@ -523,6 +523,8 @@ public class JasminVisitor implements TypeVisitor {
         n.i.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
         jfw.loadAccess(vma);
+        incrStack();
+
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.storeArray();
