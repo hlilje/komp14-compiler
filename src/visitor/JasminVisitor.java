@@ -664,13 +664,17 @@ public class JasminVisitor implements TypeVisitor {
         n.i.accept(this);
         for ( int i = 0; i < n.el.size(); i++ ) {
             n.el.elementAt(i).accept(this);
-            decrStack(); // Once for each argument
         }
 
         if(DEBUG && frame == null) {
             System.out.println("    Will call methodCall with null frame");
         }
         jfw.methodCall(className, frame);
+
+        // Must be done outside of argument loop
+        for(int i = 0; i < n.el.size(); i++) {
+            decrStack(); // Once for each argument
+        }
 
         return t;
     }
