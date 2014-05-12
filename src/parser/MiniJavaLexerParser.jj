@@ -101,7 +101,7 @@ TOKEN :
 {
     < IDENTIFIER: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","0"-"9","_"])* >
     | < INTEGER_LITERAL: "0" | ["1"-"9"] (["0"-"9"])* >
-    | < LONG_LITERAL: "0" ["L"] | ["1"-"9"] (["0"-"9"])* ["L"] >
+    | < LONG_LITERAL: "0" ["l","L"] | ["1"-"9"] (["0"-"9"])* ["l","L"] >
 }
 
 // Will be called after every token
@@ -459,8 +459,11 @@ IntegerLiteral IntegerLiteral() :
 
 // To be able to extract the long value
 LongLiteral LongLiteral() :
-{ Token il; }
+{ Token il; String str; }
 {
     il = <LONG_LITERAL>
-    { return new LongLiteral(Long.parseLong(il.toString())); }
+    {
+        str = il.toString();
+        return new LongLiteral(Long.parseLong(str.substring(0, str.length()-1)));
+    }
 }

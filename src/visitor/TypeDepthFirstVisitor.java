@@ -299,35 +299,36 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Type t = getVarType(s);
         Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
 
-        if(!(t instanceof IntArrayType) && !(t instanceof LongArrayType)) {
+        n.i.accept(this);
+
+        // Check type of array index
+        if(!(t1 instanceof IntegerType)) {
+            error.complain("Non integer type in array index for array " + s,
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+
+        // Check type of variable
+        if(t instanceof IntArrayType) {
+            // Check type of assigned expresssion
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Non integer type in array assign for array " + s,
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t instanceof LongArrayType) {
+            // Check type of assigned expresssion
+            if(!(t2 instanceof LongType)) {
+                error.complain("Non long type in array assign for array " + s,
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
             error.complain("Array lookup on non int or long array type in array assign in method " +
                     currMethod.getId() + " in class " + currClass.getId(),
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        n.i.accept(this);
-
-        if(!(t1 instanceof IntegerType)) {
-            error.complain("Non integer type in array index for array " + s,
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-        if(t instanceof IntArrayType) {
-            if(!(n.e2.accept(this) instanceof IntegerType)) {
-                error.complain("Non integer type in array assign for array " + s,
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        }
-        if(t instanceof LongArrayType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Non long type in array assign for array " + s,
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        }
-
         if((t instanceof IntArrayType) || (t instanceof LongArrayType))
             return t;
-        else
-            return null; // Don't return invalid types
+        return null; // Don't return invalid types
     }
 
     // Exp e1,e2;
@@ -389,7 +390,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        return new IntegerType();
+        if((t1 instanceof IntegerType) || (t1 instanceof LongType))
+            return t1;
+        return null; // Don't return invalid types
     }
 
     // Exp e1,e2;
@@ -412,7 +415,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        return new IntegerType();
+        if((t1 instanceof IntegerType) || (t1 instanceof LongType))
+            return t1;
+        return null; // Don't return invalid types
     }
 
     // Exp e1,e2;
@@ -435,27 +440,32 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        return new IntegerType();
+        if((t1 instanceof IntegerType) || (t1 instanceof LongType))
+            return t1;
+        return null; // Don't return invalid types
     }
 
     // Exp e1,e2;
     public Type visit(ArrayLookup n) {
         Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
 
+        // Check assigned expression
         if(!(t1 instanceof IntArrayType) && !(t1 instanceof LongArrayType)) {
             error.complain("Outer expression of ArrayLookup must be of type IntArrayType " +
                     " or LongArrayType",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
+        // Check array index
         if(!(t2 instanceof IntegerType)) {
             error.complain("Non integer type in array index",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        if((t1 instanceof IntArrayType) || (t1 instanceof LongArrayType))
-            return t1;
-        else
-            return null; // Don't return invalid types
+        if(t1 instanceof IntArrayType)
+            return new IntegerType();
+        if(t1 instanceof LongArrayType)
+            return new LongType();
+        return null; // Don't return invalid types
     }
 
     // Exp e;
@@ -729,9 +739,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                 error.complain("Right side of Equals must be of type Long",
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
-        } else if((t1 instanceof IdentifierType) && !t1.equals(t2)) {
-            error.complain("Different identifier types in equality comparison",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        } else if(t1 instanceof IdentifierType) {
+            if(!t1.equals(t2)) {
+                error.complain("Different identifier types in equality comparison",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
         } else {
             error.complain("Invalid type in equality comparison",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
@@ -754,9 +766,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                 error.complain("Right side of EqualsNot must be of type Long",
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
-        } else if((t1 instanceof IdentifierType) && !t1.equals(t2)) {
-            error.complain("Different identifier types in non-equality comparison",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        } else if(t1 instanceof IdentifierType) {
+            if(!t1.equals(t2)) {
+                error.complain("Different identifier types in non-equality comparison",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
         } else {
             error.complain("Invalid type in non-equality comparison",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);

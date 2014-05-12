@@ -851,8 +851,8 @@ private int jjMoveNfa_0(int startState, int curPos)
                   { jjAddStates(3, 5); }
                   break;
                case 9:
-                  if (curChar == 76 && kind > 53)
-                     kind = 53;
+                  if ((0x100000001000L & l) != 0L && kind > 52)
+                     kind = 52;
                   break;
                default : break;
             }

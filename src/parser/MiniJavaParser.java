@@ -878,9 +878,10 @@ el.addElement(e2);
   }
 
 // To be able to extract the long value
-  final public LongLiteral LongLiteral() throws ParseException {Token il;
+  final public LongLiteral LongLiteral() throws ParseException {Token il; String str;
     il = jj_consume_token(LONG_LITERAL);
-{if ("" != null) return new LongLiteral(Long.parseLong(il.toString()));}
+str = il.toString();
+        {if ("" != null) return new LongLiteral(Long.parseLong(str.substring(0, str.length()-1)));}
     throw new Error("Missing return statement in function");
   }
 
