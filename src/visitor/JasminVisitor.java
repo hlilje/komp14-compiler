@@ -307,7 +307,6 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(VarDecl n) {
         n.t.accept(this);
         n.i.accept(this);
-        incrStack(); // TODO Should this always be the case?
         return n.t;
     }
 
@@ -454,6 +453,7 @@ public class JasminVisitor implements TypeVisitor {
 
         n.e.accept(this);
         jfw.ifCheck(thisBranchId); // Check branch condition
+        decrStack();
 
         n.s1.accept(this);
         jfw.skip(thisBranchId); // To avoid always executing 'else'
@@ -474,6 +474,7 @@ public class JasminVisitor implements TypeVisitor {
         jfw.setSkip(thisBranchId);
         n.e.accept(this);
         jfw.ifCheck(thisBranchId); // Use 'if' branches for simplicity
+        decrStack();
 
         n.s.accept(this);
         jfw.skip(thisBranchId); // Use 'skip' for looping for simplicity
@@ -530,7 +531,10 @@ public class JasminVisitor implements TypeVisitor {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.storeArray();
-        // TODO: nothing is done to stack here, which is probably wrong
+
+        decrStack(); // For iastore
+        decrStack();
+        decrStack();
 
         return new IntArrayType();
     }
@@ -547,7 +551,7 @@ public class JasminVisitor implements TypeVisitor {
 
         jfw.and();
         jfw.setElse(thisBranchId); // Skip to 'else' if first exp was false
-        // No need to decrease stack here due to dup
+        decrStack(); // Result is pushed onto stack
 
         return new BooleanType();
     }
@@ -599,6 +603,7 @@ public class JasminVisitor implements TypeVisitor {
         n.e1.accept(this);
         n.e2.accept(this);
         jfw.loadArray();
+        decrStack();
 
         return new IntegerType();
     }
@@ -697,13 +702,12 @@ public class JasminVisitor implements TypeVisitor {
         Symbol s = Symbol.symbol(n.s);
         if(DEBUG) System.out.println(">>>> IdentifierExp: " + n.s);
         jfw.loadAccess(getVMAccess(n.s));
-        incrStack(); // TODO
+        incrStack();
 
         return getVarType(s);
     }
 
     public Type visit(This n) {
-        // TODO This might be done by calling a method somewhere
         jfw.loadThis();
         incrStack();
 
@@ -714,7 +718,7 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(NewArray n) {
         n.e.accept(this);
         jfw.newArray();
-        incrStack(); // TODO
+        incrStack();
 
         return new IntArrayType();
     }
@@ -722,8 +726,8 @@ public class JasminVisitor implements TypeVisitor {
     // Identifier i;
     public Type visit(NewObject n) {
         jfw.newObject(n.i.s);
-        incrStack(); // TODO
-        incrStack(); // TODO for dup?
+        incrStack();
+        incrStack(); // For dup
 
         return new IdentifierType(n.i.s);
     }
@@ -734,7 +738,7 @@ public class JasminVisitor implements TypeVisitor {
         branchId++;
         int thisBranchId = branchId;
         n.e.accept(this);
-        jfw.not(thisBranchId);
+        jfw.not(thisBranchId); // Push and pop
 
         return new BooleanType();
     }
@@ -817,7 +821,7 @@ public class JasminVisitor implements TypeVisitor {
 
         jfw.or();
         jfw.setElse(thisBranchId); // Skip here
-        // No need to decrease stack here due to dup
+        decrStack(); // Result is pushed onto stack
 
         return new BooleanType();
     }
