@@ -50,6 +50,7 @@ TOKEN :
     | < STRING: "String" >
     | < RETURN: "return" >
     | < INT: "int" >
+    | < LONG: "long" >
     | < BOOLEAN: "boolean" >
     | < IF: "if" >
     | < ELSE: "else" >
@@ -98,8 +99,8 @@ TOKEN :
 TOKEN :
 {
     < IDENTIFIER: ["a"-"z","A"-"Z","_"] (["a"-"z","A"-"Z","0"-"9","_"])* >
-    | < INTEGER_LITERAL: "0"
-        | ["1"-"9"] (["0"-"9"])* >
+    | < INTEGER_LITERAL: "0" | ["1"-"9"] (["0"-"9"])* >
+    | < LONG_LITERAL: "0" ["L"] | ["1"-"9"] (["0"-"9"])* ["L"] >
 }
 
 // Will be called after every token
@@ -202,8 +203,10 @@ Type Type() :
 {
     (
     LOOKAHEAD(2) "int" "[" "]" { t = new IntArrayType(); }
+    | LOOKAHEAD(2) "long" "[" "]" { t = new LongArrayType(); }
     | "boolean" { t = new BooleanType(); }
     | "int" { t = new IntegerType(); }
+    | "long" { t = new LongType(); }
     | i = Identifier() { t  = new IdentifierType(i.s); }
     )
     { return t; }
@@ -389,12 +392,14 @@ Exp PrimaryExp() :
 {
     (
     e = IntegerLiteral()
+    | e = LongLiteral()
     | "true" { e = new True(); }
     | "false" { e = new False(); }
     | i = Identifier() { e = new IdentifierExp(i.s); }
     | "this" { e = new This(); }
     | "(" e = Exp() ")"
     | LOOKAHEAD(2) "new" "int" "[" ie = Exp() "]" NewArrayRest(ie) { e = new NewArray(ie); }
+    | LOOKAHEAD(2) "new" "long" "[" ie = Exp() "]" NewLongArrayRest(ie) { e = new NewLongArray(ie); }
     | LOOKAHEAD(2) "new" id = Identifier() "(" ")" { e = new NewObject(id); }
     )
     { return e; }
@@ -406,6 +411,14 @@ Exp NewArrayRest(Exp ie) :
 {
     "[" { throw new ParseException("Multidimensional array creation"); }
     | { return new NewArray(ie); }
+}
+
+// To avoid long multidimensional array creation
+Exp NewLongArrayRest(Exp ie) :
+{}
+{
+    "[" { throw new ParseException("Multidimensional long array creation"); }
+    | { return new NewLongArray(ie); }
 }
 
 ExpList ExpList() :
@@ -439,4 +452,12 @@ IntegerLiteral IntegerLiteral() :
 {
     il = <INTEGER_LITERAL>
     { return new IntegerLiteral(Integer.parseInt(il.toString())); }
+}
+
+// To be able to extract the long value
+LongLiteral LongLiteral() :
+{ Token il; }
+{
+    il = <LONG_LITERAL>
+    { return new LongLiteral(Integer.parseLong(il.toString())); }
 }
