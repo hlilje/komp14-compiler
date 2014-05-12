@@ -51,21 +51,21 @@ public class ClassTable {
 
     public MethodTable getMethod(Symbol s) {
         MethodTable mt = (MethodTable)methods.get(s);
-        if(mt == null && spr != null)
+        if(mt == null && spr != null && s != spr)
             mt = symTable.getClass(spr).getMethod(s); // inherited method
         return mt;
     }
 
     public Binding getVar(Symbol s) {
         Binding b = (Binding)locals.get(s);
-        if(b == null && spr != null)
+        if(b == null && spr != null && s != spr)
             b = symTable.getClass(spr).getVar(s); // inherited field
         return (Binding)locals.get(s);
     }
 
     public boolean hasVar(Symbol s) {
         boolean has = locals.get(s) != null;
-        if(has == false && spr != null)
+        if(has == false && spr != null && s != spr)
             has = symTable.getClass(spr).hasVar(s); // inherited field
         return has;
     }
@@ -77,8 +77,8 @@ public class ClassTable {
 
     public VMAccess getFieldAccess(Symbol s) {
         VMAccess vma = (VMAccess)fieldAccesses.get(s);
-        if(vma == null && spr != null)
-            vma = symTable.getClass(spr).getFieldAccess(s);
+        if(vma == null && spr != null && s != spr)
+            vma = symTable.getClass(spr).getFieldAccess(s); // inherited field
         return vma;
     }
 
@@ -89,7 +89,7 @@ public class ClassTable {
 
     public VMFrame getFrame(Symbol s) {
         VMFrame frame = (VMFrame)frames.get(s);
-        if(frame == null && spr != null)
+        if(frame == null && spr != null && s != spr)
             frame = symTable.getClass(spr).getFrame(s); // inherited method
         return frame;
     }
