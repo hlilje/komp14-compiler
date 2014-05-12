@@ -741,12 +741,27 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             }
         } else if(t1 instanceof IdentifierType) {
             if(!t1.equals(t2)) {
-                error.complain("Different identifier types in equality comparison",
+                error.complain("Right side of Equals must be of type " + t1,
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof BooleanType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of Equals must be of type Boolean",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof IntArrayType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of Equals must be of type IntArrayType",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongArrayType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of Equals must be of type LongArrayType",
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
-            error.complain("Invalid type in equality comparison",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Unknown type " + t1 + " in equality comparison",
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
         return new BooleanType();
@@ -768,12 +783,27 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             }
         } else if(t1 instanceof IdentifierType) {
             if(!t1.equals(t2)) {
-                error.complain("Different identifier types in non-equality comparison",
+                error.complain("Right side of EqualsNot must be of type " + t1,
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof BooleanType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of EqualsNot must be of type Boolean",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof IntArrayType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of EqualsNot must be of type IntArrayType",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongArrayType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of EqualsNot must be of type LongArrayType",
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
-            error.complain("Invalid type in non-equality comparison",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Unknown type " + t1 + " in equality comparison",
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
         return new BooleanType();
