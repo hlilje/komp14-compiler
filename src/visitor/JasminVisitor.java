@@ -194,8 +194,8 @@ public class JasminVisitor implements TypeVisitor {
         // No inheritance
         jfw.declareClass(className, className, "java/lang/Object");
         jfw.declareMainMethod();
-        // TODO: Seems to be needed
-        setStackDepth(1);
+
+        setStackDepth(0); // Reset
 
         n.i1.accept(this);
         n.i2.accept(this);
@@ -329,8 +329,7 @@ public class JasminVisitor implements TypeVisitor {
         }
         jfw.declareMethod("public", frame);
 
-        // TODO: this stack depth should be correct
-        setStackDepth(0);
+        setStackDepth(0); // Reset
 
         n.t.accept(this);
         n.i.accept(this);
@@ -413,7 +412,6 @@ public class JasminVisitor implements TypeVisitor {
 
         // Get method frame, in order to use to the same local var list
         Frame frame = (Frame)currClass.getFrame(currMethod.getId());
-        //Frame frame = new Frame(currMethod.getId().toString(), null, null);
         if(DEBUG) System.out.println(frame.toString());
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -700,7 +698,7 @@ public class JasminVisitor implements TypeVisitor {
         Symbol s = Symbol.symbol(n.s);
         if(DEBUG) System.out.println(">>>> IdentifierExp: " + n.s);
         jfw.loadAccess(getVMAccess(n.s));
-        incrStack();
+        incrStack(); // Increase for both heap and stack
 
         return getVarType(s);
     }
@@ -716,7 +714,7 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(NewArray n) {
         n.e.accept(this);
         jfw.newArray();
-        incrStack();
+        // Nothing needs to be done here with stack
 
         return new IntArrayType();
     }
