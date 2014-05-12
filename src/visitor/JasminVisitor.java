@@ -443,6 +443,7 @@ public class JasminVisitor implements TypeVisitor {
     // Exp e;
     // Statement s1,s2;
     public Type visit(If n) {
+        if(DEBUG) System.out.println(">>>> If");
         branchId++;
         int thisBranchId = branchId; // Avoid id change by nested blocks
 
@@ -450,16 +451,19 @@ public class JasminVisitor implements TypeVisitor {
         if(n.s2 != null) {
             jfw.ifCheck(thisBranchId); // Check branch condition
         } else {
-            jfw.ifCheckNoElse(thisBranchId);
+            jfw.ifCheckWithoutElse(thisBranchId); // Skips to 'skip'
         }
         decrStack();
 
         n.s1.accept(this);
 
         if(n.s2 != null) {
+            if(DEBUG) System.out.println("  Has else");
             jfw.skip(thisBranchId); // To avoid always executing 'else'
             jfw.setElse(thisBranchId); // 'Else' block
             n.s2.accept(this);
+        } else {
+            if(DEBUG) System.out.println("  No else");
         }
         jfw.setSkip(thisBranchId); // Skip here if not 'else'
 

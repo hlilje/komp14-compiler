@@ -406,7 +406,7 @@ public class JasminFileWriter {
     }
 
     // Jasmin method to handle IWE
-    public void ifCheckNoElse(int id) {
+    public void ifCheckWithoutElse(int id) {
         sb.append("    ifeq "); sb.append("skip"); sb.append(id);
         sb.append(System.lineSeparator());
     }
