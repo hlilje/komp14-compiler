@@ -405,6 +405,12 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
+    // Jasmin method to handle IWE
+    public void ifCheckNoElse(int id) {
+        sb.append("    ifeq "); sb.append("skip"); sb.append(id);
+        sb.append(System.lineSeparator());
+    }
+
     // Jasmin method to branch if > 0
     public void ifInvCheck(int id) {
         sb.append("    ifgt "); sb.append("else"); sb.append(id);

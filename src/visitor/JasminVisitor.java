@@ -447,14 +447,22 @@ public class JasminVisitor implements TypeVisitor {
         int thisBranchId = branchId; // Avoid id change by nested blocks
 
         n.e.accept(this);
-        jfw.ifCheck(thisBranchId); // Check branch condition
+        if(n.s2 != null) {
+            jfw.ifCheck(thisBranchId); // Check branch condition
+        } else {
+            jfw.ifCheckNoElse(thisBranchId);
+        }
         decrStack();
 
         n.s1.accept(this);
-        jfw.skip(thisBranchId); // To avoid always executing 'else'
 
-        jfw.setElse(thisBranchId); // 'Else' block
-        n.s2.accept(this);
+        if(n.s2 != null)
+            jfw.skip(thisBranchId); // To avoid always executing 'else'
+
+        if(n.s2 != null) {
+            jfw.setElse(thisBranchId); // 'Else' block
+            n.s2.accept(this);
+        }
         jfw.setSkip(thisBranchId); // Skip here if not 'else'
 
         return null;
