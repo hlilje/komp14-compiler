@@ -253,7 +253,7 @@ t  = new IdentifierType(i.s);
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement Stmt() throws ParseException {StatementList sl = new StatementList(); Statement s, s1, s2;
+  final public Statement Stmt() throws ParseException {StatementList sl = new StatementList(); Statement s, s1; Statement s2 = null;
     Exp e1, e2; Identifier i; VarDeclList vdl = new VarDeclList();
     VarDecl vd;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -297,8 +297,16 @@ s = new Block(sl, vdl);
       e1 = Exp();
       jj_consume_token(RPAREN);
       s1 = Stmt();
-      jj_consume_token(ELSE);
-      s2 = Stmt();
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case ELSE:{
+        jj_consume_token(ELSE);
+        s2 = Stmt();
+        break;
+        }
+      default:
+        jj_la1[9] = jj_gen;
+        ;
+      }
 s = new If(e1, s1, s2);
       break;
       }
@@ -321,7 +329,7 @@ s = new Print(e1);
       break;
       }
     default:
-      jj_la1[9] = jj_gen;
+      jj_la1[10] = jj_gen;
       if (jj_2_5(2)) {
         i = Identifier();
         jj_consume_token(ASSIGN);
@@ -342,7 +350,7 @@ s = new ArrayAssign(i, e1, e2);
           break;
           }
         default:
-          jj_la1[10] = jj_gen;
+          jj_la1[11] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -370,7 +378,7 @@ s = new ArrayAssign(i, e1, e2);
         break;
         }
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[12] = jj_gen;
         break label_11;
       }
       jj_consume_token(OR);
@@ -391,7 +399,7 @@ e1 = new Or(e1, e2);
         break;
         }
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[13] = jj_gen;
         break label_12;
       }
       jj_consume_token(AND);
@@ -414,7 +422,7 @@ e1 = new And(e1, e2);
         break;
         }
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[14] = jj_gen;
         break label_13;
       }
       op = EqualityOpHelper();
@@ -438,7 +446,7 @@ op = "!=";
       break;
       }
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[15] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -459,7 +467,7 @@ e1 = CompareOp(op, e1, e2);
       break;
       }
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[16] = jj_gen;
       ;
     }
 {if ("" != null) return e1;}
@@ -489,7 +497,7 @@ op = ">=";
       break;
       }
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[17] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -530,7 +538,7 @@ switch(op) {
         break;
         }
       default:
-        jj_la1[17] = jj_gen;
+        jj_la1[18] = jj_gen;
         break label_14;
       }
       op = AdditiveOpHelper();
@@ -554,7 +562,7 @@ op = "-";
       break;
       }
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[19] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -585,7 +593,7 @@ switch(op) {
         break;
         }
       default:
-        jj_la1[19] = jj_gen;
+        jj_la1[20] = jj_gen;
         break label_15;
       }
       jj_consume_token(STAR);
@@ -613,7 +621,7 @@ e1 = new Times(e1, e2);
       break;
       }
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[21] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -632,7 +640,7 @@ nots++;
         break;
         }
       default:
-        jj_la1[21] = jj_gen;
+        jj_la1[22] = jj_gen;
         break label_16;
       }
     }
@@ -653,7 +661,7 @@ if(nots % 2 != 0) e = new Not(e);
         break;
         }
       default:
-        jj_la1[22] = jj_gen;
+        jj_la1[23] = jj_gen;
         break label_17;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -665,7 +673,7 @@ e = new ArrayLookup(e, ie);
         break;
         }
       default:
-        jj_la1[23] = jj_gen;
+        jj_la1[24] = jj_gen;
         if (jj_2_6(2)) {
           jj_consume_token(DOT);
           i = Identifier();
@@ -721,7 +729,7 @@ e = new This();
       break;
       }
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[25] = jj_gen;
       if (jj_2_8(2)) {
         jj_consume_token(NEW);
         jj_consume_token(INT);
@@ -754,7 +762,7 @@ e = new NewObject(id);
       break;
       }
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[26] = jj_gen;
 {if ("" != null) return new NewArray(ie);}
     }
     throw new Error("Missing return statement in function");
@@ -780,7 +788,7 @@ el.addElement(e1);
           break;
           }
         default:
-          jj_la1[26] = jj_gen;
+          jj_la1[27] = jj_gen;
           break label_18;
         }
         e2 = ExpRest();
@@ -789,7 +797,7 @@ el.addElement(e2);
       break;
       }
     default:
-      jj_la1[27] = jj_gen;
+      jj_la1[28] = jj_gen;
 
     }
 {if ("" != null) return el;}
@@ -1008,7 +1016,7 @@ el.addElement(e2);
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[28];
+  final private int[] jj_la1 = new int[29];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -1016,10 +1024,10 @@ el.addElement(e2);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x400,0x340000,0x30000,0x800,0x340000,0x0,0x30000,0x30000,0x340000,0x340000,0x0,0x0,0x8000000,0x0,0x0,0x10000000,0x10000000,0x60000000,0x60000000,0x80000000,0x7800000,0x0,0x0,0x0,0x3800000,0x0,0x0,0x7800000,};
+      jj_la1_0 = new int[] {0x400,0x340000,0x30000,0x800,0x340000,0x0,0x30000,0x30000,0x340000,0x80000,0x340000,0x0,0x0,0x8000000,0x0,0x0,0x10000000,0x10000000,0x60000000,0x60000000,0x80000000,0x7800000,0x0,0x0,0x0,0x3800000,0x0,0x0,0x7800000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x20100,0x20000,0x0,0x20100,0x8000,0x20000,0x20000,0x20100,0x100,0x20000,0x80,0x0,0x60,0x60,0x1c,0x1c,0x0,0x0,0x0,0x60401,0x1,0x11000,0x1000,0x60400,0x1000,0x8000,0x60401,};
+      jj_la1_1 = new int[] {0x0,0x20100,0x20000,0x0,0x20100,0x8000,0x20000,0x20000,0x20100,0x0,0x100,0x20000,0x80,0x0,0x60,0x60,0x1c,0x1c,0x0,0x0,0x0,0x60401,0x1,0x11000,0x1000,0x60400,0x1000,0x8000,0x60401,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[9];
   private boolean jj_rescan = false;
@@ -1036,7 +1044,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1051,7 +1059,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1062,7 +1070,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1073,7 +1081,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1083,7 +1091,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1093,7 +1101,7 @@ el.addElement(e2);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 28; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 29; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1211,7 +1219,7 @@ el.addElement(e2);
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 28; i++) {
+    for (int i = 0; i < 29; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

@@ -326,8 +326,12 @@ public class DepthFirstVisitor implements Visitor {
         n.e.accept(this);
         if(DEBUG) System.out.println("  Entering 'if' block");
         n.s1.accept(this);
-        if(DEBUG) System.out.println("  Entering 'else' block");
-        n.s2.accept(this);
+
+        // Might be missing the 'else' block
+        if(n.s2 != null) {
+            if(DEBUG) System.out.println("  Entering 'else' block");
+            n.s2.accept(this);
+        }
     }
 
     // Exp e;

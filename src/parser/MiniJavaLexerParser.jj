@@ -211,7 +211,7 @@ Type Type() :
 
 Statement Stmt() :
 {
-    StatementList sl = new StatementList(); Statement s, s1, s2;
+    StatementList sl = new StatementList(); Statement s, s1; Statement s2 = null;
     Exp e1, e2; Identifier i; VarDeclList vdl = new VarDeclList();
     VarDecl vd;
 }
@@ -219,7 +219,7 @@ Statement Stmt() :
     (
     "{" (LOOKAHEAD(2) vd = VarDecl() { vdl.addElement(vd); } )*
         ( s1 = Stmt() { sl.addElement(s1); } )* "}" { s = new Block(sl, vdl); }
-    | "if" "(" e1 = Exp() ")" s1 = Stmt() "else" s2 = Stmt() { s = new If(e1, s1, s2); }
+    | "if" "(" e1 = Exp() ")" s1 = Stmt() [ LOOKAHEAD(1) "else" s2 = Stmt() ] { s = new If(e1, s1, s2); }
     | "while" "(" e1 = Exp() ")" s1 = Stmt() { s = new While(e1, s1); }
     | "System.out.println" "(" e1 = Exp() ")" ";" { s = new Print(e1); }
     | LOOKAHEAD(2) i = Identifier() "=" e1 = Exp() ";" { s = new Assign(i, e1); }

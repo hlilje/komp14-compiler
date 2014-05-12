@@ -169,9 +169,11 @@ public class PrettyPrintVisitor implements Visitor {
         System.out.println(") ");
         System.out.print("    ");
         n.s1.accept(this);
-        System.out.println();
-        System.out.print("    else ");
-        n.s2.accept(this);
+        if(n.s2 != null) {
+            System.out.println();
+            System.out.print("    else ");
+            n.s2.accept(this);
+        }
     }
 
     // Exp e;

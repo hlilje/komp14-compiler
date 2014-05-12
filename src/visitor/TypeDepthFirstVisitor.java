@@ -224,7 +224,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
         n.s1.accept(this);
-        n.s2.accept(this);
+
+        if(n.s2 != null)
+            n.s2.accept(this);
 
         return null;
     }

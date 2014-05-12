@@ -182,8 +182,10 @@ public class ASTPrintVisitor implements Visitor {
         n.e.accept(this);
         System.out.println(",");
         n.s1.accept(this);
-        System.out.println(",");
-        n.s2.accept(this);
+        if(n.s2 != null) {
+            System.out.println(",");
+            n.s2.accept(this);
+        }
         System.out.print(")");
     }
 
