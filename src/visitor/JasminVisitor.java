@@ -456,10 +456,8 @@ public class JasminVisitor implements TypeVisitor {
 
         n.s1.accept(this);
 
-        if(n.s2 != null)
-            jfw.skip(thisBranchId); // To avoid always executing 'else'
-
         if(n.s2 != null) {
+            jfw.skip(thisBranchId); // To avoid always executing 'else'
             jfw.setElse(thisBranchId); // 'Else' block
             n.s2.accept(this);
         }
