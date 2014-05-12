@@ -207,6 +207,8 @@ public class JasminVisitor implements TypeVisitor {
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
                     System.out.println(((IntegerInFrame)vma).toString());
+                else if(vma instanceof LongInFrame)
+                    System.out.println(((LongInFrame)vma).toString());
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
@@ -220,7 +222,6 @@ public class JasminVisitor implements TypeVisitor {
         jfw.setReturn(null);
 
         // Need at least one local for args
-        // TODO: should be +1 like in regular methods?
         jfw.limitMethod(Math.max(localVars, 1), stackDepthMax);
         jfw.declareMethodEnd();
         jfw.createSourceFile(className);
@@ -358,12 +359,11 @@ public class JasminVisitor implements TypeVisitor {
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
                     System.out.println(((IntegerInFrame)vma).toString());
+                else if(vma instanceof LongInFrame)
+                    System.out.println(((LongInFrame)vma).toString());
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            // TODO Don't think this is correct, should only stack size 1 for all vars
-            // Need to fix jasmin code for programs with several classes first to test
-            //incrStack();
             vd.accept(this);
         }
         // Set number of local vars before visiting blocks
@@ -435,6 +435,8 @@ public class JasminVisitor implements TypeVisitor {
             if(DEBUG) {
                 if(vma instanceof IntegerInFrame)
                     System.out.println(((IntegerInFrame)vma).toString());
+                else if(vma instanceof LongInFrame)
+                    System.out.println(((LongInFrame)vma).toString());
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
                 if(vma == null) {

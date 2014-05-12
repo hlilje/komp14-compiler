@@ -541,7 +541,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                 }
             }
         } else if(e instanceof This) {
-            // TODO There needs to be more checks here if the method doesn't exist
             if(DEBUG) System.out.println("  instanceof This");
             mt = currClass.getMethod(s1);
 

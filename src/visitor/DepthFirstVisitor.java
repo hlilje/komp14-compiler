@@ -490,7 +490,6 @@ public class DepthFirstVisitor implements Visitor {
 
     // String s;
     public void visit(Identifier n) {
-        // TODO Does this need to be checked?
     }
 
     // Exp e1,e2;
