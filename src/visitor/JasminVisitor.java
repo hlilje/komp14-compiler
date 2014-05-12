@@ -540,15 +540,17 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(And n) {
         branchId++;
         int thisBranchId = branchId;
+        incrStack(); // Increase for dup
         n.e1.accept(this);
-        // Short-circuit
         jfw.dup(); // Duplicate since this is also needed for the 'and' check
+        // Short-circuit
         jfw.ifCheck(thisBranchId); // Use 'if' check for simplicity
         n.e2.accept(this);
 
         jfw.and();
         jfw.setElse(thisBranchId); // Skip to 'else' if first exp was false
         decrStack(); // Result is pushed onto stack
+        decrStack(); // For dup
 
         return new BooleanType();
     }
@@ -812,6 +814,7 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(Or n) {
         branchId++;
         int thisBranchId = branchId;
+        incrStack(); // Increase for dup
         n.e1.accept(this);
         jfw.dup(); // Duplicate since this is also needed for the 'or' check
         // Short circuit
@@ -821,6 +824,7 @@ public class JasminVisitor implements TypeVisitor {
         jfw.or();
         jfw.setElse(thisBranchId); // Skip here
         decrStack(); // Result is pushed onto stack
+        decrStack(); // For dup
 
         return new BooleanType();
     }
