@@ -11,8 +11,10 @@ public interface TypeVisitor {
     public Type visit(MethodDecl n);
     public Type visit(Formal n);
     public Type visit(IntArrayType n);
+    public Type visit(LongArrayType n);
     public Type visit(BooleanType n);
     public Type visit(IntegerType n);
+    public Type visit(LongType n);
     public Type visit(IdentifierType n);
     public Type visit(Block n);
     public Type visit(If n);
@@ -29,11 +31,13 @@ public interface TypeVisitor {
     public Type visit(ArrayLength n);
     public Type visit(Call n);
     public Type visit(IntegerLiteral n);
+    public Type visit(LongLiteral n);
     public Type visit(True n);
     public Type visit(False n);
     public Type visit(IdentifierExp n);
     public Type visit(This n);
     public Type visit(NewArray n);
+    public Type visit(NewLongArray n);
     public Type visit(NewObject n);
     public Type visit(Not n);
     public Type visit(Identifier n);

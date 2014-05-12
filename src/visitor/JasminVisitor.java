@@ -389,11 +389,19 @@ public class JasminVisitor implements TypeVisitor {
         return n;
     }
 
+    public Type visit(LongArrayType n) {
+        return n;
+    }
+
     public Type visit(BooleanType n) {
         return n;
     }
 
     public Type visit(IntegerType n) {
+        return n;
+    }
+
+    public Type visit(LongType n) {
         return n;
     }
 
@@ -697,6 +705,11 @@ public class JasminVisitor implements TypeVisitor {
         return new IntegerType();
     }
 
+    // int i;
+    public Type visit(LongLiteral n) {
+        return new LongType();
+    }
+
     public Type visit(True n) {
         jfw.pushTrue();
         incrStack();
@@ -735,6 +748,11 @@ public class JasminVisitor implements TypeVisitor {
         // Nothing needs to be done here with stack
 
         return new IntArrayType();
+    }
+
+    // Exp e;
+    public Type visit(NewLongArray n) {
+        return new LongArrayType();
     }
 
     // Identifier i;

@@ -151,12 +151,20 @@ public class ASTPrintVisitor implements Visitor {
         System.out.print("IntArrayType()");
     }
 
+    public void visit(LongArrayType n) {
+        System.out.print("LongArrayType()");
+    }
+
     public void visit(BooleanType n) {
         System.out.print("BooleanType()");
     }
 
     public void visit(IntegerType n) {
         System.out.print("IntegerType()");
+    }
+
+    public void visit(LongType n) {
+        System.out.print("LongType()");
     }
 
     // String s;
@@ -310,6 +318,11 @@ public class ASTPrintVisitor implements Visitor {
         System.out.print("IntegerLiteral(" + n.i + ")");
     }
 
+    // long i;
+    public void visit(LongLiteral n) {
+        System.out.print("LongLiteral(" + n.i + ")");
+    }
+
     public void visit(True n) {
         System.out.print("True()");
     }
@@ -330,6 +343,13 @@ public class ASTPrintVisitor implements Visitor {
     // Exp e;
     public void visit(NewArray n) {
         System.out.print("NewArray(");
+        n.e.accept(this);
+        System.out.print(")");
+    }
+
+    // Exp e;
+    public void visit(NewLongArray n) {
+        System.out.print("NewLongArray(");
         n.e.accept(this);
         System.out.print(")");
     }

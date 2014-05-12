@@ -2,13 +2,7 @@ package syntaxtree;
 import visitor.Visitor;
 import visitor.TypeVisitor;
 
-public class LongLiteral extends Exp {
-    public long i;
-
-    public LongLiteral(long ai) {
-        i=ai;
-    }
-
+public class LongArrayType extends Type {
     public void accept(Visitor v) {
         v.visit(this);
     }

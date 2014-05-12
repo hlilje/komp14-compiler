@@ -459,5 +459,5 @@ LongLiteral LongLiteral() :
 { Token il; }
 {
     il = <LONG_LITERAL>
-    { return new LongLiteral(Integer.parseLong(il.toString())); }
+    { return new LongLiteral(Long.parseLong(il.toString())); }
 }

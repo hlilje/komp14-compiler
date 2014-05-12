@@ -137,12 +137,20 @@ public class PrettyPrintVisitor implements Visitor {
         System.out.print("int []");
     }
 
+    public void visit(LongArrayType n) {
+        System.out.print("long []");
+    }
+
     public void visit(BooleanType n) {
         System.out.print("boolean");
     }
 
     public void visit(IntegerType n) {
         System.out.print("int");
+    }
+
+    public void visit(LongType n) {
+        System.out.print("long");
     }
 
     // String s;
@@ -291,6 +299,11 @@ public class PrettyPrintVisitor implements Visitor {
         System.out.print(n.i);
     }
 
+    // long i;
+    public void visit(LongLiteral n) {
+        System.out.print(n.i);
+    }
+
     public void visit(True n) {
         System.out.print("true");
     }
@@ -311,6 +324,13 @@ public class PrettyPrintVisitor implements Visitor {
     // Exp e;
     public void visit(NewArray n) {
         System.out.print("new int [");
+        n.e.accept(this);
+        System.out.print("]");
+    }
+
+    // Exp e;
+    public void visit(NewLongArray n) {
+        System.out.print("new long [");
         n.e.accept(this);
         System.out.print("]");
     }

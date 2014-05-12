@@ -263,10 +263,16 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(IntArrayType n) {
     }
 
+    public void visit(LongArrayType n) {
+    }
+
     public void visit(BooleanType n) {
     }
 
     public void visit(IntegerType n) {
+    }
+
+    public void visit(LongType n) {
     }
 
     // String s;
@@ -433,6 +439,10 @@ public class DepthFirstVisitor implements Visitor {
     public void visit(IntegerLiteral n) {
     }
 
+    // long i;
+    public void visit(LongLiteral n) {
+    }
+
     public void visit(True n) {
     }
 
@@ -458,6 +468,11 @@ public class DepthFirstVisitor implements Visitor {
 
     // Exp e;
     public void visit(NewArray n) {
+        n.e.accept(this);
+    }
+
+    // Exp e;
+    public void visit(NewLongArray n) {
         n.e.accept(this);
     }
 

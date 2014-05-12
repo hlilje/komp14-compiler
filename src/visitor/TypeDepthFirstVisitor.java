@@ -176,11 +176,19 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         return n;
     }
 
+    public Type visit(LongArrayType n) {
+        return n;
+    }
+
     public Type visit(BooleanType n) {
         return n;
     }
 
     public Type visit(IntegerType n) {
+        return n;
+    }
+
+    public Type visit(LongType n) {
         return n;
     }
 
@@ -498,6 +506,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         return new IntegerType();
     }
 
+    // long i;
+    public Type visit(LongLiteral n) {
+        return new LongType();
+    }
+
     public Type visit(True n) {
         return new BooleanType();
     }
@@ -524,6 +537,15 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
         return new IntArrayType();
+    }
+
+    // Exp e;
+    public Type visit(NewLongArray n) {
+        if(!(n.e.accept(this) instanceof IntegerType)) {
+            error.complain("Array size is not of type Integer",
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+        return new LongArrayType();
     }
 
     // Identifier i;
