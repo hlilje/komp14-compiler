@@ -136,11 +136,15 @@ public class JasminFileWriter {
     private String returnWithType(Type t) {
         if(t instanceof IntegerType)
             return "    ireturn";
+        else if(t instanceof LongType)
+            return "    lreturn";
         else if(t instanceof BooleanType)
             return "    ireturn"; // Boolean is int
         else if(t instanceof IdentifierType)
             return "    areturn";
         else if(t instanceof IntArrayType)
+            return "    areturn"; // Array is object
+        else if(t instanceof LongArrayType)
             return "    areturn"; // Array is object
         else {
             error.complain("Invalid return type in JasminFileWriter",
@@ -154,6 +158,12 @@ public class JasminFileWriter {
     // Jasmin method to push an interger literal onto the stack
     public void pushInt(IntegerLiteral n) {
         sb.append("    ldc "); sb.append(n.i);
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin method to push a long literal onto the stack
+    public void pushLong(LongLiteral n) {
+        sb.append("    ldc2_w "); sb.append(n.i);
         sb.append(System.lineSeparator());
     }
 
@@ -177,16 +187,35 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
-    // Jasmin minus op
-    public void minus() {
+    // Jasmin add op (long)
+    public void addLong() {
+        sb.append("    ladd");
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin sub op
+    public void sub() {
         sb.append("    ineg");
         sb.append(System.lineSeparator());
         add(); // Add negated number
     }
 
-    // Jasmin multiplication op
+    // Jasmin sub op (long)
+    public void subLong() {
+        sb.append("    lneg");
+        sb.append(System.lineSeparator());
+        addLong(); // Add negated number
+    }
+
+    // Jasmin mult op
     public void mul() {
         sb.append("    imul");
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin mult op (long)
+    public void mulLong() {
+        sb.append("    lmul");
         sb.append(System.lineSeparator());
     }
 
@@ -213,6 +242,12 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
+    // Declare new Jasmin long array
+    public void newLongArray() {
+        sb.append("    newarray long");
+        sb.append(System.lineSeparator());
+    }
+
     /* JASMIN PRINT */
 
     // Call Java's print method with Jasmin
@@ -223,9 +258,13 @@ public class JasminFileWriter {
 
     // Jasmin method to finish the print call for ints
     public void printInt() {
-        // There is no boolean in JVM, so we only need to print Integer types
-        // Will need update if Long is implemented
         sb.append("    invokevirtual java/io/PrintStream/println(I)V");
+        sb.append(System.getProperty("line.separator"));
+    }
+
+    // Jasmin method to finish the print call for longs
+    public void printLong() {
+        sb.append("    invokevirtual java/io/PrintStream/println(J)V");
         sb.append(System.getProperty("line.separator"));
     }
 
@@ -261,9 +300,21 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
+    // Jasmin method to load from a Long Array
+    public void loadLongArray() {
+        sb.append("    laload");
+        sb.append(System.lineSeparator());
+    }
+
     // Jasmin method to store in an Integer Array
     public void storeArray() {
         sb.append("    iastore");
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin method to store in a Long Array
+    public void storeLongArray() {
+        sb.append("    lastore");
         sb.append(System.lineSeparator());
     }
 
@@ -278,6 +329,25 @@ public class JasminFileWriter {
         sb.append("    goto skip"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin method for < (long)
+    public void lessThanLong(int id) {
+        // Puts 1 on stack if a > b, 0 if a == b, -1 if a < b
+        sb.append("    lcmp");
+        sb.append(System.lineSeparator());
+        sb.append("    iflt "); sb.append("lt"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 0"); // False
+        sb.append(System.lineSeparator());
+        sb.append("    goto skip"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("lt"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
         sb.append(System.lineSeparator());
@@ -301,6 +371,25 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
+    // Jasmin method for > (long)
+    public void greaterThanLong(int id) {
+        // Puts 1 on stack if a > b, 0 if a == b, -1 if a < b
+        sb.append("    lcmp");
+        sb.append(System.lineSeparator());
+        sb.append("    ifgt "); sb.append("gt"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 0"); // False
+        sb.append(System.lineSeparator());
+        sb.append("    goto skip"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("gt"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+    }
+
     // Jasmin method for <=
     public void greaterThanEquals(int id) {
         sb.append("    if_icmpge const"); sb.append(id);
@@ -312,6 +401,25 @@ public class JasminFileWriter {
         sb.append("const"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin method for >= (long)
+    public void greaterThanEqualsLong(int id) {
+        // Puts 1 on stack if a > b, 0 if a == b, -1 if a < b
+        sb.append("    lcmp");
+        sb.append(System.lineSeparator());
+        sb.append("    iflt "); sb.append("lt"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("    goto skip"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("lt"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 0"); // False
         sb.append(System.lineSeparator());
         sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
@@ -333,6 +441,25 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
+    // Jasmin method for <= (long)
+    public void lessThanEqualsLong(int id) {
+        // Puts 1 on stack if a > b, 0 if a == b, -1 if a < b
+        sb.append("    lcmp");
+        sb.append(System.lineSeparator());
+        sb.append("    ifgt "); sb.append("gt"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("    goto skip"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("gt"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 0"); // False
+        sb.append(System.lineSeparator());
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+    }
+
     // Jasmin method for ==
     public void equals(int id) {
         sb.append("    if_icmpeq const"); sb.append(id);
@@ -342,6 +469,25 @@ public class JasminFileWriter {
         sb.append("    goto skip"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin method for == (long)
+    public void equalsLong(int id) {
+        // Puts 1 on stack if a > b, 0 if a == b, -1 if a < b
+        sb.append("    lcmp");
+        sb.append(System.lineSeparator());
+        sb.append("    ifeq "); sb.append("eq"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 0"); // False
+        sb.append(System.lineSeparator());
+        sb.append("    goto skip"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("e1"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
         sb.append(System.lineSeparator());
@@ -376,6 +522,25 @@ public class JasminFileWriter {
         sb.append("const"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin method for != (long)
+    public void equalsNotLong(int id) {
+        // Puts 1 on stack if a > b, 0 if a == b, -1 if a < b
+        sb.append("    lcmp");
+        sb.append(System.lineSeparator());
+        sb.append("    ifeq "); sb.append("eq"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("    goto skip"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("eq"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 0"); // False
         sb.append(System.lineSeparator());
         sb.append("skip"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());

@@ -512,6 +512,10 @@ public class JasminVisitor implements TypeVisitor {
 
         if(t instanceof IntegerType)
             jfw.printInt();
+        else if(t instanceof LongType) {
+            jfw.printLong();
+            decrStack(); // One more is popped for larger type
+        }
         else if(t instanceof BooleanType)
             jfw.printBoolean();
         else {
@@ -545,20 +549,30 @@ public class JasminVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e1,e2;
     public Type visit(ArrayAssign n) {
+        Type t = getVarType(Symbol.symbol(n.i.s));
+
         n.i.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
         jfw.loadAccess(vma);
+
         incrStack();
+        if(t instanceof LongType)
+            incrStack(); // One extra for larger type
 
         n.e1.accept(this);
         n.e2.accept(this);
-        jfw.storeArray();
 
+        if(t instanceof IntegerType)
+            jfw.storeArray();
+        if(t instanceof LongType)
+            jfw.storeLongArray();
+
+        // TODO decr more for long?
         decrStack(); // For iastore
         decrStack();
         decrStack();
 
-        return new IntArrayType();
+        return t;
     }
 
     // Exp e1,e2;
@@ -582,11 +596,17 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(LessThan n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
-        jfw.lessThan(branchId);
+        if(t instanceof IntegerType)
+            jfw.lessThan(branchId);
+        if(t instanceof LongType) {
+            jfw.lessThanLong(branchId);
+            decrStack();
+            decrStack();
+        }
         decrStack(); // Also loads a constant onto the stack
 
         return new BooleanType();
@@ -594,42 +614,67 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Plus n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
-        jfw.add();
+
+        if(t instanceof IntegerType)
+            jfw.add();
+        if(t instanceof LongType) {
+            jfw.addLong();
+            decrStack();
+        }
         decrStack(); // Pop values and push result
 
-        return new IntegerType();
+        return t;
     }
 
     // Exp e1,e2;
     public Type visit(Minus n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
-        jfw.minus();
+
+        if(t instanceof IntegerType)
+            jfw.sub();
+        if(t instanceof LongType) {
+            jfw.subLong();
+            decrStack();
+        }
         decrStack(); // Pop values and push result
 
-        return new IntegerType();
+        return t;
     }
 
     // Exp e1,e2;
     public Type visit(Times n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
-        jfw.mul();
+
+        if(t instanceof IntegerType)
+            jfw.mul();
+        if(t instanceof LongType) {
+            jfw.mulLong();
+            decrStack();
+        }
         decrStack(); // Pop values and push result
 
-        return new IntegerType();
+        return t;
     }
 
     // Exp e1,e2;
     public Type visit(ArrayLookup n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
-        jfw.loadArray();
+
+        if(t instanceof IntArrayType)
+            jfw.loadArray();
+        if(t instanceof LongArrayType)
+            jfw.loadLongArray(); // TODO decr more for long?
         decrStack();
 
-        return new IntegerType();
+
+        if(t instanceof IntArrayType)
+            return new IntegerType();
+        return new LongType();
     }
 
     // Exp e;
@@ -714,6 +759,10 @@ public class JasminVisitor implements TypeVisitor {
 
     // int i;
     public Type visit(LongLiteral n) {
+        jfw.pushLong(n);
+        incrStack();
+        incrStack();
+
         return new LongType();
     }
 
@@ -759,6 +808,10 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e;
     public Type visit(NewLongArray n) {
+        n.e.accept(this);
+        jfw.newLongArray();
+        // Nothing needs to be done here with stack
+
         return new LongArrayType();
     }
 
@@ -791,11 +844,17 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(LessThanEquals n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
-        jfw.lessThanEquals(branchId);
+        if(t instanceof IntegerType)
+            jfw.lessThanEquals(branchId);
+        if(t instanceof LongType) {
+            jfw.lessThanEqualsLong(branchId);
+            decrStack();
+            decrStack();
+        }
         decrStack(); // Also loads a constant onto the stack
 
         return new BooleanType();
@@ -803,11 +862,17 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(GreaterThan n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
-        jfw.greaterThan(branchId);
+        if(t instanceof IntegerType)
+            jfw.greaterThan(branchId);
+        if(t instanceof LongType) {
+            jfw.greaterThanLong(branchId);
+            decrStack();
+            decrStack();
+        }
         decrStack(); // Also loads a constant onto the stack
 
         return new BooleanType();
@@ -815,11 +880,17 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(GreaterThanEquals n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
-        jfw.greaterThanEquals(branchId);
+        if(t instanceof IntegerType)
+            jfw.greaterThanEquals(branchId);
+        if(t instanceof LongType) {
+            jfw.greaterThanEqualsLong(branchId);
+            decrStack();
+            decrStack();
+        }
         decrStack(); // Also loads a constant onto the stack
 
         return new BooleanType();
@@ -831,12 +902,16 @@ public class JasminVisitor implements TypeVisitor {
         n.e2.accept(this);
 
         branchId++;
-
         // Object comparison
         if(t instanceof IdentifierType)
             jfw.equalsObj(branchId);
-        else
+        if(t instanceof IntegerType)
             jfw.equals(branchId);
+        if(t instanceof LongType) {
+            jfw.equalsLong(branchId);
+            decrStack();
+            decrStack();
+        }
         decrStack(); // Also loads a constant onto the stack
 
         return new BooleanType();
@@ -848,12 +923,16 @@ public class JasminVisitor implements TypeVisitor {
         n.e2.accept(this);
 
         branchId++;
-
         // Object comparison
         if(t instanceof IdentifierType)
             jfw.equalsNotObj(branchId);
-        else
+        if(t instanceof IntegerType)
             jfw.equalsNot(branchId);
+        if(t instanceof LongType) {
+            jfw.equalsNotLong(branchId);
+            decrStack();
+            decrStack();
+        }
         decrStack(); // Also loads a constant onto the stack
 
         return new BooleanType();
