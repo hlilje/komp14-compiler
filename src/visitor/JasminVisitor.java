@@ -802,11 +802,16 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Equals n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
-        jfw.equals(branchId);
+
+        // Object comparison
+        if(t instanceof IdentifierType)
+            jfw.equalsObj(branchId);
+        else
+            jfw.equals(branchId);
         decrStack(); // Also loads a constant onto the stack
 
         return new BooleanType();
@@ -814,11 +819,16 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(EqualsNot n) {
-        n.e1.accept(this);
+        Type t = n.e1.accept(this);
         n.e2.accept(this);
 
         branchId++;
-        jfw.equalsNot(branchId);
+
+        // Object comparison
+        if(t instanceof IdentifierType)
+            jfw.equalsNotObj(branchId);
+        else
+            jfw.equalsNot(branchId);
         decrStack(); // Also loads a constant onto the stack
 
         return new BooleanType();

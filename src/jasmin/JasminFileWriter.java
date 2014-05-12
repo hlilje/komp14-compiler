@@ -349,9 +349,41 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
+    // Jasmin method for == (object type)
+    public void equalsObj(int id) {
+        sb.append("    if_acmpeq const"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 0"); // False
+        sb.append(System.lineSeparator());
+        sb.append("    goto skip"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+    }
+
     // Jasmin method for ==
     public void equalsNot(int id) {
         sb.append("    if_icmpne const"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 0"); // False
+        sb.append(System.lineSeparator());
+        sb.append("    goto skip"); sb.append(id);
+        sb.append(System.lineSeparator());
+        sb.append("const"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+        sb.append("    ldc 1"); // True
+        sb.append(System.lineSeparator());
+        sb.append("skip"); sb.append(id); sb.append(":");
+        sb.append(System.lineSeparator());
+    }
+
+    // Jasmin method for == (object type)
+    public void equalsNotObj(int id) {
+        sb.append("    if_acmpne const"); sb.append(id);
         sb.append(System.lineSeparator());
         sb.append("    ldc 0"); // False
         sb.append(System.lineSeparator());
