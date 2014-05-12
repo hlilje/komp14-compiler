@@ -334,14 +334,21 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(LessThan n) {
-        if(DEBUG) System.out.println("LESS_THAN E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this));
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("LESS_THAN E1: " + t1 + ", E2: " + t2);
 
-        if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of LessThan must be of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-        if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of LessThan must be of type Integer",
+        if(t1 instanceof IntegerType) {
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Right side of LessThan must be of type Integer",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!(t2 instanceof LongType)) {
+                error.complain("Right side of LessThan must be of type Long",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for LessThan",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
@@ -350,14 +357,21 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Plus n) {
-        if(DEBUG) System.out.println("PLUS E1: " + n.e1.accept(this) + ", E2: " + n.e2.accept(this));
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("PLUS E1: " + t1 + ", E2: " + t2);
 
-        if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of Plus must be of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-        if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of Plus must be of type Integer",
+        if(t1 instanceof IntegerType) {
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Right side of Plus must be of type Integer",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!(t2 instanceof LongType)) {
+                error.complain("Right side of Plus must be of type Long",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for Plus",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
@@ -366,12 +380,21 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Minus n) {
-        if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of Minus must be of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-        if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of Minus must be of type Integer",
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("MINUS E1: " + t1 + ", E2: " + t2);
+
+        if(t1 instanceof IntegerType) {
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Right side of Minus must be of type Integer",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!(t2 instanceof LongType)) {
+                error.complain("Right side of Minus must be of type Long",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for Minus",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
@@ -380,12 +403,21 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Times n) {
-        if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of Times must be of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-        if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of Times must be of type Integer",
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("TIMES E1: " + t1 + ", E2: " + t2);
+
+        if(t1 instanceof IntegerType) {
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Right side of Times must be of type Integer",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!(t2 instanceof LongType)) {
+                error.complain("Right side of Times must be of type Long",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for Times",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
@@ -394,8 +426,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(ArrayLookup n) {
-        Type t1 = n.e1.accept(this);
-        Type t2 = n.e2.accept(this);
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
 
         if(!(t1 instanceof IntArrayType) && !(t1 instanceof LongArrayType)) {
             error.complain("Outer expression of ArrayLookup must be of type IntArrayType " +
@@ -603,12 +634,21 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(LessThanEquals n) {
-        if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of LessThanEquals must be of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-        if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of LessThanEquals must be of type Integer",
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("LESS_THAN_EQUALS E1: " + t1 + ", E2: " + t2);
+
+        if(t1 instanceof IntegerType) {
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Right side of LessThanEquals must be of type Integer",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!(t2 instanceof LongType)) {
+                error.complain("Right side of LessThanEquals must be of type Long",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for LessThanEquals",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
@@ -617,12 +657,21 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(GreaterThan n) {
-        if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of GreaterThan must be of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-        if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of GreaterThan must be of type Integer",
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("GREATER_THAN E1: " + t1 + ", E2: " + t2);
+
+        if(t1 instanceof IntegerType) {
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Right side of GreaterThan must be of type Integer",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!(t2 instanceof LongType)) {
+                error.complain("Right side of GreaterThan must be of type Long",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for GreaterThan",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
@@ -631,12 +680,21 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(GreaterThanEquals n) {
-        if(!(n.e1.accept(this) instanceof IntegerType)) {
-            error.complain("Left side of GreateThanEquals must be of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-        if(!(n.e2.accept(this) instanceof IntegerType)) {
-            error.complain("Right side of GreateThanEquals must be of type Integer",
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("GREATER_THAN_EQUALS E1: " + t1 + ", E2: " + t2);
+
+        if(t1 instanceof IntegerType) {
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Right side of GreaterThanEquals must be of type Integer",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!(t2 instanceof LongType)) {
+                error.complain("Right side of GreaterThanEquals must be of type Long",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for GreaterThanEquals",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
@@ -645,20 +703,24 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Equals n) {
-        Type t1 = n.e1.accept(this);
-        Type t2 = n.e2.accept(this);
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
 
-        if((t1 instanceof IntegerType) && !(t2 instanceof IntegerType)) {
-            error.complain("Right side of Equals must be of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        } else if((t1 instanceof BooleanType) && !(t2 instanceof BooleanType)) {
-            error.complain("Right side of Equals must be of type Boolean",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        if(t1 instanceof IntegerType) {
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Right side of Equals must be of type Integer",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!(t2 instanceof LongType)) {
+                error.complain("Right side of Equals must be of type Long",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
         } else if((t1 instanceof IdentifierType) && !t1.equals(t2)) {
             error.complain("Different identifier types in equality comparison",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         } else {
-            // Do nothing
+            error.complain("Invalid type in equality comparison",
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
         return new BooleanType();
@@ -666,20 +728,24 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(EqualsNot n) {
-        Type t1 = n.e1.accept(this);
-        Type t2 = n.e2.accept(this);
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
 
-        if((t1 instanceof IntegerType) && !(t2 instanceof IntegerType)) {
-            error.complain("Right side of EqualsNot must be of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        } else if((t1 instanceof BooleanType) && !(t2 instanceof BooleanType)) {
-            error.complain("Right side of EqualsNot must be of type Boolean",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        if(t1 instanceof IntegerType) {
+            if(!(t2 instanceof IntegerType)) {
+                error.complain("Right side of EqualsNot must be of type Integer",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!(t2 instanceof LongType)) {
+                error.complain("Right side of EqualsNot must be of type Long",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
         } else if((t1 instanceof IdentifierType) && !t1.equals(t2)) {
             error.complain("Different identifier types in non-equality comparison",
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         } else {
-            // Do nothing
+            error.complain("Invalid type in non-equality comparison",
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
         return new BooleanType();
