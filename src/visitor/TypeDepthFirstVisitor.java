@@ -108,13 +108,19 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // VarDeclList vl;
     // MethodDeclList ml;
     public Type visit(ClassDeclExtends n) {
-        currClass = symTable.getClass(Symbol.symbol(n.i.s));
+        Symbol s = Symbol.symbol(n.i.s);
+        currClass = symTable.getClass(s);
         currMethod = null;
 
         if(symTable.getClass(Symbol.symbol(n.j.s)) == null) {
             error.complain("Class " + n.i + " extends nonexistent class " +
                     n.j, ErrorHandler.ErrorCode.NOT_FOUND);
         }
+
+        // Check for circular inheritence
+        if(currClass.extendsClass(s))
+            error.complain("Class " + n.i + " is in a circular inheritence",
+                            ErrorHandler.ErrorCode.CIRCULAR_INHERITENCE);
 
         n.i.accept(this);
         n.j.accept(this);
@@ -165,6 +171,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
+        /*
         // Check for method overloading from inheritance here
         if( currClass.getSuperId() != null
             && symTable.getClass(currClass.getSuperId()) != null
@@ -172,7 +179,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                 error.complain("Method " + s + " in class " + currClass.getId()
                 + " was already defined in super class " + currClass.getSuperId(),
                 ErrorHandler.ErrorCode.ALREADY_DEFINED);
-        }
+        }*/
 
         blockId = -1; // Reset the block counter for this method
         return n.t;
@@ -285,6 +292,13 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("ASSIGN: " + et + " TO: " + it);
 
         if((it != null) && (et != null) && (!it.equals(et))) {
+            // Now check if type is inherited
+            if(it instanceof IdentifierType && et instanceof IdentifierType) {
+                Symbol is = Symbol.symbol(((IdentifierType)it).s);
+                Symbol es = Symbol.symbol(((IdentifierType)et).s);
+                if(symTable.getClass(es).extendsClass(is))
+                    return null;
+            }
             error.complain("Assigned type " + et + " should be of type " + it,
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
@@ -571,7 +585,15 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             Type callType = null;
             if(fl != null) callType = fl.get(i).getType(); // To handle null errors from before
             if(!formalType.equals(callType)) {
-                error.complain("Parameter type " + formalType + " in call not of type " + callType + " for method " +
+                // Now check if type is inherited
+                if(formalType instanceof IdentifierType
+                    && callType instanceof IdentifierType) {
+                    Symbol fs = Symbol.symbol(((IdentifierType)formalType).s);
+                    Symbol cs = Symbol.symbol(((IdentifierType)callType).s);
+                    if(symTable.getClass(fs).extendsClass(cs))
+                        return t;
+                } else
+                    error.complain("Parameter type " + formalType + " in call not of type " + callType + " for method " +
                         currMethod.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         }

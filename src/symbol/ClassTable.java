@@ -57,11 +57,17 @@ public class ClassTable {
     }
 
     public Binding getVar(Symbol s) {
+        Binding b = (Binding)locals.get(s);
+        if(b == null && spr != null)
+            b = symTable.getClass(spr).getVar(s); // inherited field
         return (Binding)locals.get(s);
     }
 
     public boolean hasVar(Symbol s) {
-        return locals.get(s) != null;
+        boolean has = locals.get(s) != null;
+        if(has == false && spr != null)
+            has = symTable.getClass(spr).hasVar(s); // inherited field
+        return has;
     }
 
     // Save a VMAccess for a field
@@ -70,7 +76,10 @@ public class ClassTable {
     }
 
     public VMAccess getFieldAccess(Symbol s) {
-        return (VMAccess)fieldAccesses.get(s);
+        VMAccess vma = (VMAccess)fieldAccesses.get(s);
+        if(vma == null && spr != null)
+            vma = symTable.getClass(spr).getFieldAccess(s);
+        return vma;
     }
 
     // Save a JVM frame
@@ -83,5 +92,15 @@ public class ClassTable {
         if(frame == null && spr != null)
             frame = symTable.getClass(spr).getFrame(s); // inherited method
         return frame;
+    }
+
+    // Check if this class extends another class
+    public boolean extendsClass(Symbol s) {
+        if(spr == s)
+            return true;
+        else if(spr != null)
+            return symTable.getClass(spr).extendsClass(s);
+        else
+            return false;
     }
 }
