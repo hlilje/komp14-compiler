@@ -210,7 +210,6 @@ public class JasminVisitor implements TypeVisitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            //jfw.declareLocal(vma); // DEBUG
             vd.accept(this);
         }
         // Set number of local vars before visiting blocks
@@ -358,7 +357,6 @@ public class JasminVisitor implements TypeVisitor {
                 else // instanceof ObjectInFrame
                     System.out.println(((ObjectInFrame)vma).toString());
             }
-            //jfw.declareLocal(vma); // DEBUG
             // TODO Don't think this is correct, should only stack size 1 for all vars
             // Need to fix jasmin code for programs with several classes first to test
             //incrStack();
@@ -432,7 +430,6 @@ public class JasminVisitor implements TypeVisitor {
                     System.out.println("  VMA was null for block id: " + blockId);
                 }
             }
-            //jfw.declareLocal(vma); // DEBUG
             vd.accept(this);
         }
         // Add block var decl to method local vars
@@ -665,6 +662,7 @@ public class JasminVisitor implements TypeVisitor {
         n.i.accept(this);
         for ( int i = 0; i < n.el.size(); i++ ) {
             n.el.elementAt(i).accept(this);
+            decrStack(); // Once for each argument
         }
 
         if(DEBUG && frame == null) {
