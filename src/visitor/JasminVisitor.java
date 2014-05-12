@@ -726,6 +726,7 @@ public class JasminVisitor implements TypeVisitor {
         jfw.newObject(n.i.s);
         incrStack();
         incrStack(); // For dup
+        decrStack(); // Constructor returns void
 
         return new IdentifierType(n.i.s);
     }
