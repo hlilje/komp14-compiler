@@ -13,7 +13,7 @@ import frame.VMAccess;
 import frame.VMFrame;
 
 public class JasminVisitor implements TypeVisitor {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private ErrorHandler error;
     private JasminFileWriter jfw;
@@ -241,7 +241,8 @@ public class JasminVisitor implements TypeVisitor {
         if(DEBUG) System.out.println(record.toString());
 
         // No inheritance
-        jfw.declareClass(className, className, "java/lang/Object");
+        String spr = "java/lang/Object";
+        jfw.declareClass(className, className, spr);
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -254,7 +255,7 @@ public class JasminVisitor implements TypeVisitor {
             vd.accept(this);
         }
 
-        jfw.declareConstructor();
+        jfw.declareConstructor(spr);
 
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
@@ -278,8 +279,9 @@ public class JasminVisitor implements TypeVisitor {
         Record record = new Record(className);
         if(DEBUG) System.out.println(record.toString());
 
-        // No inheritance
-        jfw.declareClass(className, className, "java/lang/Object");
+        // Inheritance
+        String spr = n.j.s;
+        jfw.declareClass(className, className, spr);
 
         n.i.accept(this);
         n.j.accept(this);
@@ -292,6 +294,9 @@ public class JasminVisitor implements TypeVisitor {
             jfw.declareField(vma);
             vd.accept(this);
         }
+
+        jfw.declareConstructor(spr);
+
         for ( int i = 0; i < n.ml.size(); i++ ) {
             n.ml.elementAt(i).accept(this);
         }

@@ -61,6 +61,7 @@ TOKEN :
     | < FALSE: "false" >
     | < THIS: "this" >
     | < NEW: "new" >
+    | < EXTENDS: "extends" >
 }
 
 // Operators
@@ -152,13 +153,15 @@ MainClass MainClass() :
 // NOTE ClassDeclExtends is an extension to the grammar
 ClassDecl ClassDecl() :
 {
-    Identifier i; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
+    Identifier i, j = null; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
     MethodDeclList mdl = new MethodDeclList();
 }
 {
-    "class" i = Identifier() "{" ( vd = VarDecl() { vdl.addElement(vd); } )*
+    "class" i = Identifier() ( "extends" j = Identifier() )?
+    "{" ( vd = VarDecl() { vdl.addElement(vd); } )*
     ( md = MethodDecl() { mdl.addElement(md); } )* "}"
-    { return new ClassDeclSimple(i, vdl, mdl); }
+    { return j == null ? new ClassDeclSimple(i, vdl, mdl)
+        : new ClassDeclExtends(i, j, vdl, mdl); }
 }
 
 VarDecl VarDecl() :

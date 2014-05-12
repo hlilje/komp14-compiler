@@ -63,12 +63,12 @@ public class JasminFileWriter {
     }
 
     // Helper method to write a default constructor declaration in Jasmin syntax
-    public void declareConstructor() {
+    public void declareConstructor(String spr) {
         sb.append(".method public <init>()V");
         sb.append(System.lineSeparator());
         sb.append("    aload_0");
         sb.append(System.lineSeparator());
-        sb.append("    invokespecial java/lang/Object/<init>()V");
+        sb.append("    invokespecial "); sb.append(spr); sb.append("/<init>()V");
         sb.append(System.lineSeparator());
         sb.append("    return");
         sb.append(System.lineSeparator());

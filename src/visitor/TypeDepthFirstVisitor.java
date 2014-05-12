@@ -111,6 +111,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         currClass = symTable.getClass(Symbol.symbol(n.i.s));
         currMethod = null;
 
+        if(symTable.getClass(Symbol.symbol(n.j.s)) == null) {
+            error.complain("Class " + n.i + " extends nonexistent class " +
+                    n.j, ErrorHandler.ErrorCode.NOT_FOUND);
+        }
+
         n.i.accept(this);
         n.j.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
@@ -158,6 +163,15 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if((t != null) && (!(t.equals(n.t)))) {
             error.complain("Returned type " + t + " is not same as declared type " +
                     n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+
+        // Check for method overloading from inheritance here
+        if( currClass.getSuperId() != null
+            && symTable.getClass(currClass.getSuperId()) != null
+            && symTable.getClass(currClass.getSuperId()).getMethod(s) != null ) {
+                error.complain("Method " + s + " in class " + currClass.getId()
+                + " was already defined in super class " + currClass.getSuperId(),
+                ErrorHandler.ErrorCode.ALREADY_DEFINED);
         }
 
         blockId = -1; // Reset the block counter for this method

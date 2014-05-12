@@ -10,9 +10,13 @@ public class ClassTable {
     private Table methods;
     private Table fieldAccesses; // VMAccesses for fields
     private Table frames; // JVM Frames
+    private SymbolTable symTable; // For inheritance
+    private Symbol spr; // For inheritance
 
-    public ClassTable(Symbol s) {
+    public ClassTable(Symbol s, Symbol spr, SymbolTable st) {
         this.s = s;
+        this.spr = spr;
+        this.symTable = st;
         locals = new Table();
         methods = new Table();
         fieldAccesses = new Table();
@@ -21,6 +25,10 @@ public class ClassTable {
 
     public Symbol getId() {
         return s;
+    }
+
+    public Symbol getSuperId() {
+        return spr;
     }
 
     public boolean addVar(Symbol s, Type t) {
@@ -42,7 +50,10 @@ public class ClassTable {
     }
 
     public MethodTable getMethod(Symbol s) {
-        return (MethodTable)methods.get(s);
+        MethodTable mt = (MethodTable)methods.get(s);
+        if(mt == null && spr != null)
+            mt = symTable.getClass(spr).getMethod(s); // inherited method
+        return mt;
     }
 
     public Binding getVar(Symbol s) {
@@ -68,6 +79,9 @@ public class ClassTable {
     }
 
     public VMFrame getFrame(Symbol s) {
-        return (VMFrame)frames.get(s);
+        VMFrame frame = (VMFrame)frames.get(s);
+        if(frame == null && spr != null)
+            frame = symTable.getClass(spr).getFrame(s); // inherited method
+        return frame;
     }
 }

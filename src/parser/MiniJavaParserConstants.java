@@ -51,55 +51,57 @@ public interface MiniJavaParserConstants {
   /** RegularExpression Id. */
   int NEW = 27;
   /** RegularExpression Id. */
-  int AND = 28;
+  int EXTENDS = 28;
   /** RegularExpression Id. */
-  int LT = 29;
+  int AND = 29;
   /** RegularExpression Id. */
-  int PLUS = 30;
+  int LT = 30;
   /** RegularExpression Id. */
-  int MINUS = 31;
+  int PLUS = 31;
   /** RegularExpression Id. */
-  int STAR = 32;
+  int MINUS = 32;
   /** RegularExpression Id. */
-  int BANG = 33;
+  int STAR = 33;
   /** RegularExpression Id. */
-  int ASSIGN = 34;
+  int BANG = 34;
   /** RegularExpression Id. */
-  int GT = 35;
+  int ASSIGN = 35;
   /** RegularExpression Id. */
-  int LEQ = 36;
+  int GT = 36;
   /** RegularExpression Id. */
-  int GEQ = 37;
+  int LEQ = 37;
   /** RegularExpression Id. */
-  int EQ = 38;
+  int GEQ = 38;
   /** RegularExpression Id. */
-  int NEQ = 39;
+  int EQ = 39;
   /** RegularExpression Id. */
-  int OR = 40;
+  int NEQ = 40;
   /** RegularExpression Id. */
-  int LBRACE = 41;
+  int OR = 41;
   /** RegularExpression Id. */
-  int RBRACE = 42;
+  int LBRACE = 42;
   /** RegularExpression Id. */
-  int LPAREN = 43;
+  int RBRACE = 43;
   /** RegularExpression Id. */
-  int RPAREN = 44;
+  int LPAREN = 44;
   /** RegularExpression Id. */
-  int LBRACKET = 45;
+  int RPAREN = 45;
   /** RegularExpression Id. */
-  int RBRACKET = 46;
+  int LBRACKET = 46;
   /** RegularExpression Id. */
-  int SEMICOLON = 47;
+  int RBRACKET = 47;
   /** RegularExpression Id. */
-  int COMMA = 48;
+  int SEMICOLON = 48;
   /** RegularExpression Id. */
-  int DOT = 49;
+  int COMMA = 49;
   /** RegularExpression Id. */
-  int IDENTIFIER = 50;
+  int DOT = 50;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 51;
+  int IDENTIFIER = 51;
   /** RegularExpression Id. */
-  int LONG_LITERAL = 52;
+  int INTEGER_LITERAL = 52;
+  /** RegularExpression Id. */
+  int LONG_LITERAL = 53;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -136,6 +138,7 @@ public interface MiniJavaParserConstants {
     "\"false\"",
     "\"this\"",
     "\"new\"",
+    "\"extends\"",
     "\"&&\"",
     "\"<\"",
     "\"+\"",

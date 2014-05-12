@@ -73,7 +73,7 @@ public class DepthFirstVisitor implements Visitor {
 
         if(DEBUG) System.out.println(">>> VISIT MAIN_CLASS: " + s);
         if(DEBUG) System.out.println("=== BEGIN MAIN CLASS SCOPE ====");
-        ClassTable ct = new ClassTable(s);
+        ClassTable ct = new ClassTable(s, null, symTable);
 
         if(!(n.i3.s.equals("main"))) {
             error.complain("Main method not defined, was named: " + n.i3,
@@ -110,7 +110,7 @@ public class DepthFirstVisitor implements Visitor {
         Symbol s = Symbol.symbol(n.i.s);
         if(DEBUG) System.out.println(">>> VISIT CLASS_DECL_SIMP: " + s);
         if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ====== ");
-        ClassTable ct = new ClassTable(s);
+        ClassTable ct = new ClassTable(s, null, symTable);
 
         if(!symTable.addClass(s, ct)) {
             error.complain("Class " + s + " is already defined",
@@ -137,9 +137,10 @@ public class DepthFirstVisitor implements Visitor {
     // MethodDeclList ml;
     public void visit(ClassDeclExtends n) {
         Symbol s = Symbol.symbol(n.i.s);
+        Symbol spr = Symbol.symbol(n.j.s);
         if(DEBUG) System.out.println(">>> VISIT CLASS_DECLEXT: " + s);
         if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ======");
-        ClassTable ct = new ClassTable(s);
+        ClassTable ct = new ClassTable(s, spr, symTable);
 
         if(!symTable.addClass(s, ct)) {
             error.complain("Class " + s + " is already defined",
