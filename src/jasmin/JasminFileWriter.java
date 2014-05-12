@@ -365,7 +365,7 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
-    // Jasmin method for ==
+    // Jasmin method for !=
     public void equalsNot(int id) {
         sb.append("    if_icmpne const"); sb.append(id);
         sb.append(System.lineSeparator());
@@ -381,7 +381,7 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
     }
 
-    // Jasmin method for == (object type)
+    // Jasmin method for != (object type)
     public void equalsNotObj(int id) {
         sb.append("    if_acmpne const"); sb.append(id);
         sb.append(System.lineSeparator());
