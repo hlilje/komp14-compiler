@@ -4,7 +4,10 @@ import syntaxtree.BooleanType;
 import syntaxtree.FormalList;
 import syntaxtree.IdentifierType;
 import syntaxtree.IntArrayType;
+import syntaxtree.LongArrayType;
 import syntaxtree.IntegerType;
+import syntaxtree.LongType;
+import syntaxtree.BooleanType;
 import syntaxtree.Type;
 
 public class Hardware {
@@ -15,8 +18,14 @@ public class Hardware {
         else if(t instanceof IntegerType) {
             return "I";
         }
+        else if(t instanceof LongType) {
+            return "J";
+        }
         else if(t instanceof IntArrayType) {
             return "[I";
+        }
+        else if(t instanceof LongArrayType) {
+            return "[J";
         }
         else if(t instanceof IdentifierType) {
             return "L" + t.toString() + ";";
