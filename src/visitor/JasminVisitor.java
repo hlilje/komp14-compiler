@@ -553,6 +553,7 @@ public class JasminVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e1,e2;
     public Type visit(ArrayAssign n) {
+        // TODO Finish this
         Type t = getVarType(Symbol.symbol(n.i.s));
 
         n.i.accept(this);
@@ -560,21 +561,21 @@ public class JasminVisitor implements TypeVisitor {
         jfw.loadAccess(vma);
 
         incrStack();
-        if(t instanceof LongType)
-            incrStack(); // One extra for larger type
+        //if(t instanceof LongArrayType)
+            //incrStack(); // One extra for larger type
 
         n.e1.accept(this);
         n.e2.accept(this);
 
-        if(t instanceof IntegerType)
+        if(t instanceof IntArrayType)
             jfw.storeArray();
-        if(t instanceof LongType)
+        if(t instanceof LongArrayType)
             jfw.storeLongArray();
 
         decrStack(); // For iastore
         decrStack();
         decrStack();
-        if(t instanceof LongType)
+        if(t instanceof LongArrayType)
             decrStack(); // One extra for larger type
 
         return t;
