@@ -537,8 +537,12 @@ public class JasminVisitor implements TypeVisitor {
         // If the variable to be assigned is a field, one extra value is put on the stack
         if(vma instanceof OnHeap)
             incrStack();
+
         jfw.storeAccess(vma);
         decrStack();
+
+        if(vma instanceof LongInFrame)
+            decrStack(); // One extra for Long
         // The extra stack value for fields is used
         if(vma instanceof OnHeap)
             decrStack();
@@ -567,10 +571,11 @@ public class JasminVisitor implements TypeVisitor {
         if(t instanceof LongType)
             jfw.storeLongArray();
 
-        // TODO decr more for long?
         decrStack(); // For iastore
         decrStack();
         decrStack();
+        if(t instanceof LongType)
+            decrStack(); // One extra for larger type
 
         return t;
     }
@@ -668,9 +673,9 @@ public class JasminVisitor implements TypeVisitor {
         if(t instanceof IntArrayType)
             jfw.loadArray();
         if(t instanceof LongArrayType)
-            jfw.loadLongArray(); // TODO decr more for long?
-        decrStack();
+            jfw.loadLongArray(); // TODO decrease more for long?
 
+        decrStack();
 
         if(t instanceof IntArrayType)
             return new IntegerType();
@@ -732,8 +737,10 @@ public class JasminVisitor implements TypeVisitor {
         }
 
         n.i.accept(this);
+        int longs = 0; // Keep track of Long formals
         for ( int i = 0; i < n.el.size(); i++ ) {
-            n.el.elementAt(i).accept(this);
+            if(n.el.elementAt(i).accept(this) instanceof LongType);
+                longs++;
         }
 
         if(DEBUG && frame == null) {
@@ -744,6 +751,9 @@ public class JasminVisitor implements TypeVisitor {
         // Must be done outside of argument loop
         for(int i = 0; i < n.el.size(); i++) {
             decrStack(); // Once for each argument
+        }
+        for(int i = 0; i < longs; i++) {
+            decrStack(); // One extra for Longs
         }
 
         return t;
@@ -761,7 +771,7 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(LongLiteral n) {
         jfw.pushLong(n);
         incrStack();
-        incrStack();
+        incrStack(); // Longs take up two stack spots
 
         return new LongType();
     }
@@ -782,10 +792,13 @@ public class JasminVisitor implements TypeVisitor {
 
     // String s;
     public Type visit(IdentifierExp n) {
-        Symbol s = Symbol.symbol(n.s);
         if(DEBUG) System.out.println(">>>> IdentifierExp: " + n.s);
-        jfw.loadAccess(getVMAccess(n.s));
+        Symbol s = Symbol.symbol(n.s);
+        VMAccess vma = getVMAccess(n.s);
+        jfw.loadAccess(vma);
         incrStack(); // Increase for both heap and stack
+        if(vma instanceof LongInFrame)
+            incrStack(); // One extra for Long
 
         return getVarType(s);
     }
