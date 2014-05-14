@@ -880,7 +880,18 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             }
         } else if(t1 instanceof IdentifierType) {
             if(!t1.equals(t2)) {
-                error.complain("Right side of Equals must be of type " + t1,
+                // Check inheritance
+                Symbol s1 = Symbol.symbol(((IdentifierType)t1).s);
+                Symbol s2 = null;
+                ClassTable ct1 = symTable.getClass(s1);
+                ClassTable ct2 = null;
+                if(t2 instanceof IdentifierType)
+                    s2 = Symbol.symbol(((IdentifierType)t2).s);
+                if(s2 != null)
+                    ct2 = symTable.getClass(s2);
+                if(! (ct1 != null && ct2 != null &&
+                     (ct1.extendsClass(s2) || ct2.extendsClass(s1))) )
+                    error.complain("Right side of Equals must be of type " + t1,
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof BooleanType) {
@@ -924,7 +935,18 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             }
         } else if(t1 instanceof IdentifierType) {
             if(!t1.equals(t2)) {
-                error.complain("Right side of EqualsNot must be of type " + t1,
+                // Check inheritance
+                Symbol s1 = Symbol.symbol(((IdentifierType)t1).s);
+                Symbol s2 = null;
+                ClassTable ct1 = symTable.getClass(s1);
+                ClassTable ct2 = null;
+                if(t2 instanceof IdentifierType)
+                    s2 = Symbol.symbol(((IdentifierType)t2).s);
+                if(s2 != null)
+                    ct2 = symTable.getClass(s2);
+                if(! (ct1 != null && ct2 != null &&
+                     (ct1.extendsClass(s2) || ct2.extendsClass(s1))) )
+                    error.complain("Right side of EqualsNot must be of type " + t1,
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof BooleanType) {
