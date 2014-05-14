@@ -394,18 +394,20 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("LESS_THAN E1: " + t1 + ", E2: " + t2);
 
         if(t1 instanceof IntegerType) {
-            if(!(t2 instanceof IntegerType)) {
-                error.complain("Right side of LessThan must be of type Integer",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of LessThan must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof LongType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Right side of LessThan must be of type Long",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of LessThan must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
-            error.complain("Non Integer or Long type for LessThan",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Non Integer or Long type for LessThan in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
         return new BooleanType();
@@ -417,23 +419,26 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("PLUS E1: " + t1 + ", E2: " + t2);
 
         if(t1 instanceof IntegerType) {
-            if(!(t2 instanceof IntegerType)) {
-                error.complain("Right side of Plus must be of type Integer",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Plus must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof LongType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Right side of Plus must be of type Long",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Plus must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
-            error.complain("Non Integer or Long type for Plus",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Non Integer or Long type for Plus in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        if((t1 instanceof IntegerType) || (t1 instanceof LongType))
-            return t1;
-        return null; // Don't return invalid types
+        if((t1 instanceof LongType) || (t2 instanceof LongType)) {
+            return new LongType();
+        }
+        return new IntegerType();
     }
 
     // Exp e1,e2;
@@ -442,23 +447,26 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("MINUS E1: " + t1 + ", E2: " + t2);
 
         if(t1 instanceof IntegerType) {
-            if(!(t2 instanceof IntegerType)) {
-                error.complain("Right side of Minus must be of type Integer",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Minus must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof LongType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Right side of Minus must be of type Long",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Minus must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
-            error.complain("Non Integer or Long type for Minus",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Non Integer or Long type for Minus in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        if((t1 instanceof IntegerType) || (t1 instanceof LongType))
-            return t1;
-        return null; // Don't return invalid types
+        if((t1 instanceof LongType) || (t2 instanceof LongType)) {
+            return new LongType();
+        }
+        return new IntegerType();
     }
 
     // Exp e1,e2;
@@ -467,23 +475,26 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("TIMES E1: " + t1 + ", E2: " + t2);
 
         if(t1 instanceof IntegerType) {
-            if(!(t2 instanceof IntegerType)) {
-                error.complain("Right side of Times must be of type Integer",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Times must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof LongType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Right side of Times must be of type Long",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Times must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
-            error.complain("Non Integer or Long type for Times",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Non Integer or Long type for Times in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        if((t1 instanceof IntegerType) || (t1 instanceof LongType))
-            return t1;
-        return null; // Don't return invalid types
+        if((t1 instanceof LongType) || (t2 instanceof LongType)) {
+            return new LongType();
+        }
+        return new IntegerType();
     }
 
     // Exp e1,e2;
@@ -715,18 +726,20 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("LESS_THAN_EQUALS E1: " + t1 + ", E2: " + t2);
 
         if(t1 instanceof IntegerType) {
-            if(!(t2 instanceof IntegerType)) {
-                error.complain("Right side of LessThanEquals must be of type Integer",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of LessThanEquals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof LongType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Right side of LessThanEquals must be of type Long",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of LessThanEquals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
-            error.complain("Non Integer or Long type for LessThanEquals",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Non Integer or Long type for LessThanEquals in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
         return new BooleanType();
@@ -738,18 +751,20 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("GREATER_THAN E1: " + t1 + ", E2: " + t2);
 
         if(t1 instanceof IntegerType) {
-            if(!(t2 instanceof IntegerType)) {
-                error.complain("Right side of GreaterThan must be of type Integer",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of GreaterThan must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof LongType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Right side of GreaterThan must be of type Long",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of GreaterThan must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
-            error.complain("Non Integer or Long type for GreaterThan",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Non Integer or Long type for GreaterThan in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
         return new BooleanType();
@@ -761,18 +776,20 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(DEBUG) System.out.println("GREATER_THAN_EQUALS E1: " + t1 + ", E2: " + t2);
 
         if(t1 instanceof IntegerType) {
-            if(!(t2 instanceof IntegerType)) {
-                error.complain("Right side of GreaterThanEquals must be of type Integer",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of GreaterThanEquals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof LongType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Right side of GreaterThanEquals must be of type Long",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of GreaterThanEquals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
-            error.complain("Non Integer or Long type for GreaterThanEquals",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Non Integer or Long type for GreaterThanEquals in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
         return new BooleanType();
@@ -783,13 +800,15 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
 
         if(t1 instanceof IntegerType) {
-            if(!(t2 instanceof IntegerType)) {
-                error.complain("Right side of Equals must be of type Integer",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Equals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof LongType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Right side of Equals must be of type Long",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Equals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof IdentifierType) {
@@ -825,13 +844,15 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
 
         if(t1 instanceof IntegerType) {
-            if(!(t2 instanceof IntegerType)) {
-                error.complain("Right side of EqualsNot must be of type Integer",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of EqualsNot must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof LongType) {
-            if(!(t2 instanceof LongType)) {
-                error.complain("Right side of EqualsNot must be of type Long",
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of EqualsNot must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t1 instanceof IdentifierType) {
