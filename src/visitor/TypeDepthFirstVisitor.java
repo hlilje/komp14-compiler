@@ -183,19 +183,37 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             n.sl.elementAt(i).accept(this);
         }
 
+        // t is return type, n.t is method type
         Type t = n.e.accept(this); // Avoid nullpointer exception
-        if((t != null) && (!(t.equals(n.t)))) {
-            // Now check if type is inherited
-            ClassTable ct = null;
-            if(t instanceof IdentifierType)
-                ct = symTable.getClass(Symbol.symbol(((IdentifierType)t).s));
-            if(ct != null && n.t instanceof IdentifierType
-               && ct.extendsClass(Symbol.symbol(((IdentifierType)n.t).s))) {
-                if(DEBUG) System.out.println("  " + t + " extends " + n.t);
-            } else {
-                error.complain("Returned type " + t + " is not same as declared type "
-                    + n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        boolean returnTypeError = false;
+        if(t != null) {
+            // Allow long methods to return ints
+            if(n.t instanceof LongType &&
+                    !(t instanceof LongType || t instanceof IntegerType)) {
+                returnTypeError = true;
             }
+            // Special check to allow ints to be returned by long methods
+            if(!(n.t instanceof LongType) && !t.equals(n.t)) {
+                // Now check if type is inherited since they were not equal
+                ClassTable ct = null;
+                if(t instanceof IdentifierType) {
+                    ct = symTable.getClass(Symbol.symbol(((IdentifierType)t).s));
+                    if(ct != null && n.t instanceof IdentifierType
+                            && ct.extendsClass(Symbol.symbol(((IdentifierType)n.t).s))) {
+                        if(DEBUG) System.out.println("  " + t + " extends " + n.t);
+                    } else {
+                        returnTypeError = true;
+                    }
+                }
+            }
+            if(returnTypeError) {
+                error.complain("Returned type " + t + " is not same as declared type "
+                        + n.t + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Null return type in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
         /*
@@ -305,6 +323,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(e instanceof IdentifierType) {
             error.complain("Invalid print of object in method " + currMethod.getId() +
                     " in class " + currClass.getId(), ErrorHandler.ErrorCode.OBJECT_PRINT);
+        }
+        if(e instanceof IntArrayType || e instanceof LongArrayType) {
+            error.complain("Invalid print of array in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.ARRAY_PRINT);
         }
         return null;
     }
@@ -642,21 +664,42 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         }
 
         // Type check formals
+        boolean callTypeError = false;
         for ( int i = 0; i < n.el.size(); i++ ) {
-            Type formalType = n.el.elementAt(i).accept(this);
-            Type callType = null;
-            if(fl != null) callType = fl.get(i).getType(); // To handle null errors from before
-            if(!formalType.equals(callType)) {
-                // Now check if type is inherited
-                if(formalType instanceof IdentifierType
-                    && callType instanceof IdentifierType) {
+            Type callType = n.el.elementAt(i).accept(this);
+            Type formalType = null;
+            if(fl != null) {
+                formalType = fl.get(i).getType(); // To handle null errors from before
+                // Allow long formals to be called with ints
+                if(formalType instanceof LongType &&
+                        !(callType instanceof LongType || callType instanceof IntegerType)) {
+                    callTypeError = true;
+                }
+
+                // Check for identifier types
+                if(formalType instanceof IdentifierType && callType instanceof IdentifierType
+                        && !formalType.equals(callType)) {
+                    // Now check if type is inherited since identifier types were not equal
                     Symbol fs = Symbol.symbol(((IdentifierType)formalType).s);
                     Symbol cs = Symbol.symbol(((IdentifierType)callType).s);
-                    if(symTable.getClass(fs).extendsClass(cs))
-                        return t;
-                } else
+                    if(!symTable.getClass(fs).extendsClass(cs)) {
+                        callTypeError = true;
+                    }
+                }
+
+                // Check for other types with exception for Long
+                if(!(formalType instanceof LongType) && !formalType.equals(callType)) {
+                    callTypeError = true;
+                }
+
+                // Finally report errors from previous checks
+                if(callTypeError) {
                     error.complain("Parameter type " + formalType + " in call not of type " + callType + " for method " +
-                        currMethod.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
+                            currMethod.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
+                }
+            } else {
+                error.complain("Null type in assignment in method " + currMethod.getId() +
+                        " in class " + currClass.getId(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
             }
         }
 
