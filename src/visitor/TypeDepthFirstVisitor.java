@@ -137,6 +137,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(symTable.getClass(Symbol.symbol(n.j.s)) == null) {
             error.complain("Class " + n.i + " extends nonexistent class " +
                     n.j, ErrorHandler.ErrorCode.NOT_FOUND);
+            currClass.removeSuper();
         }
 
         n.i.accept(this);
@@ -184,8 +185,17 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
         Type t = n.e.accept(this); // Avoid nullpointer exception
         if((t != null) && (!(t.equals(n.t)))) {
-            error.complain("Returned type " + t + " is not same as declared type " +
-                    n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            // Now check if type is inherited
+            ClassTable ct = null;
+            if(t instanceof IdentifierType)
+                ct = symTable.getClass(Symbol.symbol(((IdentifierType)t).s));
+            if(ct != null && n.t instanceof IdentifierType
+               && ct.extendsClass(Symbol.symbol(((IdentifierType)n.t).s))) {
+                if(DEBUG) System.out.println("  " + t + " extends " + n.t);
+            } else {
+                error.complain("Returned type " + t + " is not same as declared type "
+                    + n.t, ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
         }
 
         /*
