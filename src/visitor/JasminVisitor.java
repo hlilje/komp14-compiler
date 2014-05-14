@@ -199,6 +199,9 @@ public class JasminVisitor implements TypeVisitor {
 
         n.i1.accept(this);
         n.i2.accept(this);
+
+        // Set number of local vars before visiting blocks
+        localVars = 0;
         for ( int i = 0; i < n.vl.size(); i++ ) {
             VarDecl vd = n.vl.elementAt(i); String varName = vd.i.toString();
             VMAccess vma = frame.allocLocal(varName, vd.t);
@@ -213,9 +216,12 @@ public class JasminVisitor implements TypeVisitor {
                     System.out.println(((ObjectInFrame)vma).toString());
             }
             vd.accept(this);
+
+            localVars++;
+            // Double size for Longs
+            if(n.vl.elementAt(i).t instanceof LongType) localVars++;
         }
-        // Set number of local vars before visiting blocks
-        localVars = n.vl.size();
+
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
@@ -345,12 +351,19 @@ public class JasminVisitor implements TypeVisitor {
         // method is being called on. TODO: maybe do this in a better way.
         frame.allocFormal("this", new IdentifierType(null));
 
+        int formalVars = 0;
         for ( int i = 0; i < n.fl.size(); i++ ) {
             Formal f = n.fl.elementAt(i); String formName = f.i.toString();
             VMAccess vma = frame.allocFormal(formName, f.t);
             currMethod.addFormalAccess(Symbol.symbol(formName), vma);
             f.accept(this);
+
+            formalVars++;
+            // Double size for longs
+            if(n.fl.elementAt(i).t instanceof LongType) formalVars++;
         }
+        // Set number of local vars before visiting blocks
+        localVars = 0;
         for ( int i = 0; i < n.vl.size(); i++ ) {
             VarDecl vd = n.vl.elementAt(i); String varName = vd.i.toString();
             VMAccess vma = frame.allocLocal(varName, vd.t);
@@ -365,16 +378,19 @@ public class JasminVisitor implements TypeVisitor {
                     System.out.println(((ObjectInFrame)vma).toString());
             }
             vd.accept(this);
+
+            localVars++;
+            // Double size for Longs
+            if(n.vl.elementAt(i).t instanceof LongType) localVars++;
         }
-        // Set number of local vars before visiting blocks
-        localVars = n.vl.size();
+
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
 
         n.e.accept(this);
         jfw.setReturn(currMethod.getType());
-        jfw.limitMethod(localVars + n.fl.size() + 1, stackDepthMax);
+        jfw.limitMethod(localVars + formalVars + 1, stackDepthMax);
         jfw.declareMethodEnd();
         blockId = -1; // Reset the block counter for this method
         branchId = -1; // Reset branch id, will be inc before first assign
@@ -531,18 +547,25 @@ public class JasminVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e;
     public Type visit(Assign n) {
-        n.i.accept(this);
+        Type t = n.i.accept(this);
         n.e.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
         // If the variable to be assigned is a field, one extra value is put on the stack
-        if(vma instanceof OnHeap) incrStack();
+        if(vma instanceof OnHeap) {
+            incrStack();
+            // The operations neeeded to store a long field requires one more stack spot
+            if(t instanceof LongType) incrStack();
+        }
 
         jfw.storeAccess(vma);
         decrStack();
 
         if(vma instanceof LongInFrame) decrStack(); // One extra for Long
         // The extra stack value for fields is used
-        if(vma instanceof OnHeap) decrStack();
+        if(vma instanceof OnHeap) {
+            decrStack();
+            if(t instanceof LongType) decrStack();
+        }
 
         return null;
     }

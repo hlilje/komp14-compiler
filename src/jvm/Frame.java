@@ -2,6 +2,7 @@ package jvm;
 
 import syntaxtree.FormalList;
 import syntaxtree.Type;
+import syntaxtree.LongType;
 import jasmin.JasminReservedWords;
 
 /**
@@ -29,11 +30,13 @@ public class Frame implements frame.VMFrame {
 
     public frame.VMAccess allocFormal(String id, Type type) {
         formals++;
+        if(type instanceof LongType) formals++; // Long has double the size
         return alloc(id, Hardware.signature(type));
     }
 
     public frame.VMAccess allocLocal(String id, Type type) {
         locals++;
+        if(type instanceof LongType) locals++; // Long has double the size
         return alloc(id, Hardware.signature(type));
     }
 
@@ -58,6 +61,9 @@ public class Frame implements frame.VMFrame {
         // of VMAccess object to return.
         if(signature.equals("B") || signature.equals("I"))
             return new IntegerInFrame(id, formals + locals - 1, signature);
+        else if(signature.equals("J"))
+            // Index is -2 due to double size
+            return new LongInFrame(id, formals + locals - 2, signature);
         else
             return new ObjectInFrame(id, formals + locals - 1, signature);
     }
