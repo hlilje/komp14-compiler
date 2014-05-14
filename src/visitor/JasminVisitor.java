@@ -523,7 +523,7 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(Print n) {
         // 1 extra value (ref to print method) is added to stack, and 2 removed
         jfw.printInvoke();
-        incrStack();
+        incrStack(); // Load class
         Type t = n.e.accept(this);
 
         if(t instanceof IntegerType)
@@ -689,7 +689,7 @@ public class JasminVisitor implements TypeVisitor {
         if(t instanceof IntArrayType)
             jfw.loadArray();
         if(t instanceof LongArrayType)
-            jfw.loadLongArray(); // TODO decrease more for long?
+            jfw.loadLongArray();
 
         decrStack();
 
@@ -935,6 +935,8 @@ public class JasminVisitor implements TypeVisitor {
             jfw.equalsObj(branchId);
         if(t instanceof IntegerType)
             jfw.equals(branchId);
+        if(t instanceof BooleanType)
+            jfw.equals(branchId);
         if(t instanceof LongType) {
             jfw.equalsLong(branchId);
             decrStack();
@@ -955,6 +957,8 @@ public class JasminVisitor implements TypeVisitor {
         if(t instanceof IdentifierType)
             jfw.equalsNotObj(branchId);
         if(t instanceof IntegerType)
+            jfw.equalsNot(branchId);
+        if(t instanceof BooleanType)
             jfw.equalsNot(branchId);
         if(t instanceof LongType) {
             jfw.equalsNotLong(branchId);
