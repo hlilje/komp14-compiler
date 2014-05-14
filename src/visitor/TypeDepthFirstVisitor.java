@@ -49,6 +49,28 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         return b != null ? b.getType() : null;
     }
 
+    // Added helper method to find out if a variable is declared
+    public boolean varInScope(Symbol s) {
+        if(currMethod == null) {
+            if(DEBUG) System.out.println("  Looking for " + s + " in class");
+            if(!currClass.hasVar(s)) return false;
+        } else if(currBlock == null) {
+            if(DEBUG) System.out.println("  Looking for " + s + " in method");
+            if(!currMethod.inScope(s)) {
+                if(!currClass.hasVar(s)) return false;
+            }
+        } else { // Check in block
+            if(DEBUG) System.out.println("  Looking for " + s + " in block");
+            if(currBlock.getVar(s) == null) {
+                if(!currMethod.inScope(s)) {
+                    if(!currClass.hasVar(s)) return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     // Helper method to use the name of a variable to create a symbol
     // of its IdentifierType (class).
     public Symbol getClassNameFromVar(Symbol s) {
@@ -280,6 +302,11 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e;
     public Type visit(Assign n) {
+        Symbol s = Symbol.symbol(n.i.s);
+        if(!varInScope(s))
+            error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
+        if(DEBUG) System.out.println("    Assigning to " + s);
+
         // To avoid nullpointer exception
         Type it = n.i.accept(this);
         Type et = n.e.accept(this);
@@ -307,6 +334,9 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e1,e2;
     public Type visit(ArrayAssign n) {
         Symbol s = Symbol.symbol(n.i.s);
+        if(!varInScope(s))
+            error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
+
         Type t = getVarType(s);
         Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
 
@@ -618,8 +648,13 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
     // String s;
     public Type visit(IdentifierExp n) {
-        if(DEBUG) System.out.println("ID_EXP: " + n.s);
         Symbol s = Symbol.symbol(n.s);
+        if(DEBUG) System.out.println(">>> VISIT ID_EXP: " + s);
+        if(!varInScope(s)) {
+            error.complain(s + " is not defined in method " + currMethod.getId() + " in class " +
+                    currClass.getId(), ErrorHandler.ErrorCode.NOT_FOUND);
+        }
+
         return getVarType(s);
     }
 

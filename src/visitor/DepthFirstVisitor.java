@@ -33,28 +33,6 @@ public class DepthFirstVisitor implements Visitor {
         blockId = -1; // To give block #1 id 0
     }
 
-    // Added helper method to find out if a variable is declared
-    public boolean varInScope(Symbol s) {
-        if(currMethod == null) {
-            if(DEBUG) System.out.println("  Looking for " + s + " in class");
-            if(!currClass.hasVar(s)) return false;
-        } else if(currBlock == null) {
-            if(DEBUG) System.out.println("  Looking for " + s + " in method");
-            if(!currMethod.inScope(s)) {
-                if(!currClass.hasVar(s)) return false;
-            }
-        } else { // Check in block
-            if(DEBUG) System.out.println("  Looking for " + s + " in block");
-            if(currBlock.getVar(s) == null) {
-                if(!currMethod.inScope(s)) {
-                    if(!currClass.hasVar(s)) return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
     // MainClass m;
     // ClassDeclList cl;
     public void visit(Program n) {
@@ -383,11 +361,6 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i;
     // Exp e;
     public void visit(Assign n) {
-        Symbol s = Symbol.symbol(n.i.s);
-        if(!varInScope(s))
-            error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
-        if(DEBUG) System.out.println("    Assigning to " + s);
-
         n.i.accept(this);
         n.e.accept(this);
     }
@@ -395,10 +368,6 @@ public class DepthFirstVisitor implements Visitor {
     // Identifier i;
     // Exp e1,e2;
     public void visit(ArrayAssign n) {
-        Symbol s = Symbol.symbol(n.i.s);
-        if(!varInScope(s))
-            error.complain(s + " is not defined", ErrorHandler.ErrorCode.NOT_FOUND);
-
         n.i.accept(this);
         n.e1.accept(this);
         n.e2.accept(this);
@@ -475,12 +444,6 @@ public class DepthFirstVisitor implements Visitor {
 
     // String s;
     public void visit(IdentifierExp n) {
-        Symbol s = Symbol.symbol(n.s);
-        if(DEBUG) System.out.println(">>> VISIT ID_EXP: " + s);
-        if(!varInScope(s)) {
-            error.complain(s + " is not defined in method " + currMethod.getId() + " in class " +
-                    currClass.getId(), ErrorHandler.ErrorCode.NOT_FOUND);
-        }
     }
 
     public void visit(This n) {
