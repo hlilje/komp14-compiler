@@ -117,11 +117,6 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     n.j, ErrorHandler.ErrorCode.NOT_FOUND);
         }
 
-        // Check for circular inheritence
-        if(currClass.extendsClass(s))
-            error.complain("Class " + n.i + " is in a circular inheritence",
-                            ErrorHandler.ErrorCode.CIRCULAR_INHERITENCE);
-
         n.i.accept(this);
         n.j.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {

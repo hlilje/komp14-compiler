@@ -98,9 +98,13 @@ public class ClassTable {
     public boolean extendsClass(Symbol s) {
         if(spr == s)
             return true;
-        else if(spr != null)
+        else if(spr != null && symTable.getClass(spr) != null)
             return symTable.getClass(spr).extendsClass(s);
         else
             return false;
+    }
+
+    public void removeSuper() {
+        spr = null;
     }
 }
