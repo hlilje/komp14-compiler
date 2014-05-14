@@ -605,12 +605,12 @@ public class JasminVisitor implements TypeVisitor {
         jfw.dup(); // Duplicate since this is also needed for the 'and' check
         // Short-circuit
         jfw.ifCheck(thisBranchId); // Use 'if' check for simplicity
+        decrStack(); // For dup
         n.e2.accept(this);
 
         jfw.and();
         jfw.setElse(thisBranchId); // Skip to 'else' if first exp was false
         decrStack(); // Result is pushed onto stack
-        decrStack(); // For dup
 
         return new BooleanType();
     }
@@ -979,12 +979,12 @@ public class JasminVisitor implements TypeVisitor {
         jfw.dup(); // Duplicate since this is also needed for the 'or' check
         // Short circuit
         jfw.ifInvCheck(thisBranchId); // Skip if true (> 0)
+        decrStack(); // For dup
         n.e2.accept(this);
 
         jfw.or();
         jfw.setElse(thisBranchId); // Skip here
         decrStack(); // Result is pushed onto stack
-        decrStack(); // For dup
 
         return new BooleanType();
     }
