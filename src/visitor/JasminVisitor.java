@@ -535,17 +535,14 @@ public class JasminVisitor implements TypeVisitor {
         n.e.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
         // If the variable to be assigned is a field, one extra value is put on the stack
-        if(vma instanceof OnHeap)
-            incrStack();
+        if(vma instanceof OnHeap) incrStack();
 
         jfw.storeAccess(vma);
         decrStack();
 
-        if(vma instanceof LongInFrame)
-            decrStack(); // One extra for Long
+        if(vma instanceof LongInFrame) decrStack(); // One extra for Long
         // The extra stack value for fields is used
-        if(vma instanceof OnHeap)
-            decrStack();
+        if(vma instanceof OnHeap) decrStack();
 
         return null;
     }
@@ -553,30 +550,25 @@ public class JasminVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e1,e2;
     public Type visit(ArrayAssign n) {
-        // TODO Finish this
         Type t = getVarType(Symbol.symbol(n.i.s));
 
-        n.i.accept(this);
+        n.i.accept(this); // Variable holding array
         VMAccess vma = getVMAccess(n.i.s);
-        jfw.loadAccess(vma);
+        jfw.loadAccess(vma); // Load the array reference
 
-        incrStack();
-        //if(t instanceof LongArrayType)
-            //incrStack(); // One extra for larger type
+        incrStack(); // Load the variable holding the array
 
-        n.e1.accept(this);
-        n.e2.accept(this);
+        n.e1.accept(this); // In brackets
+        n.e2.accept(this); // Exp to assign
 
-        if(t instanceof IntArrayType)
-            jfw.storeArray();
-        if(t instanceof LongArrayType)
-            jfw.storeLongArray();
+        // Store the value in the local variable
+        if(t instanceof IntArrayType) jfw.storeArray();
+        if(t instanceof LongArrayType) jfw.storeLongArray();
 
-        decrStack(); // For iastore
-        decrStack();
-        decrStack();
-        if(t instanceof LongArrayType)
-            decrStack(); // One extra for larger type
+        decrStack(); // For value to store
+        if(t instanceof LongArrayType) decrStack(); // One extra for larger type
+        decrStack(); // For index to store at
+        decrStack(); // For array reference
 
         return t;
     }
@@ -798,8 +790,7 @@ public class JasminVisitor implements TypeVisitor {
         VMAccess vma = getVMAccess(n.s);
         jfw.loadAccess(vma);
         incrStack(); // Increase for both heap and stack
-        if(vma instanceof LongInFrame)
-            incrStack(); // One extra for Long
+        if(vma instanceof LongInFrame) incrStack(); // One extra for Long
 
         return getVarType(s);
     }
