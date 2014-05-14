@@ -871,17 +871,27 @@ el.addElement(e2);
   }
 
 // To be able to extract the int value
-  final public IntegerLiteral IntegerLiteral() throws ParseException {Token il;
+  final public IntegerLiteral IntegerLiteral() throws ParseException {Token il; int n;
     il = jj_consume_token(INTEGER_LITERAL);
-{if ("" != null) return new IntegerLiteral(Integer.parseInt(il.toString()));}
+try {
+            n = Integer.parseInt(il.toString());
+        } catch(NumberFormatException e) {
+            {if (true) throw new ParseException("Maximum integer size exceeded");}
+        }
+        {if ("" != null) return new IntegerLiteral(n);}
     throw new Error("Missing return statement in function");
   }
 
 // To be able to extract the long value
-  final public LongLiteral LongLiteral() throws ParseException {Token il; String str;
+  final public LongLiteral LongLiteral() throws ParseException {Token il; String str; long n;
     il = jj_consume_token(LONG_LITERAL);
 str = il.toString();
-        {if ("" != null) return new LongLiteral(Long.parseLong(str.substring(0, str.length()-1)));}
+        try {
+            n = Long.parseLong(str.substring(0, str.length()-1));
+        } catch(NumberFormatException e) {
+            {if (true) throw new ParseException("Maximum long size exceeded");}
+        }
+        {if ("" != null) return new LongLiteral(n);}
     throw new Error("Missing return statement in function");
   }
 

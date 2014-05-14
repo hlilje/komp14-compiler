@@ -451,19 +451,31 @@ Identifier Identifier() :
 
 // To be able to extract the int value
 IntegerLiteral IntegerLiteral() :
-{ Token il; }
+{ Token il; int n; }
 {
     il = <INTEGER_LITERAL>
-    { return new IntegerLiteral(Integer.parseInt(il.toString())); }
+    {
+        try {
+            n = Integer.parseInt(il.toString());
+        } catch(NumberFormatException e) {
+            throw new ParseException("Maximum integer size exceeded");
+        }
+        return new IntegerLiteral(n);
+    }
 }
 
 // To be able to extract the long value
 LongLiteral LongLiteral() :
-{ Token il; String str; }
+{ Token il; String str; long n; }
 {
     il = <LONG_LITERAL>
     {
         str = il.toString();
-        return new LongLiteral(Long.parseLong(str.substring(0, str.length()-1)));
+        try {
+            n = Long.parseLong(str.substring(0, str.length()-1));
+        } catch(NumberFormatException e) {
+            throw new ParseException("Maximum long size exceeded");
+        }
+        return new LongLiteral(n);
     }
 }
