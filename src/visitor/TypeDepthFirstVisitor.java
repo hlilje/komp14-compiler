@@ -344,7 +344,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
         // Check type of array index
         if(!(t1 instanceof IntegerType)) {
-            error.complain("Non integer type in array index for array " + s,
+            error.complain("Non integer type in array index for array " + s +
+                    " in method " + currMethod.getId() + " in class " + currClass.getId(),
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
@@ -352,13 +353,15 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         if(t instanceof IntArrayType) {
             // Check type of assigned expresssion
             if(!(t2 instanceof IntegerType)) {
-                error.complain("Non integer type in array assign for array " + s,
+                error.complain("Non integer type in array assign for array " + s +
+                        " in method " + currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else if(t instanceof LongArrayType) {
-            // Check type of assigned expresssion
-            if(!(t2 instanceof LongType)) {
-                error.complain("Non long type in array assign for array " + s,
+            // Allow integers for long arrays
+            if(!((t2 instanceof LongType) || (t2 instanceof IntegerType))) {
+                error.complain("Non long or integer type in array assign for array " + s +
+                        " in method " + currMethod.getId() + " in class " + currClass.getId(),
                         ErrorHandler.ErrorCode.TYPE_MISMATCH);
             }
         } else {
@@ -367,9 +370,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
-        if((t instanceof IntArrayType) || (t instanceof LongArrayType))
-            return t;
-        return null; // Don't return invalid types
+        return t;
     }
 
     // Exp e1,e2;
@@ -502,32 +503,30 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
 
         // Check assigned expression
-        if(!(t1 instanceof IntArrayType) && !(t1 instanceof LongArrayType)) {
+        if(!((t1 instanceof IntArrayType) || (t1 instanceof LongArrayType))) {
             error.complain("Outer expression of ArrayLookup must be of type IntArrayType " +
-                    " or LongArrayType",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+                    " or LongArrayType in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
         // Check array index
         if(!(t2 instanceof IntegerType)) {
-            error.complain("Non integer type in array index",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Non integer type in array index in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
 
         if(t1 instanceof IntArrayType)
             return new IntegerType();
-        if(t1 instanceof LongArrayType)
-            return new LongType();
-        return null; // Don't return invalid types
+        else
+            return new LongType(); // LongArrayType
     }
 
     // Exp e;
     public Type visit(ArrayLength n) {
         Type t = n.e.accept(this);
 
-        if(!(t instanceof IntArrayType) && !(t instanceof LongArrayType)) {
+        if(!((t instanceof IntArrayType) || (t instanceof LongArrayType))) {
             error.complain("Array length of non-array type in method " + currMethod.getId() +
-                    " in class " + currClass.getId(),
-                    ErrorHandler.ErrorCode.NON_ARRAY_LENGTH);
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.NON_ARRAY_LENGTH);
         }
         return new IntegerType();
     }
@@ -676,8 +675,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e;
     public Type visit(NewArray n) {
         if(!(n.e.accept(this) instanceof IntegerType)) {
-            error.complain("Array size is not of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Array size is not of type Integer in " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
         return new IntArrayType();
     }
@@ -685,8 +684,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Exp e;
     public Type visit(NewLongArray n) {
         if(!(n.e.accept(this) instanceof IntegerType)) {
-            error.complain("Array size is not of type Integer",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            error.complain("Array size is not of type Integer in " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
         }
         return new LongArrayType();
     }
