@@ -296,8 +296,10 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             if(it instanceof IdentifierType && et instanceof IdentifierType) {
                 Symbol is = Symbol.symbol(((IdentifierType)it).s);
                 Symbol es = Symbol.symbol(((IdentifierType)et).s);
-                if(symTable.getClass(es).extendsClass(is))
+                if(symTable.getClass(es).extendsClass(is)) {
+                    if(DEBUG) System.out.println("  " + et + " extends " + it);
                     return null;
+                }
             }
             error.complain("Assigned type " + et + " should be of type " + it,
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);

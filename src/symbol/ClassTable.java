@@ -60,7 +60,7 @@ public class ClassTable {
         Binding b = (Binding)locals.get(s);
         if(b == null && spr != null && s != spr)
             b = symTable.getClass(spr).getVar(s); // inherited field
-        return (Binding)locals.get(s);
+        return b;
     }
 
     public boolean hasVar(Symbol s) {
