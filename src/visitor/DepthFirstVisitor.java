@@ -20,7 +20,6 @@ public class DepthFirstVisitor implements Visitor {
 
     private boolean staticClass; // If current class is static
     private int blockId; // To give a unique id for the outmost blocks
-    private Symbol mainClass; // Keep track of main class to check for inheritance
 
     // Added constructor to inject error message and symtable
     public DepthFirstVisitor(ErrorHandler error, SymbolTable symTable) {
@@ -49,7 +48,6 @@ public class DepthFirstVisitor implements Visitor {
         // Hard coded method name, actual name is ignored
         Symbol s = Symbol.symbol(n.i1.toString()); Symbol s2 = Symbol.symbol("main");
         staticClass = true;
-        mainClass = s; // Keep track of main class to check for inheritance
 
         if(DEBUG) System.out.println(">>> VISIT MAIN_CLASS: " + s);
         if(DEBUG) System.out.println("=== BEGIN MAIN CLASS SCOPE ====");
@@ -121,13 +119,6 @@ public class DepthFirstVisitor implements Visitor {
         if(DEBUG) System.out.println(">>> VISIT CLASS_DECLEXT: " + s);
         if(DEBUG) System.out.println("====== BEGIN CLASS SCOPE ======");
         ClassTable ct = new ClassTable(s, spr, symTable);
-
-        // Check that class doesn't inherit from main class
-        if(spr == mainClass) {
-            error.complain("Class " + n.i + " is inheriting from main class",
-                            ErrorHandler.ErrorCode.MAIN_CLASS_INHERITANCE);
-            ct.removeSuper();
-        }
 
         // Check that class doesn't inherit from itself
         if(spr == s) {
