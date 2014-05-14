@@ -137,7 +137,7 @@ public class DepthFirstVisitor implements Visitor {
         }
 
         // Check for circular inheritance
-        if(currClass.extendsClass(s)) {
+        if(ct.extendsClass(s)) {
             error.complain("Class " + n.i + " is in a circular inheritance",
                             ErrorHandler.ErrorCode.CIRCULAR_INHERITANCE);
             ct.removeSuper();
