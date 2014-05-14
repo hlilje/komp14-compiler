@@ -600,8 +600,8 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(And n) {
         branchId++;
         int thisBranchId = branchId;
-        incrStack(); // Increase for dup
         n.e1.accept(this);
+        incrStack(); // Increase for dup
         jfw.dup(); // Duplicate since this is also needed for the 'and' check
         // Short-circuit
         jfw.ifCheck(thisBranchId); // Use 'if' check for simplicity
@@ -974,8 +974,8 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(Or n) {
         branchId++;
         int thisBranchId = branchId;
-        incrStack(); // Increase for dup
         n.e1.accept(this);
+        incrStack(); // Increase for dup
         jfw.dup(); // Duplicate since this is also needed for the 'or' check
         // Short circuit
         jfw.ifInvCheck(thisBranchId); // Skip if true (> 0)
