@@ -313,7 +313,12 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
 
         if(DEBUG) System.out.println("ASSIGN: " + et + " TO: " + it);
 
-        if((it != null) && (et != null) && (!it.equals(et))) {
+        if((it != null) && (et != null)) {
+            // Allow assignment of int to long
+            if((it instanceof LongType) &&
+                    ((et instanceof IntegerType) || (et instanceof LongType))) {
+                return null;
+            }
             // Now check if type is inherited
             if(it instanceof IdentifierType && et instanceof IdentifierType) {
                 Symbol is = Symbol.symbol(((IdentifierType)it).s);
@@ -323,8 +328,18 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                     return null;
                 }
             }
-            error.complain("Assigned type " + et + " should be of type " + it,
+            // Regular type comparison
+            if(it.equals(et)) {
+                return null;
+            }
+
+            // Finally give error if other checks fail
+            error.complain("Assigned type " + et + " should be of type " + it +
+                    " in method " + currMethod.getId() + " in class " + currClass.getId(),
                     ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        } else {
+            error.complain("Null type in assignment in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
         return null;
