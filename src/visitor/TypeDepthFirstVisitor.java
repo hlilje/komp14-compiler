@@ -188,24 +188,26 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         boolean returnTypeError = false;
         if(t != null) {
             // Allow long methods to return ints
-            if(n.t instanceof LongType &&
-                    !(t instanceof LongType || t instanceof IntegerType)) {
-                returnTypeError = true;
-            }
-            // Special check to allow ints to be returned by long methods
-            if(!(n.t instanceof LongType) && !t.equals(n.t)) {
-                // Now check if type is inherited since they were not equal
-                ClassTable ct = null;
-                if(t instanceof IdentifierType) {
-                    ct = symTable.getClass(Symbol.symbol(((IdentifierType)t).s));
-                    if(ct != null && n.t instanceof IdentifierType
-                            && ct.extendsClass(Symbol.symbol(((IdentifierType)n.t).s))) {
+            if(n.t instanceof LongType) {
+                if(!(t instanceof LongType || t instanceof IntegerType)) {
+                    returnTypeError = true;
+                }
+            // Check identifier types
+            } else if(n.t instanceof IdentifierType) {
+                if(!t.equals(n.t)) {
+                    // Now check if type is inherited since they were not equal
+                    ClassTable ct = symTable.getClass(Symbol.symbol(((IdentifierType)t).s));
+                    if(ct != null && ct.extendsClass(Symbol.symbol(((IdentifierType)n.t).s))) {
                         if(DEBUG) System.out.println("  " + t + " extends " + n.t);
                     } else {
                         returnTypeError = true;
                     }
                 }
+            // Check every other type
+            } else if(!t.equals(n.t)) {
+                returnTypeError = true;
             }
+
             if(returnTypeError) {
                 error.complain("Returned type " + t + " is not same as declared type "
                         + n.t + " in class " + currClass.getId(),
@@ -582,8 +584,8 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     // Identifier i;
     // ExpList el;
     public Type visit(Call n) {
-        /* This method has to be massive since it's impossible to check for
-         * method/class existance in the first visit (it may not have been visited yet). */
+        // This method has to be massive since it's impossible to check for
+        // method/class existance in the first visit (it may not have been visited yet).
         Symbol s1 = Symbol.symbol(n.i.s); // Method name
         Type t = null; Type t2; Exp e = n.e; Symbol s2;
         java.util.ArrayList<Binding> fl = null; // To be able to check for formal type in call
@@ -671,34 +673,32 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
             if(fl != null) {
                 formalType = fl.get(i).getType(); // To handle null errors from before
                 // Allow long formals to be called with ints
-                if(formalType instanceof LongType &&
-                        !(callType instanceof LongType || callType instanceof IntegerType)) {
-                    callTypeError = true;
-                }
-
-                // Check for identifier types
-                if(formalType instanceof IdentifierType && callType instanceof IdentifierType
-                        && !formalType.equals(callType)) {
-                    // Now check if type is inherited since identifier types were not equal
-                    Symbol fs = Symbol.symbol(((IdentifierType)formalType).s);
-                    Symbol cs = Symbol.symbol(((IdentifierType)callType).s);
-                    if(!symTable.getClass(fs).extendsClass(cs)) {
+                if(formalType instanceof LongType) {
+                    if(!(callType instanceof LongType || callType instanceof IntegerType)) {
                         callTypeError = true;
                     }
-                }
-
-                // Check for other types with exception for Long
-                if(!(formalType instanceof LongType) && !formalType.equals(callType)) {
+                // Check for identifier types
+                } else if(formalType instanceof IdentifierType) {
+                    if(!formalType.equals(callType)) {
+                        // Now check if type is inherited since identifier types were not equal
+                        Symbol fs = Symbol.symbol(((IdentifierType)formalType).s);
+                        Symbol cs = Symbol.symbol(((IdentifierType)callType).s);
+                        if(!symTable.getClass(fs).extendsClass(cs)) {
+                            callTypeError = true;
+                        }
+                    }
+                // Check for other types
+                } else if(!formalType.equals(callType)){
                     callTypeError = true;
                 }
 
                 // Finally report errors from previous checks
                 if(callTypeError) {
                     error.complain("Parameter type " + formalType + " in call not of type " + callType + " for method " +
-                            currMethod.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
+                            currMethod.getId() + " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
                 }
             } else {
-                error.complain("Null type in assignment in method " + currMethod.getId() +
+                error.complain("Null formal list in call in method " + currMethod.getId() +
                         " in class " + currClass.getId(), ErrorHandler.ErrorCode.INTERNAL_ERROR);
             }
         }
