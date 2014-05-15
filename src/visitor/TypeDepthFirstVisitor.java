@@ -683,7 +683,7 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
                         // Now check if type is inherited since identifier types were not equal
                         Symbol fs = Symbol.symbol(((IdentifierType)formalType).s);
                         Symbol cs = Symbol.symbol(((IdentifierType)callType).s);
-                        if(!symTable.getClass(fs).extendsClass(cs)) {
+                        if(!symTable.getClass(cs).extendsClass(fs)) {
                             callTypeError = true;
                         }
                     }
