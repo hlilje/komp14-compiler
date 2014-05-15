@@ -635,18 +635,31 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Plus n) {
-        Type t = n.e1.accept(this);
-        n.e2.accept(this);
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+        Type retType;
 
-        if(t instanceof IntegerType)
-            jfw.add();
-        if(t instanceof LongType) {
+        // TODO This doesn't work if t1 needs to be converted, since
+        // t2 will be visited beforehand
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2long(); // Convert to long
+                incrStack(); // Pop int and push long (2)
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
             jfw.addLong();
-            decrStack();
+            retType = new LongType();
+            decrStack(); // Larger long size
+        } else { // Only integers
+            jfw.add();
+            retType = new IntegerType();
         }
         decrStack(); // Pop values and push result
 
-        return t;
+        return retType;
     }
 
     // Exp e1,e2;

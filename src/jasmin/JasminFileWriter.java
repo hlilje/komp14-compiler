@@ -667,4 +667,10 @@ public class JasminFileWriter {
         sb.append("    dup");
         sb.append(System.lineSeparator());
     }
+
+    // Jasmin method to convert an integer to a long
+    public void int2long() {
+        sb.append("    i2l");
+        sb.append(System.lineSeparator());
+    }
 }
