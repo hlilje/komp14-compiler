@@ -1,5 +1,8 @@
 /* An execution test for converting ints to longs */
 // EXT:LONG
+// EXT:IWE
+// EXT:CEQ
+// EXT:CNE
 
 class Main {
     public static void main(String[] args) {

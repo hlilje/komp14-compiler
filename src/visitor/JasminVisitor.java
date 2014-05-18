@@ -388,8 +388,15 @@ public class JasminVisitor implements TypeVisitor {
             n.sl.elementAt(i).accept(this);
         }
 
-        n.e.accept(this);
-        jfw.setReturn(currMethod.getType());
+        // If a long method returns an int, conversion must be made
+        Type retType = n.e.accept(this);
+        Type declType = currMethod.getType();
+        if(declType instanceof LongType && retType instanceof IntegerType) {
+            jfw.int2long();
+            incrStack();
+        }
+
+        jfw.setReturn(declType);
         jfw.limitMethod(localVars + formalVars + 1, stackDepthMax);
         jfw.declareMethodEnd();
         blockId = -1; // Reset the block counter for this method
