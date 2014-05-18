@@ -487,7 +487,7 @@ public class JasminFileWriter {
         sb.append(System.lineSeparator());
         sb.append("    goto skip"); sb.append(id);
         sb.append(System.lineSeparator());
-        sb.append("e1"); sb.append(id); sb.append(":");
+        sb.append("eq"); sb.append(id); sb.append(":");
         sb.append(System.lineSeparator());
         sb.append("    ldc 1"); // True
         sb.append(System.lineSeparator());

@@ -27,5 +27,31 @@ class Main {
         if(3L < 2) {
             System.out.println(0);
         }
+        System.out.println(999999999L);
+        if(2 == 2L) {
+            System.out.println(3);
+        }
+        if(1 == 2L) {
+            System.out.println(0);
+        }
+        if(1L == 1) {
+            System.out.println(4);
+        }
+        if(1L == 2) {
+            System.out.println(0);
+        }
+        System.out.println(999999999L);
+        if(1 != 2L) {
+            System.out.println(5);
+        }
+        if(2 != 2L) {
+            System.out.println(0);
+        }
+        if(1L != 2) {
+            System.out.println(6);
+        }
+        if(1L != 1) {
+            System.out.println(0);
+        }
     }
 }

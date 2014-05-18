@@ -1005,46 +1005,74 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Equals n) {
-        Type t = n.e1.accept(this);
-        n.e2.accept(this);
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
 
         branchId++;
         // Object comparison
-        if(t instanceof IdentifierType)
+        if(t1 instanceof IdentifierType) {
             jfw.equalsObj(branchId);
-        if(t instanceof IntegerType)
-            jfw.equals(branchId);
-        if(t instanceof BooleanType)
-            jfw.equals(branchId);
-        if(t instanceof LongType) {
-            jfw.equalsLong(branchId);
-            decrStack();
             decrStack();
         }
-        decrStack(); // Also loads a constant onto the stack
+        if(t1 instanceof BooleanType) {
+            jfw.equals(branchId);
+            decrStack();
+        }
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2longIntLong(); // Convert to long
+                incrStack(); incrStack(); // For dup2_x1
+                incrStack(); // For i2l
+                decrStack(); decrStack(); // For pop2
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
+            jfw.equalsLong(branchId);
+            decrStack(); decrStack(); // Larger long size
+            decrStack();
+        } else { // Only integers
+            jfw.equals(branchId);
+            decrStack(); // Also loads a constant onto the stack
+        }
 
         return new BooleanType();
     }
 
     // Exp e1,e2;
     public Type visit(EqualsNot n) {
-        Type t = n.e1.accept(this);
-        n.e2.accept(this);
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
 
         branchId++;
         // Object comparison
-        if(t instanceof IdentifierType)
+        if(t1 instanceof IdentifierType) {
             jfw.equalsNotObj(branchId);
-        if(t instanceof IntegerType)
-            jfw.equalsNot(branchId);
-        if(t instanceof BooleanType)
-            jfw.equalsNot(branchId);
-        if(t instanceof LongType) {
-            jfw.equalsNotLong(branchId);
-            decrStack();
             decrStack();
         }
-        decrStack(); // Also loads a constant onto the stack
+        if(t1 instanceof BooleanType) {
+            jfw.equalsNot(branchId);
+            decrStack();
+        }
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2longIntLong(); // Convert to long
+                incrStack(); incrStack(); // For dup2_x1
+                incrStack(); // For i2l
+                decrStack(); decrStack(); // For pop2
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
+            jfw.equalsNotLong(branchId);
+            decrStack(); decrStack(); // Larger long size
+            decrStack();
+        } else { // Only integers
+            jfw.equalsNot(branchId);
+            decrStack(); // Also loads a constant onto the stack
+        }
 
         return new BooleanType();
     }
