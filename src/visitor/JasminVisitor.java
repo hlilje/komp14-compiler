@@ -664,34 +664,60 @@ public class JasminVisitor implements TypeVisitor {
 
     // Exp e1,e2;
     public Type visit(Minus n) {
-        Type t = n.e1.accept(this);
-        n.e2.accept(this);
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+        Type resType;
 
-        if(t instanceof IntegerType)
-            jfw.sub();
-        if(t instanceof LongType) {
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2longIntLong(); // Convert to long
+                incrStack(); incrStack(); // For dup2_x1
+                incrStack(); // For i2l
+                decrStack(); decrStack(); // For pop2
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
             jfw.subLong();
-            decrStack();
+            decrStack(); decrStack(); // Larger long size
+            resType = new LongType();
+        } else { // Only integers
+            jfw.sub();
+            resType = new IntegerType();
+            decrStack(); // Pop values and push result
         }
-        decrStack(); // Pop values and push result
 
-        return t;
+        return resType;
     }
 
     // Exp e1,e2;
     public Type visit(Times n) {
-        Type t = n.e1.accept(this);
-        n.e2.accept(this);
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+        Type resType;
 
-        if(t instanceof IntegerType)
-            jfw.mul();
-        if(t instanceof LongType) {
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2longIntLong(); // Convert to long
+                incrStack(); incrStack(); // For dup2_x1
+                incrStack(); // For i2l
+                decrStack(); decrStack(); // For pop2
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
             jfw.mulLong();
-            decrStack();
+            decrStack(); decrStack(); // Larger long size
+            resType = new LongType();
+        } else { // Only integers
+            jfw.mul();
+            resType = new IntegerType();
+            decrStack(); // Pop values and push result
         }
-        decrStack(); // Pop values and push result
 
-        return t;
+        return resType;
     }
 
     // Exp e1,e2;
