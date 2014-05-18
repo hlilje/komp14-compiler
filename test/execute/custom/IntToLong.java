@@ -14,5 +14,18 @@ class Main {
         System.out.println(999999999L);
         System.out.println(3 * 2);
         System.out.println(2 * 3);
+
+        if(2 < 3L) {
+            System.out.println(1);
+        }
+        if(3 < 2L) {
+            System.out.println(0);
+        }
+        if(2L < 3) {
+            System.out.println(2);
+        }
+        if(3L < 2) {
+            System.out.println(0);
+        }
     }
 }
