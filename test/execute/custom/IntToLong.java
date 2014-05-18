@@ -3,17 +3,10 @@
 
 class Main {
     public static void main(String[] args) {
-        //System.out.println(1 + 2L);
         System.out.println(2L + 1);
-    }
-}
-
-class Long {
-    public long getLong() {
-        return 1L;
-    }
-
-    public int getInt() {
-        return 1;
+        System.out.println(1 + 2L);
+        System.out.println(1 + 1);
+        System.out.println(2L + 2L);
+        System.out.println(1 + 2L + 3 + 4L + 5 + 6 + 7L + 8L + 9L + 10 + 11l);
     }
 }

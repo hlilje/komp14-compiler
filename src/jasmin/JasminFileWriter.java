@@ -673,4 +673,20 @@ public class JasminFileWriter {
         sb.append("    i2l");
         sb.append(System.lineSeparator());
     }
+
+    // Jasmin method to convert an integer to a long when the stack
+    // contains one int under a long
+    public void int2longIntLong() {
+        // Move the bottom int to the top of the stack
+        sb.append("    dup2_x1");
+        sb.append(System.lineSeparator());
+        sb.append("    pop2");
+        sb.append(System.lineSeparator());
+        int2long(); // Convert the int
+        // Switch them back since the order was reversed
+        sb.append("    dup2_x2");
+        sb.append(System.lineSeparator());
+        sb.append("    pop2");
+        sb.append(System.lineSeparator());
+    }
 }
