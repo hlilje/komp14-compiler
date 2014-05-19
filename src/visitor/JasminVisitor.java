@@ -1033,6 +1033,10 @@ public class JasminVisitor implements TypeVisitor {
             jfw.equals(branchId);
             decrStack();
         }
+        if(t1 instanceof IntegerType && t2 instanceof IntegerType) {
+            jfw.equals(branchId);
+            decrStack(); // Also loads a constant onto the stack
+        }
         if(t1 instanceof LongType || t2 instanceof LongType) {
             if(t1 instanceof IntegerType) {
                 jfw.int2longIntLong(); // Convert to long
@@ -1047,9 +1051,6 @@ public class JasminVisitor implements TypeVisitor {
             jfw.equalsLong(branchId);
             decrStack(); decrStack(); // Larger long size
             decrStack();
-        } else { // Only integers
-            jfw.equals(branchId);
-            decrStack(); // Also loads a constant onto the stack
         }
 
         return new BooleanType();
@@ -1070,6 +1071,10 @@ public class JasminVisitor implements TypeVisitor {
             jfw.equalsNot(branchId);
             decrStack();
         }
+        if(t1 instanceof IntegerType && t2 instanceof IntegerType) {
+            jfw.equalsNot(branchId);
+            decrStack(); // Also loads a constant onto the stack
+        }
         if(t1 instanceof LongType || t2 instanceof LongType) {
             if(t1 instanceof IntegerType) {
                 jfw.int2longIntLong(); // Convert to long
@@ -1084,9 +1089,6 @@ public class JasminVisitor implements TypeVisitor {
             jfw.equalsNotLong(branchId);
             decrStack(); decrStack(); // Larger long size
             decrStack();
-        } else { // Only integers
-            jfw.equalsNot(branchId);
-            decrStack(); // Also loads a constant onto the stack
         }
 
         return new BooleanType();
