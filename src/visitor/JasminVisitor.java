@@ -192,7 +192,9 @@ public class JasminVisitor implements TypeVisitor {
         currClass.addFrame(Symbol.symbol("main"), frame);
 
         // No inheritance
-        jfw.declareClass(className, className, "java/lang/Object");
+        String spr = "java/lang/Object";
+        jfw.declareClass(className, className, spr);
+        jfw.declareConstructor(spr);
         jfw.declareMainMethod();
 
         setStackDepth(0); // Reset
