@@ -1,6 +1,6 @@
 package symbol;
 
-import syntaxtree.*;
+import syntaxtree.Type;
 
 public class Binding {
     private Symbol s;

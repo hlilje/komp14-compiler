@@ -1,6 +1,6 @@
 package symbol;
 
-import syntaxtree.*;
+import syntaxtree.Type;
 import frame.VMAccess;
 import frame.VMFrame;
 

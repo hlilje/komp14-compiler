@@ -5,10 +5,10 @@
 package mjc;
 
 import parser.*;
-import syntaxtree.*;
 import visitor.*;
-import error.*;
-import symbol.*;
+import syntaxtree.Program;
+import error.ErrorHandler;
+import symbol.SymbolTable;
 
 public class JVMMain {
     public static final boolean DEBUG = false;

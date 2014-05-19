@@ -5,7 +5,7 @@
 package jasmin;
 
 import syntaxtree.*;
-import error.*;
+import error.ErrorHandler;
 import frame.VMAccess;
 import frame.VMFrame;
 import symbol.Binding;

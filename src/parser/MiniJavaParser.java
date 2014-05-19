@@ -86,7 +86,6 @@ sl.addElement(s);
     throw new Error("Missing return statement in function");
   }
 
-// NOTE ClassDeclExtends is an extension to the grammar
   final public ClassDecl ClassDecl() throws ParseException {Identifier i, j = null; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
     MethodDeclList mdl = new MethodDeclList();
     jj_consume_token(CLASS);
@@ -983,6 +982,12 @@ str = il.toString();
     finally { jj_save(10, xla); }
   }
 
+  private boolean jj_3_2()
+ {
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
   private boolean jj_3_1()
  {
     if (jj_3R_19()) return true;
@@ -1106,12 +1111,6 @@ str = il.toString();
   }
 
   private boolean jj_3_5()
- {
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3_2()
  {
     if (jj_3R_19()) return true;
     return false;

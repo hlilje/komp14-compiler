@@ -150,7 +150,6 @@ MainClass MainClass() :
     { return new MainClass(i1, i2, i3, sl, vdl); }
 }
 
-// NOTE ClassDeclExtends is an extension to the grammar
 ClassDecl ClassDecl() :
 {
     Identifier i, j = null; VarDecl vd; VarDeclList vdl = new VarDeclList(); MethodDecl md;
