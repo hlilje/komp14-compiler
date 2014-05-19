@@ -547,14 +547,20 @@ public class JasminVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e;
     public Type visit(Assign n) {
-        Type t = n.i.accept(this);
-        n.e.accept(this);
+        Type it = n.i.accept(this);
+        Type et = n.e.accept(this);
         VMAccess vma = getVMAccess(n.i.s);
         // If the variable to be assigned is a field, one extra value is put on the stack
         if(vma instanceof OnHeap) {
             incrStack();
             // The operations neeeded to store a long field requires one more stack spot
-            if(t instanceof LongType) incrStack();
+            if(it instanceof LongType) incrStack();
+        }
+
+        // If an integer expression is converted to long via assignment
+        if(it instanceof LongType && et instanceof IntegerType) {
+            jfw.int2long();
+            incrStack();
         }
 
         jfw.storeAccess(vma);
@@ -564,7 +570,7 @@ public class JasminVisitor implements TypeVisitor {
         // The extra stack value for fields is used
         if(vma instanceof OnHeap) {
             decrStack();
-            if(t instanceof LongType) decrStack();
+            if(it instanceof LongType) decrStack();
         }
 
         return null;
@@ -573,27 +579,31 @@ public class JasminVisitor implements TypeVisitor {
     // Identifier i;
     // Exp e1,e2;
     public Type visit(ArrayAssign n) {
-        Type t = getVarType(Symbol.symbol(n.i.s));
-
-        n.i.accept(this); // Variable holding array
+        Type it = n.i.accept(this); // Variable holding array
         VMAccess vma = getVMAccess(n.i.s);
         jfw.loadAccess(vma); // Load the array reference
 
         incrStack(); // Load the variable holding the array
 
         n.e1.accept(this); // In brackets
-        n.e2.accept(this); // Exp to assign
+        Type et = n.e2.accept(this); // Exp to assign
+
+        // If an integer expression is converted to long via assignment
+        if(it instanceof LongArrayType && et instanceof IntegerType) {
+            jfw.int2long();
+            incrStack();
+        }
 
         // Store the value in the local variable
-        if(t instanceof IntArrayType) jfw.storeArray();
-        if(t instanceof LongArrayType) jfw.storeLongArray();
+        if(it instanceof IntArrayType) jfw.storeArray();
+        if(it instanceof LongArrayType) jfw.storeLongArray();
 
         decrStack(); // For value to store
-        if(t instanceof LongArrayType) decrStack(); // One extra for larger type
+        if(it instanceof LongArrayType) decrStack(); // One extra for larger type
         decrStack(); // For index to store at
         decrStack(); // For array reference
 
-        return t;
+        return it;
     }
 
     // Exp e1,e2;
