@@ -23,7 +23,13 @@ public interface TypeVisitor {
     public Type visit(Assign n);
     public Type visit(ArrayAssign n);
     public Type visit(And n);
+    public Type visit(Or n);
     public Type visit(LessThan n);
+    public Type visit(LessThanEquals n);
+    public Type visit(GreaterThan n);
+    public Type visit(GreaterThanEquals n);
+    public Type visit(Equals n);
+    public Type visit(EqualsNot n);
     public Type visit(Plus n);
     public Type visit(Minus n);
     public Type visit(Times n);
@@ -41,10 +47,4 @@ public interface TypeVisitor {
     public Type visit(NewObject n);
     public Type visit(Not n);
     public Type visit(Identifier n);
-    public Type visit(LessThanEquals n); // Extensions follows
-    public Type visit(GreaterThan n);
-    public Type visit(GreaterThanEquals n);
-    public Type visit(Equals n);
-    public Type visit(EqualsNot n);
-    public Type visit(Or n); // Separate extension
 }

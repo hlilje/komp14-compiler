@@ -391,7 +391,43 @@ public class DepthFirstVisitor implements Visitor {
     }
 
     // Exp e1,e2;
+    public void visit(Or n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+    }
+
+    // Exp e1,e2;
     public void visit(LessThan n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+    }
+
+    // Exp e1,e2;
+    public void visit(LessThanEquals n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+    }
+
+    // Exp e1,e2;
+    public void visit(GreaterThan n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+    }
+
+    // Exp e1,e2;
+    public void visit(GreaterThanEquals n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+    }
+
+    // Exp e1,e2;
+    public void visit(Equals n) {
+        n.e1.accept(this);
+        n.e2.accept(this);
+    }
+
+    // Exp e1,e2;
+    public void visit(EqualsNot n) {
         n.e1.accept(this);
         n.e2.accept(this);
     }
@@ -487,41 +523,5 @@ public class DepthFirstVisitor implements Visitor {
 
     // String s;
     public void visit(Identifier n) {
-    }
-
-    // Exp e1,e2;
-    public void visit(LessThanEquals n) {
-        n.e1.accept(this);
-        n.e2.accept(this);
-    }
-
-    // Exp e1,e2;
-    public void visit(GreaterThan n) {
-        n.e1.accept(this);
-        n.e2.accept(this);
-    }
-
-    // Exp e1,e2;
-    public void visit(GreaterThanEquals n) {
-        n.e1.accept(this);
-        n.e2.accept(this);
-    }
-
-    // Exp e1,e2;
-    public void visit(Equals n) {
-        n.e1.accept(this);
-        n.e2.accept(this);
-    }
-
-    // Exp e1,e2;
-    public void visit(EqualsNot n) {
-        n.e1.accept(this);
-        n.e2.accept(this);
-    }
-
-    // Exp e1,e2;
-    public void visit(Or n) {
-        n.e1.accept(this);
-        n.e2.accept(this);
     }
 }

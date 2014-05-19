@@ -230,10 +230,64 @@ public class PrettyPrintVisitor implements Visitor {
     }
 
     // Exp e1,e2;
+    public void visit(Or n) {
+        System.out.print("(");
+        n.e1.accept(this);
+        System.out.print(" || ");
+        n.e2.accept(this);
+        System.out.print(")");
+    }
+
+    // Exp e1,e2;
     public void visit(LessThan n) {
         System.out.print("(");
         n.e1.accept(this);
         System.out.print(" < ");
+        n.e2.accept(this);
+        System.out.print(")");
+    }
+
+    // Exp e1,e2;
+    public void visit(LessThanEquals n) {
+        System.out.print("(");
+        n.e1.accept(this);
+        System.out.print(" <= ");
+        n.e2.accept(this);
+        System.out.print(")");
+    }
+
+    // Exp e1,e2;
+    public void visit(GreaterThan n) {
+        System.out.print("(");
+        n.e1.accept(this);
+        System.out.print(" > ");
+        n.e2.accept(this);
+        System.out.print(")");
+    }
+
+    // Exp e1,e2;
+    public void visit(GreaterThanEquals n) {
+        System.out.print("(");
+        n.e1.accept(this);
+        System.out.print(" >= ");
+        n.e2.accept(this);
+        System.out.print(")");
+    }
+
+    // Exp e1,e2;
+    public void visit(Equals n) {
+        System.out.print("(");
+        n.e1.accept(this);
+        System.out.print(" == ");
+        n.e2.accept(this);
+        System.out.print(")");
+    }
+
+    // Exp e1,e2;
+    public void visit(EqualsNot n) {
+        System.out.print("(");
+        n.e1.accept(this);
+        System.out.print(" != ");
         n.e2.accept(this);
         System.out.print(")");
     }
@@ -351,59 +405,5 @@ public class PrettyPrintVisitor implements Visitor {
     // String s;
     public void visit(Identifier n) {
         System.out.print(n.s);
-    }
-
-    // Exp e1,e2;
-    public void visit(LessThanEquals n) {
-        System.out.print("(");
-        n.e1.accept(this);
-        System.out.print(" <= ");
-        n.e2.accept(this);
-        System.out.print(")");
-    }
-
-    // Exp e1,e2;
-    public void visit(GreaterThan n) {
-        System.out.print("(");
-        n.e1.accept(this);
-        System.out.print(" > ");
-        n.e2.accept(this);
-        System.out.print(")");
-    }
-
-    // Exp e1,e2;
-    public void visit(GreaterThanEquals n) {
-        System.out.print("(");
-        n.e1.accept(this);
-        System.out.print(" >= ");
-        n.e2.accept(this);
-        System.out.print(")");
-    }
-
-    // Exp e1,e2;
-    public void visit(Equals n) {
-        System.out.print("(");
-        n.e1.accept(this);
-        System.out.print(" == ");
-        n.e2.accept(this);
-        System.out.print(")");
-    }
-
-    // Exp e1,e2;
-    public void visit(EqualsNot n) {
-        System.out.print("(");
-        n.e1.accept(this);
-        System.out.print(" != ");
-        n.e2.accept(this);
-        System.out.print(")");
-    }
-
-    // Exp e1,e2;
-    public void visit(Or n) {
-        System.out.print("(");
-        n.e1.accept(this);
-        System.out.print(" || ");
-        n.e2.accept(this);
-        System.out.print(")");
     }
 }

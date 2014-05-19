@@ -439,6 +439,20 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
     }
 
     // Exp e1,e2;
+    public Type visit(Or n) {
+        if(!(n.e1.accept(this) instanceof BooleanType)) {
+            error.complain("Left side of Or must be of type Boolean",
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+        if(!(n.e2.accept(this) instanceof BooleanType)) {
+            error.complain("Right side of Or must be of type Boolean",
+                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
     public Type visit(LessThan n) {
         Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
         if(DEBUG) System.out.println("LESS_THAN E1: " + t1 + ", E2: " + t2);
@@ -458,6 +472,191 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         } else {
             error.complain("Non Integer or Long type for LessThan in method " + currMethod.getId() +
                     " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(LessThanEquals n) {
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("LESS_THAN_EQUALS E1: " + t1 + ", E2: " + t2);
+
+        if(t1 instanceof IntegerType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of LessThanEquals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of LessThanEquals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for LessThanEquals in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(GreaterThan n) {
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("GREATER_THAN E1: " + t1 + ", E2: " + t2);
+
+        if(t1 instanceof IntegerType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of GreaterThan must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of GreaterThan must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for GreaterThan in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(GreaterThanEquals n) {
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+        if(DEBUG) System.out.println("GREATER_THAN_EQUALS E1: " + t1 + ", E2: " + t2);
+
+        if(t1 instanceof IntegerType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of GreaterThanEquals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of GreaterThanEquals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Non Integer or Long type for GreaterThanEquals in method " + currMethod.getId() +
+                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(Equals n) {
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+
+        if(t1 instanceof IntegerType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Equals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of Equals must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof IdentifierType) {
+            if(!t1.equals(t2)) {
+                // Check inheritance
+                Symbol s1 = Symbol.symbol(((IdentifierType)t1).s);
+                Symbol s2 = null;
+                ClassTable ct1 = symTable.getClass(s1);
+                ClassTable ct2 = null;
+                if(t2 instanceof IdentifierType)
+                    s2 = Symbol.symbol(((IdentifierType)t2).s);
+                if(s2 != null)
+                    ct2 = symTable.getClass(s2);
+                if(! (ct1 != null && ct2 != null &&
+                     (ct1.extendsClass(s2) || ct2.extendsClass(s1))) )
+                    error.complain("Right side of Equals must be of type " + t1,
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof BooleanType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of Equals must be of type Boolean",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof IntArrayType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of Equals must be of type IntArrayType",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongArrayType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of Equals must be of type LongArrayType",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Unknown type " + t1 + " in equality comparison",
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(EqualsNot n) {
+        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
+
+        if(t1 instanceof IntegerType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of EqualsNot must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongType) {
+            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
+                error.complain("Right side of EqualsNot must be of type Integer or Long in method " +
+                        currMethod.getId() + " in class " + currClass.getId(),
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof IdentifierType) {
+            if(!t1.equals(t2)) {
+                // Check inheritance
+                Symbol s1 = Symbol.symbol(((IdentifierType)t1).s);
+                Symbol s2 = null;
+                ClassTable ct1 = symTable.getClass(s1);
+                ClassTable ct2 = null;
+                if(t2 instanceof IdentifierType)
+                    s2 = Symbol.symbol(((IdentifierType)t2).s);
+                if(s2 != null)
+                    ct2 = symTable.getClass(s2);
+                if(! (ct1 != null && ct2 != null &&
+                     (ct1.extendsClass(s2) || ct2.extendsClass(s1))) )
+                    error.complain("Right side of EqualsNot must be of type " + t1,
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof BooleanType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of EqualsNot must be of type Boolean",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof IntArrayType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of EqualsNot must be of type IntArrayType",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else if(t1 instanceof LongArrayType) {
+            if(!t1.equals(t2)) {
+                error.complain("Right side of EqualsNot must be of type LongArrayType",
+                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
+            }
+        } else {
+            error.complain("Unknown type " + t1 + " in equality comparison",
+                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
         }
 
         return new BooleanType();
@@ -785,204 +984,5 @@ public class TypeDepthFirstVisitor implements TypeVisitor {
         Symbol s = Symbol.symbol(n.s);
 
         return getVarType(s);
-    }
-
-    // Exp e1,e2;
-    public Type visit(LessThanEquals n) {
-        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
-        if(DEBUG) System.out.println("LESS_THAN_EQUALS E1: " + t1 + ", E2: " + t2);
-
-        if(t1 instanceof IntegerType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of LessThanEquals must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof LongType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of LessThanEquals must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else {
-            error.complain("Non Integer or Long type for LessThanEquals in method " + currMethod.getId() +
-                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(GreaterThan n) {
-        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
-        if(DEBUG) System.out.println("GREATER_THAN E1: " + t1 + ", E2: " + t2);
-
-        if(t1 instanceof IntegerType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of GreaterThan must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof LongType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of GreaterThan must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else {
-            error.complain("Non Integer or Long type for GreaterThan in method " + currMethod.getId() +
-                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(GreaterThanEquals n) {
-        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
-        if(DEBUG) System.out.println("GREATER_THAN_EQUALS E1: " + t1 + ", E2: " + t2);
-
-        if(t1 instanceof IntegerType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of GreaterThanEquals must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof LongType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of GreaterThanEquals must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else {
-            error.complain("Non Integer or Long type for GreaterThanEquals in method " + currMethod.getId() +
-                    " in class " + currClass.getId(), ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(Equals n) {
-        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
-
-        if(t1 instanceof IntegerType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of Equals must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof LongType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of Equals must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof IdentifierType) {
-            if(!t1.equals(t2)) {
-                // Check inheritance
-                Symbol s1 = Symbol.symbol(((IdentifierType)t1).s);
-                Symbol s2 = null;
-                ClassTable ct1 = symTable.getClass(s1);
-                ClassTable ct2 = null;
-                if(t2 instanceof IdentifierType)
-                    s2 = Symbol.symbol(((IdentifierType)t2).s);
-                if(s2 != null)
-                    ct2 = symTable.getClass(s2);
-                if(! (ct1 != null && ct2 != null &&
-                     (ct1.extendsClass(s2) || ct2.extendsClass(s1))) )
-                    error.complain("Right side of Equals must be of type " + t1,
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof BooleanType) {
-            if(!t1.equals(t2)) {
-                error.complain("Right side of Equals must be of type Boolean",
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof IntArrayType) {
-            if(!t1.equals(t2)) {
-                error.complain("Right side of Equals must be of type IntArrayType",
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof LongArrayType) {
-            if(!t1.equals(t2)) {
-                error.complain("Right side of Equals must be of type LongArrayType",
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else {
-            error.complain("Unknown type " + t1 + " in equality comparison",
-                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(EqualsNot n) {
-        Type t1 = n.e1.accept(this); Type t2 = n.e2.accept(this);
-
-        if(t1 instanceof IntegerType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of EqualsNot must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof LongType) {
-            if(!((t2 instanceof IntegerType) || (t2 instanceof LongType))) {
-                error.complain("Right side of EqualsNot must be of type Integer or Long in method " +
-                        currMethod.getId() + " in class " + currClass.getId(),
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof IdentifierType) {
-            if(!t1.equals(t2)) {
-                // Check inheritance
-                Symbol s1 = Symbol.symbol(((IdentifierType)t1).s);
-                Symbol s2 = null;
-                ClassTable ct1 = symTable.getClass(s1);
-                ClassTable ct2 = null;
-                if(t2 instanceof IdentifierType)
-                    s2 = Symbol.symbol(((IdentifierType)t2).s);
-                if(s2 != null)
-                    ct2 = symTable.getClass(s2);
-                if(! (ct1 != null && ct2 != null &&
-                     (ct1.extendsClass(s2) || ct2.extendsClass(s1))) )
-                    error.complain("Right side of EqualsNot must be of type " + t1,
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof BooleanType) {
-            if(!t1.equals(t2)) {
-                error.complain("Right side of EqualsNot must be of type Boolean",
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof IntArrayType) {
-            if(!t1.equals(t2)) {
-                error.complain("Right side of EqualsNot must be of type IntArrayType",
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else if(t1 instanceof LongArrayType) {
-            if(!t1.equals(t2)) {
-                error.complain("Right side of EqualsNot must be of type LongArrayType",
-                        ErrorHandler.ErrorCode.TYPE_MISMATCH);
-            }
-        } else {
-            error.complain("Unknown type " + t1 + " in equality comparison",
-                    ErrorHandler.ErrorCode.INTERNAL_ERROR);
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(Or n) {
-        if(!(n.e1.accept(this) instanceof BooleanType)) {
-            error.complain("Left side of Or must be of type Boolean",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-        if(!(n.e2.accept(this) instanceof BooleanType)) {
-            error.complain("Right side of Or must be of type Boolean",
-                    ErrorHandler.ErrorCode.TYPE_MISMATCH);
-        }
-
-        return new BooleanType();
     }
 }

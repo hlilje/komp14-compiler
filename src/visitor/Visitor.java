@@ -23,7 +23,13 @@ public interface Visitor {
     public void visit(Assign n);
     public void visit(ArrayAssign n);
     public void visit(And n);
+    public void visit(Or n);
     public void visit(LessThan n);
+    public void visit(LessThanEquals n);
+    public void visit(GreaterThan n);
+    public void visit(GreaterThanEquals n);
+    public void visit(Equals n);
+    public void visit(EqualsNot n);
     public void visit(Plus n);
     public void visit(Minus n);
     public void visit(Times n);
@@ -41,10 +47,4 @@ public interface Visitor {
     public void visit(NewObject n);
     public void visit(Not n);
     public void visit(Identifier n);
-    public void visit(LessThanEquals n); // Extensions follows
-    public void visit(GreaterThan n);
-    public void visit(GreaterThanEquals n);
-    public void visit(Equals n);
-    public void visit(EqualsNot n);
-    public void visit(Or n); // Separate extension
 }

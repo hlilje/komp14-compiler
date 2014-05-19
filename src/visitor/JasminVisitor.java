@@ -634,6 +634,25 @@ public class JasminVisitor implements TypeVisitor {
     }
 
     // Exp e1,e2;
+    public Type visit(Or n) {
+        branchId++;
+        int thisBranchId = branchId;
+        n.e1.accept(this);
+        incrStack(); // Increase for dup
+        jfw.dup(); // Duplicate since this is also needed for the 'or' check
+        // Short circuit
+        jfw.ifInvCheck(thisBranchId); // Skip if true (> 0)
+        decrStack(); // For dup
+        n.e2.accept(this);
+
+        jfw.or();
+        jfw.setElse(thisBranchId); // Skip here
+        decrStack(); // Result is pushed onto stack
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
     public Type visit(LessThan n) {
         Type t1 = n.e1.accept(this);
         Type t2 = n.e2.accept(this);
@@ -656,6 +675,166 @@ public class JasminVisitor implements TypeVisitor {
         } else { // Only integers
             jfw.lessThan(branchId);
             decrStack(); // Also loads a constant onto the stack
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(LessThanEquals n) {
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+
+        branchId++;
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2longIntLong(); // Convert to long
+                incrStack(); incrStack(); // For dup2_x1
+                incrStack(); // For i2l
+                decrStack(); decrStack(); // For pop2
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
+            jfw.lessThanEqualsLong(branchId);
+            decrStack(); decrStack(); // Larger long size
+            decrStack();
+        } else { // Only integers
+            jfw.lessThanEquals(branchId);
+            decrStack(); // Also loads a constant onto the stack
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(GreaterThan n) {
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+
+        branchId++;
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2longIntLong(); // Convert to long
+                incrStack(); incrStack(); // For dup2_x1
+                incrStack(); // For i2l
+                decrStack(); decrStack(); // For pop2
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
+            jfw.greaterThanLong(branchId);
+            decrStack(); decrStack(); // Larger long size
+            decrStack();
+        } else { // Only integers
+            jfw.greaterThan(branchId);
+            decrStack(); // Also loads a constant onto the stack
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(GreaterThanEquals n) {
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+
+        branchId++;
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2longIntLong(); // Convert to long
+                incrStack(); incrStack(); // For dup2_x1
+                incrStack(); // For i2l
+                decrStack(); decrStack(); // For pop2
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
+            jfw.greaterThanEqualsLong(branchId);
+            decrStack(); decrStack(); // Larger long size
+            decrStack();
+        } else { // Only integers
+            jfw.greaterThanEquals(branchId);
+            decrStack(); // Also loads a constant onto the stack
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(Equals n) {
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+
+        branchId++;
+        // Object comparison
+        if(t1 instanceof IdentifierType) {
+            jfw.equalsObj(branchId);
+            decrStack();
+        }
+        if(t1 instanceof BooleanType) {
+            jfw.equals(branchId);
+            decrStack();
+        }
+        if(t1 instanceof IntegerType && t2 instanceof IntegerType) {
+            jfw.equals(branchId);
+            decrStack(); // Also loads a constant onto the stack
+        }
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2longIntLong(); // Convert to long
+                incrStack(); incrStack(); // For dup2_x1
+                incrStack(); // For i2l
+                decrStack(); decrStack(); // For pop2
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
+            jfw.equalsLong(branchId);
+            decrStack(); decrStack(); // Larger long size
+            decrStack();
+        }
+
+        return new BooleanType();
+    }
+
+    // Exp e1,e2;
+    public Type visit(EqualsNot n) {
+        Type t1 = n.e1.accept(this);
+        Type t2 = n.e2.accept(this);
+
+        branchId++;
+        // Object comparison
+        if(t1 instanceof IdentifierType) {
+            jfw.equalsNotObj(branchId);
+            decrStack();
+        }
+        if(t1 instanceof BooleanType) {
+            jfw.equalsNot(branchId);
+            decrStack();
+        }
+        if(t1 instanceof IntegerType && t2 instanceof IntegerType) {
+            jfw.equalsNot(branchId);
+            decrStack(); // Also loads a constant onto the stack
+        }
+        if(t1 instanceof LongType || t2 instanceof LongType) {
+            if(t1 instanceof IntegerType) {
+                jfw.int2longIntLong(); // Convert to long
+                incrStack(); incrStack(); // For dup2_x1
+                incrStack(); // For i2l
+                decrStack(); decrStack(); // For pop2
+            }
+            if(t2 instanceof IntegerType) {
+                jfw.int2long();
+                incrStack();
+            }
+            jfw.equalsNotLong(branchId);
+            decrStack(); decrStack(); // Larger long size
+            decrStack();
         }
 
         return new BooleanType();
@@ -942,184 +1121,5 @@ public class JasminVisitor implements TypeVisitor {
     public Type visit(Identifier n) {
         Symbol s = Symbol.symbol(n.s);
         return getVarType(s);
-    }
-
-    // Exp e1,e2;
-    public Type visit(LessThanEquals n) {
-        Type t1 = n.e1.accept(this);
-        Type t2 = n.e2.accept(this);
-
-        branchId++;
-        if(t1 instanceof LongType || t2 instanceof LongType) {
-            if(t1 instanceof IntegerType) {
-                jfw.int2longIntLong(); // Convert to long
-                incrStack(); incrStack(); // For dup2_x1
-                incrStack(); // For i2l
-                decrStack(); decrStack(); // For pop2
-            }
-            if(t2 instanceof IntegerType) {
-                jfw.int2long();
-                incrStack();
-            }
-            jfw.lessThanEqualsLong(branchId);
-            decrStack(); decrStack(); // Larger long size
-            decrStack();
-        } else { // Only integers
-            jfw.lessThanEquals(branchId);
-            decrStack(); // Also loads a constant onto the stack
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(GreaterThan n) {
-        Type t1 = n.e1.accept(this);
-        Type t2 = n.e2.accept(this);
-
-        branchId++;
-        if(t1 instanceof LongType || t2 instanceof LongType) {
-            if(t1 instanceof IntegerType) {
-                jfw.int2longIntLong(); // Convert to long
-                incrStack(); incrStack(); // For dup2_x1
-                incrStack(); // For i2l
-                decrStack(); decrStack(); // For pop2
-            }
-            if(t2 instanceof IntegerType) {
-                jfw.int2long();
-                incrStack();
-            }
-            jfw.greaterThanLong(branchId);
-            decrStack(); decrStack(); // Larger long size
-            decrStack();
-        } else { // Only integers
-            jfw.greaterThan(branchId);
-            decrStack(); // Also loads a constant onto the stack
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(GreaterThanEquals n) {
-        Type t1 = n.e1.accept(this);
-        Type t2 = n.e2.accept(this);
-
-        branchId++;
-        if(t1 instanceof LongType || t2 instanceof LongType) {
-            if(t1 instanceof IntegerType) {
-                jfw.int2longIntLong(); // Convert to long
-                incrStack(); incrStack(); // For dup2_x1
-                incrStack(); // For i2l
-                decrStack(); decrStack(); // For pop2
-            }
-            if(t2 instanceof IntegerType) {
-                jfw.int2long();
-                incrStack();
-            }
-            jfw.greaterThanEqualsLong(branchId);
-            decrStack(); decrStack(); // Larger long size
-            decrStack();
-        } else { // Only integers
-            jfw.greaterThanEquals(branchId);
-            decrStack(); // Also loads a constant onto the stack
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(Equals n) {
-        Type t1 = n.e1.accept(this);
-        Type t2 = n.e2.accept(this);
-
-        branchId++;
-        // Object comparison
-        if(t1 instanceof IdentifierType) {
-            jfw.equalsObj(branchId);
-            decrStack();
-        }
-        if(t1 instanceof BooleanType) {
-            jfw.equals(branchId);
-            decrStack();
-        }
-        if(t1 instanceof IntegerType && t2 instanceof IntegerType) {
-            jfw.equals(branchId);
-            decrStack(); // Also loads a constant onto the stack
-        }
-        if(t1 instanceof LongType || t2 instanceof LongType) {
-            if(t1 instanceof IntegerType) {
-                jfw.int2longIntLong(); // Convert to long
-                incrStack(); incrStack(); // For dup2_x1
-                incrStack(); // For i2l
-                decrStack(); decrStack(); // For pop2
-            }
-            if(t2 instanceof IntegerType) {
-                jfw.int2long();
-                incrStack();
-            }
-            jfw.equalsLong(branchId);
-            decrStack(); decrStack(); // Larger long size
-            decrStack();
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(EqualsNot n) {
-        Type t1 = n.e1.accept(this);
-        Type t2 = n.e2.accept(this);
-
-        branchId++;
-        // Object comparison
-        if(t1 instanceof IdentifierType) {
-            jfw.equalsNotObj(branchId);
-            decrStack();
-        }
-        if(t1 instanceof BooleanType) {
-            jfw.equalsNot(branchId);
-            decrStack();
-        }
-        if(t1 instanceof IntegerType && t2 instanceof IntegerType) {
-            jfw.equalsNot(branchId);
-            decrStack(); // Also loads a constant onto the stack
-        }
-        if(t1 instanceof LongType || t2 instanceof LongType) {
-            if(t1 instanceof IntegerType) {
-                jfw.int2longIntLong(); // Convert to long
-                incrStack(); incrStack(); // For dup2_x1
-                incrStack(); // For i2l
-                decrStack(); decrStack(); // For pop2
-            }
-            if(t2 instanceof IntegerType) {
-                jfw.int2long();
-                incrStack();
-            }
-            jfw.equalsNotLong(branchId);
-            decrStack(); decrStack(); // Larger long size
-            decrStack();
-        }
-
-        return new BooleanType();
-    }
-
-    // Exp e1,e2;
-    public Type visit(Or n) {
-        branchId++;
-        int thisBranchId = branchId;
-        n.e1.accept(this);
-        incrStack(); // Increase for dup
-        jfw.dup(); // Duplicate since this is also needed for the 'or' check
-        // Short circuit
-        jfw.ifInvCheck(thisBranchId); // Skip if true (> 0)
-        decrStack(); // For dup
-        n.e2.accept(this);
-
-        jfw.or();
-        jfw.setElse(thisBranchId); // Skip here
-        decrStack(); // Result is pushed onto stack
-
-        return new BooleanType();
     }
 }
