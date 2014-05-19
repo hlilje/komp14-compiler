@@ -462,9 +462,14 @@ public class JasminVisitor implements TypeVisitor {
                 }
             }
             vd.accept(this);
+
+
+            // Add block var decl to method local vars
+            localVars++;
+            // Double size for Longs
+            if(n.vl.elementAt(i).t instanceof LongType) localVars++;
         }
-        // Add block var decl to method local vars
-        localVars += n.vl.size();
+
         for ( int i = 0; i < n.sl.size(); i++ ) {
             n.sl.elementAt(i).accept(this);
         }
