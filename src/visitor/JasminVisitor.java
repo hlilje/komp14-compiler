@@ -814,7 +814,7 @@ public class JasminVisitor implements TypeVisitor {
         n.i.accept(this);
         int longs = 0; // Keep track of Long formals
         for ( int i = 0; i < n.el.size(); i++ ) {
-            if(n.el.elementAt(i).accept(this) instanceof LongType);
+            if(n.el.elementAt(i).accept(this) instanceof LongType)
                 longs++;
         }
 
