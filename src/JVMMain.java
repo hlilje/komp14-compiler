@@ -56,6 +56,7 @@ public class JVMMain {
                 break;
             default:
                 System.err.println("Give no argument to read from stdin, otherwise specify a single input file");
+                System.err.println("Give '-S' as the second argument to enable code generation");
                 return;
         }
 
