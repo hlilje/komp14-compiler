@@ -7,7 +7,8 @@ package visitor;
 import syntaxtree.*;
 import error.*;
 import symbol.*;
-import jvm.Frame;
+import jvm.*;
+import frame.VMAccess;
 
 public class DepthFirstVisitor implements Visitor {
     public static final boolean DEBUG = false;
@@ -98,9 +99,18 @@ public class DepthFirstVisitor implements Visitor {
             currMethod = null;
         }
 
+        Record record = new Record(n.i.s);
+        if(DEBUG) System.out.println(record.toString());
+
         n.i.accept(this);
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
+            // Add field accesses here instead of in Jasmin visitor, since a class
+            // using them might be declared before the class they belong to
+            VarDecl vd = n.vl.elementAt(i); String fieldName = vd.i.toString();
+            VMAccess vma = record.allocField(fieldName, vd.t);
+            currClass.addFieldAccess(Symbol.symbol(fieldName), vma);
+
             n.vl.elementAt(i).accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {
@@ -142,10 +152,19 @@ public class DepthFirstVisitor implements Visitor {
             currMethod = null;
         }
 
+        Record record = new Record(n.i.s);
+        if(DEBUG) System.out.println(record.toString());
+
         n.i.accept(this);
         n.j.accept(this);
 
         for ( int i = 0; i < n.vl.size(); i++ ) {
+            // Add field accesses here instead of in Jasmin visitor, since a class
+            // using them might be declared before the class they belong to
+            VarDecl vd = n.vl.elementAt(i); String fieldName = vd.i.toString();
+            VMAccess vma = record.allocField(fieldName, vd.t);
+            currClass.addFieldAccess(Symbol.symbol(fieldName), vma);
+
             n.vl.elementAt(i).accept(this);
         }
         for ( int i = 0; i < n.ml.size(); i++ ) {

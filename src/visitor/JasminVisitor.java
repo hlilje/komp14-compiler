@@ -244,18 +244,15 @@ public class JasminVisitor implements TypeVisitor {
         currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = null;
 
-        Record record = new Record(className);
-        if(DEBUG) System.out.println(record.toString());
-
         // No inheritance
         String spr = "java/lang/Object";
         jfw.declareClass(className, className, spr);
 
         n.i.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            VarDecl vd = n.vl.elementAt(i); String fieldName = vd.i.toString();
-            VMAccess vma = record.allocField(fieldName, vd.t);
-            currClass.addFieldAccess(Symbol.symbol(fieldName), vma);
+            // Fields are now allocated in the first visitor instead
+            VarDecl vd = n.vl.elementAt(i);
+            VMAccess vma = getVMAccess(vd.i.toString());
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
             jfw.declareField(vma);
@@ -283,9 +280,6 @@ public class JasminVisitor implements TypeVisitor {
         currClass = symTable.getClass(Symbol.symbol(className));
         currMethod = null;
 
-        Record record = new Record(className);
-        if(DEBUG) System.out.println(record.toString());
-
         // Inheritance
         String spr = n.j.s;
         jfw.declareClass(className, className, spr);
@@ -293,9 +287,9 @@ public class JasminVisitor implements TypeVisitor {
         n.i.accept(this);
         n.j.accept(this);
         for ( int i = 0; i < n.vl.size(); i++ ) {
-            VarDecl vd = n.vl.elementAt(i); String fieldName = vd.i.toString();
-            VMAccess vma = record.allocField(fieldName, vd.t);
-            currClass.addFieldAccess(Symbol.symbol(fieldName), vma);
+            // Fields are now allocated in the first visitor instead
+            VarDecl vd = n.vl.elementAt(i);
+            VMAccess vma = getVMAccess(vd.i.toString());
 
             if(DEBUG) System.out.println(((OnHeap)vma).toString());
             jfw.declareField(vma);
