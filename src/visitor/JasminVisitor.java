@@ -389,6 +389,7 @@ public class JasminVisitor implements TypeVisitor {
         Type declType = currMethod.getType();
         if(declType instanceof LongType && retType instanceof IntegerType) {
             jfw.int2long();
+            incrStack();
         }
 
         jfw.setReturn(declType);
