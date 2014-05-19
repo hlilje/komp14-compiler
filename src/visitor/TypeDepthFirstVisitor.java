@@ -5,8 +5,8 @@
 package visitor;
 
 import syntaxtree.*;
-import error.*;
 import symbol.*;
+import error.ErrorHandler;
 
 public class TypeDepthFirstVisitor implements TypeVisitor {
     public static final boolean DEBUG = false;

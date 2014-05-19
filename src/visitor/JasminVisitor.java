@@ -5,10 +5,10 @@
 package visitor;
 
 import syntaxtree.*;
-import error.*;
 import symbol.*;
 import jvm.*;
-import jasmin.*;
+import error.ErrorHandler;
+import jasmin.JasminFileWriter;
 import frame.VMAccess;
 import frame.VMFrame;
 

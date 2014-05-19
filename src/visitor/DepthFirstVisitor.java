@@ -5,9 +5,10 @@
 package visitor;
 
 import syntaxtree.*;
-import error.*;
 import symbol.*;
-import jvm.*;
+import error.ErrorHandler;
+import jvm.Frame;
+import jvm.Record;
 import frame.VMAccess;
 
 public class DepthFirstVisitor implements Visitor {
