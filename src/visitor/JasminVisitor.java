@@ -879,9 +879,11 @@ public class JasminVisitor implements TypeVisitor {
         VMAccess vma = getVMAccess(n.s);
         jfw.loadAccess(vma);
         incrStack(); // Increase for both heap and stack
-        if(vma instanceof LongInFrame) incrStack(); // One extra for Long
 
-        return getVarType(s);
+        Type t = getVarType(s);
+        if(t instanceof LongType) incrStack(); // One extra for Long
+
+        return t;
     }
 
     public Type visit(This n) {
